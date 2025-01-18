@@ -809,3 +809,5 @@ fabric.properties
 
 *.tar
 *.zip
+
+.vscode
