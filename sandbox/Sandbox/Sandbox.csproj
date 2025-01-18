@@ -16,4 +16,15 @@
     <PackageReference Include="Spectre.Console" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\..\assets\calculation-constants.json">
+      <Link>Constants\calculation-constants.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\assets\year-constants.json">
+      <Link>Constants\year-constants.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

@@ -55,7 +55,7 @@ public class SalaryCalculationService
 
         // 6) Decide the CalculationMode. If you want a default "GrossToNet", do:
         //    Or if your request had "CalculationMode" we map that to the domain enum.
-        var calcMode = CalculationMode.NetToGross; // you can also choose "NetToGross" or "TotalToGross"
+        const CalculationMode calcMode = CalculationMode.NetToGross; // you can also choose "NetToGross" or "TotalToGross"
 
         // 7) Perform the yearly calculation
         yearCalc.Calculate(calcMode);

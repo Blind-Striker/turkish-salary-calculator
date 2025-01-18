@@ -9,28 +9,36 @@ using Turkish.HRSolutions.SalaryCalculator.Infrastructure;
 
 #pragma warning disable S1075,S1481,S125, IDE0059
 
-var parameterProvider = new JsonParameterProvider(new FileSystem());
+var turkishCulture = CultureInfo.CreateSpecificCulture("tr-TR");
 
-var yearParameters = await parameterProvider
-    .LoadYearParametersAsync(@"E:\repos\my-projects\turkish-employee-financial-utils\assets\year-parameters.json");
+// var parsed = decimal.TryParse(args[0], NumberStyles.Number, turkishCulture, out var salary);
+const decimal salary = 27_000m;
 
-var fixtures = await parameterProvider
-    .LoadFixtureAsync(@"E:\repos\my-projects\turkish-employee-financial-utils\assets\fixtures.json");
+var fileSystem = new FileSystem();
+var parameterProvider = new JsonParameterProvider(fileSystem);
+
+var currentDirectory = fileSystem.Directory.GetCurrentDirectory();
+
+var yearConstants = fileSystem.Path.Combine(currentDirectory, "Constants", "year-constants.json");
+var calcConstants = fileSystem.Path.Combine(currentDirectory, "Constants", "calculation-constants.json");
+
+var yearParameters = await parameterProvider.LoadYearParametersAsync(yearConstants);
+var fixtures = await parameterProvider.LoadFixtureAsync(calcConstants);
 
 var monthlySalaries = new List<MonthlySalary>()
 {
-    new(MonthsOfYear.January, 140_831),
-    new(MonthsOfYear.February, 140_831),
-    new(MonthsOfYear.March, 140_831),
-    new(MonthsOfYear.April, 140_831),
-    new(MonthsOfYear.May, 140_831),
-    new(MonthsOfYear.June, 140_831),
-    new(MonthsOfYear.July, 140_831),
-    new(MonthsOfYear.August, 140_831),
-    new(MonthsOfYear.September, 140_831),
-    new(MonthsOfYear.October, 140_831),
-    new(MonthsOfYear.November, 140_831),
-    new(MonthsOfYear.December, 140_831),
+    new(MonthsOfYear.January, salary),
+    new(MonthsOfYear.February, salary),
+    new(MonthsOfYear.March, salary),
+    new(MonthsOfYear.April, salary),
+    new(MonthsOfYear.May, salary),
+    new(MonthsOfYear.June, salary),
+    new(MonthsOfYear.July, salary),
+    new(MonthsOfYear.August, salary),
+    new(MonthsOfYear.September, salary),
+    new(MonthsOfYear.October, salary),
+    new(MonthsOfYear.November, salary),
+    new(MonthsOfYear.December, salary),
 };
 
 var calculateSalaryRequest = new CalculateSalaryRequest(2025, monthlySalaries);
@@ -57,8 +65,6 @@ table.AddColumn("Damga Vergisi İstinası");
 table.AddColumn("Net Ücret");
 table.AddColumn("Maaş");
 
-var turkishCulture = CultureInfo.CreateSpecificCulture("tr-TR");
-
 foreach (var month in yearCalculationModel.Months)
 {
     _ = table.AddRow(
@@ -79,39 +85,3 @@ foreach (var month in yearCalculationModel.Months)
 }
 
 AnsiConsole.Write(table);
-
-// var parameterService = new ParameterService();
-//
-// var path = @"E:\repos\my-projects\turkish-employee-financial-utils\assets\example_parameters.json";
-// var parameters = parameterService.LoadParameters(path);
-//
-// var salaryService = new SalaryService(parameters);
-// var monthlySalaries = new List<MonthlySalary>()
-// {
-//     new(MonthsOfYear.January, 140_831),
-//     new(MonthsOfYear.February, 140_831),
-//     new(MonthsOfYear.March, 140_831),
-//     new(MonthsOfYear.April, 140_831),
-//     new(MonthsOfYear.May, 140_831),
-//     new(MonthsOfYear.June, 140_831),
-//     new(MonthsOfYear.July, 140_831),
-//     new(MonthsOfYear.August, 140_831),
-//     new(MonthsOfYear.September, 140_831),
-//     new(MonthsOfYear.October, 140_831),
-//     new(MonthsOfYear.November, 140_831),
-//     new(MonthsOfYear.December, 140_831),
-// };
-//
-// var request = new CalculateSalaryRequest(2025, "SC", "DARP", "ED0", monthlySalaries);
-//
-// // var grossToNetYearlyCalcModel = salaryService.CalculateGrossToNetMonthly(request);
-// //
-// // grossToNetYearlyCalcModel.Calculate();
-//
-// var netToGrossYearlyCalcModel = salaryService.CalculateNetToGrossMonthly(request);
-// netToGrossYearlyCalcModel.IsAgiCalculationEnabled = true;
-// netToGrossYearlyCalcModel.IsAgiIncludedTax = true;
-// netToGrossYearlyCalcModel.ApplyMinWageTaxExemption = true;
-// netToGrossYearlyCalcModel.Calculate();
-//
-// Console.ReadLine();
