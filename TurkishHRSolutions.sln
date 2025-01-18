@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5BB8A4DD-E120-4FC4-BF6D-727319A09A20}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C8D361B3-BBCF-4FD2-A3FD-D8A1D496BACB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TurkEmployCalc", "src\TurkEmployCalc\TurkEmployCalc.csproj", "{6655072C-DB87-4E5A-8649-07DF64A2CF71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TurkEmployCalc.Tests", "test\TurkEmployCalc.Tests\TurkEmployCalc.Tests.csproj", "{3C172203-4E2D-4115-A19C-CF67F30F2EF7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sandbox", "sandbox", "{61F3CBC9-DFEB-47B6-BEF6-58CAC473389E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "sandbox\Sandbox\Sandbox.csproj", "{D70BBC74-B988-44FD-9C0C-D332CF87A197}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turkish.HRSolutions.SalaryCalculator", "src\Turkish.HRSolutions.SalaryCalculator\Turkish.HRSolutions.SalaryCalculator.csproj", "{3CD2C3D1-855F-4C15-A530-51A0D247903E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6655072C-DB87-4E5A-8649-07DF64A2CF71} = {5BB8A4DD-E120-4FC4-BF6D-727319A09A20}
+		{3C172203-4E2D-4115-A19C-CF67F30F2EF7} = {C8D361B3-BBCF-4FD2-A3FD-D8A1D496BACB}
+		{D70BBC74-B988-44FD-9C0C-D332CF87A197} = {61F3CBC9-DFEB-47B6-BEF6-58CAC473389E}
+		{3CD2C3D1-855F-4C15-A530-51A0D247903E} = {5BB8A4DD-E120-4FC4-BF6D-727319A09A20}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6655072C-DB87-4E5A-8649-07DF64A2CF71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6655072C-DB87-4E5A-8649-07DF64A2CF71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6655072C-DB87-4E5A-8649-07DF64A2CF71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6655072C-DB87-4E5A-8649-07DF64A2CF71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C172203-4E2D-4115-A19C-CF67F30F2EF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C172203-4E2D-4115-A19C-CF67F30F2EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C172203-4E2D-4115-A19C-CF67F30F2EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C172203-4E2D-4115-A19C-CF67F30F2EF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D70BBC74-B988-44FD-9C0C-D332CF87A197}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D70BBC74-B988-44FD-9C0C-D332CF87A197}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D70BBC74-B988-44FD-9C0C-D332CF87A197}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D70BBC74-B988-44FD-9C0C-D332CF87A197}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CD2C3D1-855F-4C15-A530-51A0D247903E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CD2C3D1-855F-4C15-A530-51A0D247903E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CD2C3D1-855F-4C15-A530-51A0D247903E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CD2C3D1-855F-4C15-A530-51A0D247903E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

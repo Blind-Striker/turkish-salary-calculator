@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(CurrentNetVersion)</TargetFramework>
+    <NoWarn>
+      $(NoWarn);CA1008
+    </NoWarn>
+    <NoError>
+      $(NoError);CA1008
+    </NoError>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers"/>
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Extensions"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+</Project>

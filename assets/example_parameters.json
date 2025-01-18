@@ -1,0 +1,811 @@
+{
+  "YearParameters": [
+    {
+      "Year": 2025,
+      "MinGrossWages": [
+        {
+          "StartMonth": 1,
+          "Amount": 26005.50,
+          "SGKCeil": 195041.40
+        }
+      ],
+      "MinWageEmployeeTaxExemption": true,
+      "TaxSlices": [
+        {
+          "Rate": 0.15,
+          "Ceil": 158000
+        },
+        {
+          "Rate": 0.2,
+          "Ceil": 330000
+        },
+        {
+          "Rate": 0.27,
+          "Ceil": 1200000
+        },
+        {
+          "Rate": 0.35,
+          "Ceil": 4300000
+        },
+        {
+          "Rate": 0.4,
+          "Ceil": null
+        }
+      ],
+      "DisabledMonthlyIncomeTaxDiscountBases": [
+        {
+          "Degree": 1,
+          "Amount": 9900
+        },
+        {
+          "Degree": 2,
+          "Amount": 5700
+        },
+        {
+          "Degree": 3,
+          "Amount": 2400
+        }
+      ]
+    },
+    {
+      "Year": 2024,
+      "MinGrossWages": [
+        {
+          "StartMonth": 1,
+          "Amount": 20002.50,
+          "SGKCeil": 150018.90
+        }
+      ],
+      "MinWageEmployeeTaxExemption": true,
+      "TaxSlices": [
+        {
+          "Rate": 0.15,
+          "Ceil": 110000
+        },
+        {
+          "Rate": 0.2,
+          "Ceil": 230000
+        },
+        {
+          "Rate": 0.27,
+          "Ceil": 870000
+        },
+        {
+          "Rate": 0.35,
+          "Ceil": 3000000
+        },
+        {
+          "Rate": 0.4,
+          "Ceil": null
+        }
+      ],
+      "DisabledMonthlyIncomeTaxDiscountBases": [
+        {
+          "Degree": 1,
+          "Amount": 6900
+        },
+        {
+          "Degree": 2,
+          "Amount": 4000
+        },
+        {
+          "Degree": 3,
+          "Amount": 1700
+        }
+      ]
+    },
+    {
+      "Year": 2023,
+      "MinGrossWages": [
+        {
+          "StartMonth": 7,
+          "Amount": 13414.5,
+          "SgkCeil": 100608.9
+        },
+        {
+          "StartMonth": 1,
+          "Amount": 10008,
+          "SgkCeil": 75060
+        }
+      ],
+      "MinWageEmployeeTaxExemption": true,
+      "TaxSlices": [
+        {
+          "Rate": 0.15,
+          "Ceil": 70000
+        },
+        {
+          "Rate": 0.2,
+          "Ceil": 150000
+        },
+        {
+          "Rate": 0.27,
+          "Ceil": 550000
+        },
+        {
+          "Rate": 0.35,
+          "Ceil": 1900000
+        },
+        {
+          "Rate": 0.4,
+          "Ceil": null
+        }
+      ],
+      "DisabledMonthlyIncomeTaxDiscountBases": [
+        {
+          "Degree": 1,
+          "Amount": 4400
+        },
+        {
+          "Degree": 2,
+          "Amount": 2600
+        },
+        {
+          "Degree": 3,
+          "Amount": 1100
+        }
+      ]
+    },
+    {
+      "Year": 2022,
+      "MinGrossWages": [
+        {
+          "StartMonth": 7,
+          "Amount": 6471,
+          "SgkCeil": 48532.5
+        },
+        {
+          "StartMonth": 1,
+          "Amount": 5004,
+          "SgkCeil": 37530
+        }
+      ],
+      "MinWageEmployeeTaxExemption": true,
+      "TaxSlices": [
+        {
+          "Rate": 0.15,
+          "Ceil": 32000
+        },
+        {
+          "Rate": 0.2,
+          "Ceil": 70000
+        },
+        {
+          "Rate": 0.27,
+          "Ceil": 250000
+        },
+        {
+          "Rate": 0.35,
+          "Ceil": 880000
+        },
+        {
+          "Rate": 0.4,
+          "Ceil": null
+        }
+      ],
+      "DisabledMonthlyIncomeTaxDiscountBases": [
+        {
+          "Degree": 1,
+          "Amount": 2000
+        },
+        {
+          "Degree": 2,
+          "Amount": 1170
+        },
+        {
+          "Degree": 3,
+          "Amount": 500
+        }
+      ]
+    },
+    {
+      "Year": 2021,
+      "MinGrossWages": [
+        {
+          "StartMonth": 1,
+          "Amount": 3577.5,
+          "SgkCeil": 26831.4
+        }
+      ],
+      "MinWageEmployeeTaxExemption": false,
+      "TaxSlices": [
+        {
+          "Rate": 0.15,
+          "Ceil": 24000
+        },
+        {
+          "Rate": 0.2,
+          "Ceil": 53000
+        },
+        {
+          "Rate": 0.27,
+          "Ceil": 190000
+        },
+        {
+          "Rate": 0.35,
+          "Ceil": 650000
+        },
+        {
+          "Rate": 0.4,
+          "Ceil": null
+        }
+      ],
+      "DisabledMonthlyIncomeTaxDiscountBases": [
+        {
+          "Degree": 1,
+          "Amount": 1500
+        },
+        {
+          "Degree": 2,
+          "Amount": 860
+        },
+        {
+          "Degree": 3,
+          "Amount": 380
+        }
+      ]
+    },
+    {
+      "Year": 2020,
+      "MinGrossWages": [
+        {
+          "StartMonth": 1,
+          "Amount": 2943,
+          "SgkCeil": 22072.5
+        }
+      ],
+      "MinWageEmployeeTaxExemption": false,
+      "TaxSlices": [
+        {
+          "Rate": 0.15,
+          "Ceil": 22000
+        },
+        {
+          "Rate": 0.2,
+          "Ceil": 49000
+        },
+        {
+          "Rate": 0.27,
+          "Ceil": 180000
+        },
+        {
+          "Rate": 0.35,
+          "Ceil": 600000
+        },
+        {
+          "Rate": 0.4,
+          "Ceil": null
+        }
+      ],
+      "DisabledMonthlyIncomeTaxDiscountBases": [
+        {
+          "Degree": 1,
+          "Amount": 1400
+        },
+        {
+          "Degree": 2,
+          "Amount": 790
+        },
+        {
+          "Degree": 3,
+          "Amount": 350
+        }
+      ]
+    },
+    {
+      "Year": 2019,
+      "MinGrossWages": [
+        {
+          "StartMonth": 1,
+          "Amount": 2558.4,
+          "SgkCeil": 19188
+        }
+      ],
+      "MinWageEmployeeTaxExemption": false,
+      "TaxSlices": [
+        {
+          "Rate": 0.15,
+          "Ceil": 18000
+        },
+        {
+          "Rate": 0.2,
+          "Ceil": 40000
+        },
+        {
+          "Rate": 0.27,
+          "Ceil": 148000
+        },
+        {
+          "Rate": 0.35,
+          "Ceil": null
+        }
+      ],
+      "DisabledMonthlyIncomeTaxDiscountBases": [
+        {
+          "Degree": 1,
+          "Amount": 1200
+        },
+        {
+          "Degree": 2,
+          "Amount": 650
+        },
+        {
+          "Degree": 3,
+          "Amount": 290
+        }
+      ]
+    },
+    {
+      "Year": 2018,
+      "MinGrossWages": [
+        {
+          "StartMonth": 1,
+          "Amount": 2029.5,
+          "SgkCeil": 15221.4
+        }
+      ],
+      "MinWageEmployeeTaxExemption": false,
+      "TaxSlices": [
+        {
+          "Rate": 0.15,
+          "Ceil": 14800
+        },
+        {
+          "Rate": 0.2,
+          "Ceil": 34000
+        },
+        {
+          "Rate": 0.27,
+          "Ceil": 120000
+        },
+        {
+          "Rate": 0.35,
+          "Ceil": null
+        }
+      ],
+      "DisabledMonthlyIncomeTaxDiscountBases": [
+        {
+          "Degree": 1,
+          "Amount": 1000
+        },
+        {
+          "Degree": 2,
+          "Amount": 530
+        },
+        {
+          "Degree": 3,
+          "Amount": 240
+        }
+      ]
+    },
+    {
+      "Year": 2017,
+      "MinGrossWages": [
+        {
+          "StartMonth": 1,
+          "Amount": 1777.5,
+          "SgkCeil": 13331.4
+        }
+      ],
+      "MinWageEmployeeTaxExemption": false,
+      "TaxSlices": [
+        {
+          "Rate": 0.15,
+          "Ceil": 13000
+        },
+        {
+          "Rate": 0.2,
+          "Ceil": 30000
+        },
+        {
+          "Rate": 0.27,
+          "Ceil": 110000
+        },
+        {
+          "Rate": 0.35,
+          "Ceil": null
+        }
+      ],
+      "DisabledMonthlyIncomeTaxDiscountBases": [
+        {
+          "Degree": 1,
+          "Amount": 900
+        },
+        {
+          "Degree": 2,
+          "Amount": 470
+        },
+        {
+          "Degree": 3,
+          "Amount": 210
+        }
+      ]
+    },
+    {
+      "Year": 2016,
+      "MinGrossWages": [
+        {
+          "StartMonth": 1,
+          "Amount": 1647,
+          "SgkCeil": 10705.5
+        }
+      ],
+      "MinWageEmployeeTaxExemption": false,
+      "TaxSlices": [
+        {
+          "Rate": 0.15,
+          "Ceil": 12600
+        },
+        {
+          "Rate": 0.2,
+          "Ceil": 30000
+        },
+        {
+          "Rate": 0.27,
+          "Ceil": 110000
+        },
+        {
+          "Rate": 0.35,
+          "Ceil": null
+        }
+      ],
+      "DisabledMonthlyIncomeTaxDiscountBases": [
+        {
+          "Degree": 1,
+          "Amount": 900
+        },
+        {
+          "Degree": 2,
+          "Amount": 460
+        },
+        {
+          "Degree": 3,
+          "Amount": 210
+        }
+      ]
+    }
+  ],
+  "MinimumLivingAllowanceParameters": [
+    {
+      "SpouseWorkStatus": "Unmarried",
+      "ChildrenCompareType": "Eq",
+      "NumberOfChildren": 0,
+      "Rate": 0.5
+    },
+    {
+      "SpouseWorkStatus": "Working",
+      "ChildrenCompareType": "Eq",
+      "NumberOfChildren": 0,
+      "Rate": 0.5
+    },
+    {
+      "SpouseWorkStatus": "Working",
+      "ChildrenCompareType": "Eq",
+      "NumberOfChildren": 1,
+      "Rate": 0.575
+    },
+    {
+      "SpouseWorkStatus": "Working",
+      "ChildrenCompareType": "Eq",
+      "NumberOfChildren": 2,
+      "Rate": 0.65
+    },
+    {
+      "SpouseWorkStatus": "Working",
+      "ChildrenCompareType": "Eq",
+      "NumberOfChildren": 3,
+      "Rate": 0.75
+    },
+    {
+      "SpouseWorkStatus": "Working",
+      "ChildrenCompareType": "Eq",
+      "NumberOfChildren": 4,
+      "Rate": 0.8
+    },
+    {
+      "SpouseWorkStatus": "Working",
+      "ChildrenCompareType": "Gte",
+      "NumberOfChildren": 5,
+      "Rate": 0.85
+    },
+    {
+      "SpouseWorkStatus": "Unemployed",
+      "ChildrenCompareType": "Eq",
+      "NumberOfChildren": 0,
+      "Rate": 0.6
+    },
+    {
+      "SpouseWorkStatus": "Unemployed",
+      "ChildrenCompareType": "Eq",
+      "NumberOfChildren": 1,
+      "Rate": 0.675
+    },
+    {
+      "SpouseWorkStatus": "Unemployed",
+      "ChildrenCompareType": "Eq",
+      "NumberOfChildren": 2,
+      "Rate": 0.75
+    },
+    {
+      "SpouseWorkStatus": "Unemployed",
+      "ChildrenCompareType": "Eq",
+      "NumberOfChildren": 3,
+      "Rate": 0.8
+    },
+    {
+      "SpouseWorkStatus": "Unemployed",
+      "ChildrenCompareType": "Gte",
+      "NumberOfChildren": 4,
+      "Rate": 0.85
+    }
+  ],
+  "EmployeeTypeParameters": [
+    {
+      "Code": "SC",
+      "Description": "Standart Çalışan",
+      "SgkApplicable": true,
+      "SgkMinWageBasedExemption": false,
+      "SgkMinWageBased17103Exemption": false,
+      "UnemploymentInsuranceApplicable": true,
+      "AgiApplicable": true,
+      "IncomeTaxApplicable": true,
+      "TaxMinWageBasedExemption": false,
+      "ResearchAndDevelopmentTaxExemption": false,
+      "StampTaxApplicable": true,
+      "EmployerSgkApplicable": true,
+      "EmployerUnemploymentInsuranceApplicable": true,
+      "EmployerIncomeTaxApplicable": true,
+      "EmployerStampTaxApplicable": true,
+      "EmployerEducationIncomeTaxExemption": false,
+      "EmployerSgkShareTotalExemption": false,
+      "EmployerSgkDiscount5746Applicable": true,
+      "Employer5746AdditionalDiscountApplicable": false
+    },
+    {
+      "Code": "TP4691",
+      "Description": "Teknokent Personeli (4691)",
+      "SgkApplicable": true,
+      "SgkMinWageBasedExemption": false,
+      "SgkMinWageBased17103Exemption": false,
+      "UnemploymentInsuranceApplicable": true,
+      "AgiApplicable": true,
+      "IncomeTaxApplicable": true,
+      "TaxMinWageBasedExemption": false,
+      "ResearchAndDevelopmentTaxExemption": true,
+      "StampTaxApplicable": true,
+      "EmployerSgkApplicable": true,
+      "EmployerUnemploymentInsuranceApplicable": true,
+      "EmployerIncomeTaxApplicable": true,
+      "EmployerStampTaxApplicable": true,
+      "EmployerEducationIncomeTaxExemption": false,
+      "EmployerSgkShareTotalExemption": false,
+      "EmployerSgkDiscount5746Applicable": true,
+      "Employer5746AdditionalDiscountApplicable": true
+    },
+    {
+      "Code": "AGP5746",
+      "Description": "Ar-Ge Personeli (5746)",
+      "SgkApplicable": true,
+      "SgkMinWageBasedExemption": false,
+      "SgkMinWageBased17103Exemption": false,
+      "UnemploymentInsuranceApplicable": true,
+      "AgiApplicable": true,
+      "IncomeTaxApplicable": true,
+      "TaxMinWageBasedExemption": false,
+      "ResearchAndDevelopmentTaxExemption": true,
+      "StampTaxApplicable": true,
+      "EmployerSgkApplicable": true,
+      "EmployerUnemploymentInsuranceApplicable": true,
+      "EmployerIncomeTaxApplicable": true,
+      "EmployerStampTaxApplicable": true,
+      "EmployerEducationIncomeTaxExemption": true,
+      "EmployerSgkShareTotalExemption": false,
+      "EmployerSgkDiscount5746Applicable": true,
+      "Employer5746AdditionalDiscountApplicable": true
+    },
+    {
+      "Code": "6111SK",
+      "Description": "6111 Sayılı Kanun",
+      "SgkApplicable": true,
+      "SgkMinWageBasedExemption": false,
+      "SgkMinWageBased17103Exemption": false,
+      "UnemploymentInsuranceApplicable": true,
+      "AgiApplicable": true,
+      "IncomeTaxApplicable": true,
+      "TaxMinWageBasedExemption": false,
+      "ResearchAndDevelopmentTaxExemption": false,
+      "StampTaxApplicable": true,
+      "EmployerSgkApplicable": true,
+      "EmployerUnemploymentInsuranceApplicable": true,
+      "EmployerIncomeTaxApplicable": true,
+      "EmployerStampTaxApplicable": true,
+      "EmployerEducationIncomeTaxExemption": false,
+      "EmployerSgkShareTotalExemption": true,
+      "EmployerSgkDiscount5746Applicable": false,
+      "Employer5746AdditionalDiscountApplicable": false
+    },
+    {
+      "Code": "IV",
+      "Description": "İşveren",
+      "SgkApplicable": false,
+      "SgkMinWageBasedExemption": false,
+      "SgkMinWageBased17103Exemption": false,
+      "UnemploymentInsuranceApplicable": false,
+      "AgiApplicable": true,
+      "IncomeTaxApplicable": true,
+      "TaxMinWageBasedExemption": false,
+      "ResearchAndDevelopmentTaxExemption": false,
+      "StampTaxApplicable": true,
+      "EmployerSgkApplicable": false,
+      "EmployerUnemploymentInsuranceApplicable": false,
+      "EmployerIncomeTaxApplicable": true,
+      "EmployerStampTaxApplicable": true,
+      "EmployerEducationIncomeTaxExemption": false,
+      "EmployerSgkShareTotalExemption": false,
+      "EmployerSgkDiscount5746Applicable": false,
+      "Employer5746AdditionalDiscountApplicable": false
+    },
+    {
+      "Code": "27103P",
+      "Description": "27103 Personel",
+      "SgkApplicable": true,
+      "SgkMinWageBasedExemption": true,
+      "SgkMinWageBased17103Exemption": false,
+      "UnemploymentInsuranceApplicable": true,
+      "AgiApplicable": true,
+      "IncomeTaxApplicable": true,
+      "ResearchAndDevelopmentTaxExemption": false,
+      "StampTaxApplicable": true,
+      "EmployerSgkApplicable": true,
+      "EmployerUnemploymentInsuranceApplicable": true,
+      "EmployerIncomeTaxApplicable": true,
+      "TaxMinWageBasedExemption": true,
+      "EmployerStampTaxApplicable": true,
+      "EmployerEducationIncomeTaxExemption": false,
+      "EmployerSgkShareTotalExemption": false,
+      "EmployerSgkDiscount5746Applicable": false,
+      "Employer5746AdditionalDiscountApplicable": false
+    },
+    {
+      "Code": "17103P",
+      "Description": "17103 Personel",
+      "SgkApplicable": true,
+      "SgkMinWageBasedExemption": false,
+      "SgkMinWageBased17103Exemption": true,
+      "UnemploymentInsuranceApplicable": true,
+      "AgiApplicable": true,
+      "IncomeTaxApplicable": true,
+      "ResearchAndDevelopmentTaxExemption": false,
+      "StampTaxApplicable": true,
+      "EmployerSgkApplicable": true,
+      "EmployerUnemploymentInsuranceApplicable": true,
+      "EmployerIncomeTaxApplicable": true,
+      "TaxMinWageBasedExemption": true,
+      "EmployerStampTaxApplicable": true,
+      "EmployerEducationIncomeTaxExemption": false,
+      "EmployerSgkShareTotalExemption": false,
+      "EmployerSgkDiscount5746Applicable": false,
+      "Employer5746AdditionalDiscountApplicable": false
+    },
+    {
+      "Code": "IVTP4691",
+      "Description": "İşveren - Teknokent Personeli (4691)",
+      "SgkApplicable": false,
+      "SgkMinWageBasedExemption": false,
+      "SgkMinWageBased17103Exemption": false,
+      "UnemploymentInsuranceApplicable": false,
+      "AgiApplicable": true,
+      "IncomeTaxApplicable": true,
+      "TaxMinWageBasedExemption": false,
+      "ResearchAndDevelopmentTaxExemption": true,
+      "StampTaxApplicable": true,
+      "EmployerSgkApplicable": false,
+      "EmployerUnemploymentInsuranceApplicable": false,
+      "EmployerIncomeTaxApplicable": true,
+      "EmployerStampTaxApplicable": true,
+      "EmployerEducationIncomeTaxExemption": false,
+      "EmployerSgkShareTotalExemption": false,
+      "EmployerSgkDiscount5746Applicable": false,
+      "Employer5746AdditionalDiscountApplicable": false
+    },
+    {
+      "Code": "IVAGP5746",
+      "Description": "İşveren - Ar-Ge Personeli (5746)",
+      "SgkApplicable": false,
+      "SgkMinWageBasedExemption": false,
+      "SgkMinWageBased17103Exemption": false,
+      "UnemploymentInsuranceApplicable": false,
+      "AgiApplicable": true,
+      "IncomeTaxApplicable": true,
+      "TaxMinWageBasedExemption": false,
+      "ResearchAndDevelopmentTaxExemption": true,
+      "StampTaxApplicable": true,
+      "EmployerSgkApplicable": false,
+      "EmployerUnemploymentInsuranceApplicable": false,
+      "EmployerIncomeTaxApplicable": true,
+      "EmployerStampTaxApplicable": true,
+      "EmployerEducationIncomeTaxExemption": true,
+      "EmployerSgkShareTotalExemption": false,
+      "EmployerSgkDiscount5746Applicable": false,
+      "Employer5746AdditionalDiscountApplicable": false
+    },
+    {
+      "Code": "EHF10GF",
+      "Description": "Ev Hizmetleri (10 günden fazla). Temizlik, Çocuk bakımı, Yaşlı bakımı, Hasta bakımı, Bahçıvan",
+      "SgkApplicable": true,
+      "SgkMinWageBasedExemption": false,
+      "SgkMinWageBased17103Exemption": false,
+      "UnemploymentInsuranceApplicable": true,
+      "AgiApplicable": true,
+      "IncomeTaxApplicable": false,
+      "TaxMinWageBasedExemption": false,
+      "ResearchAndDevelopmentTaxExemption": false,
+      "StampTaxApplicable": false,
+      "EmployerSgkApplicable": true,
+      "EmployerUnemploymentInsuranceApplicable": true,
+      "EmployerIncomeTaxApplicable": true,
+      "EmployerStampTaxApplicable": true,
+      "EmployerEducationIncomeTaxExemption": false,
+      "EmployerSgkShareTotalExemption": false,
+      "EmployerSgkDiscount5746Applicable": true,
+      "Employer5746AdditionalDiscountApplicable": false
+    }
+  ],
+  "CalculationConstantParameters": {
+    "MonthDayCount": 30,
+    "StampTaxRate": 0.00759,
+    "Employee": {
+      "SgkDeductionRate": 0.14,
+      "SgdpDeductionRate": 0.075,
+      "UnemploymentInsuranceRate": 0.01,
+      "PensionerUnemploymentInsuranceRate": 0
+    },
+    "Employer": {
+      "SgkDeductionRate": 0.205,
+      "SgdpDeductionRate": 0.245,
+      "EmployerDiscount5746": 0.05,
+      "UnemploymentInsuranceRate": 0.02,
+      "PensionerUnemploymentInsuranceRate": 0,
+      "Sgk5746AdditionalDiscount": 0.5
+    }
+  },
+  "EmployeeEducationTypeParameters": [
+    {
+      "Code": "DARP",
+      "Description": "Diğer AR-GE Personeli",
+      "ExemptionRate": 0.8
+    },
+    {
+      "Code": "DTBLYL",
+      "Description": "Doktoralı veya Temel Bilimler Yüksek Lisanslı",
+      "ExemptionRate": 0.95
+    },
+    {
+      "Code": "YLLTBL",
+      "Description": "Yüksek Lisanslı veya Temel Bilimleri Lisanslı",
+      "ExemptionRate": 0.9
+    }
+  ],
+  "DisabilityTypeParameters": [
+    {
+      "Code": "ED0",
+      "Description": "Engelli Değil",
+      "Degree": -1
+    },
+    {
+      "Code": "ED1",
+      "Description": "1. Derece Engelli",
+      "Degree": 1
+    },
+    {
+      "Code": "ED2",
+      "Description": "2. Derece Engelli",
+      "Degree": 2
+    },
+    {
+      "Code": "ED3",
+      "Description": "3. Derece Engelli",
+      "Degree": 3
+    }
+  ]
+}
