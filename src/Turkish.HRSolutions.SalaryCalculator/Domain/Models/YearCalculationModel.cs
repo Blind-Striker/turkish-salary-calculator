@@ -316,12 +316,9 @@ public sealed class YearCalculationModel
         var daysInSixMonths = _parameters.CalculationConstants.MonthDayCount * 6m;
         var semesterWorkedDays = GetSemesterWorkedDays(half);
 
-        if (semesterWorkedDays == 0)
-        {
-            return 0;
-        }
-
-        return halfAvgCost * (daysInSixMonths / semesterWorkedDays);
+        return semesterWorkedDays == 0
+            ? 0
+            : halfAvgCost * (daysInSixMonths / semesterWorkedDays);
     }
 
     public decimal EmployerHalfTotalCost(string half)
@@ -367,11 +364,8 @@ public sealed class YearCalculationModel
             totalCost += month.EmployerTotalCost;
         }
 
-        if (workedMonths == 0)
-        {
-            return 0m;
-        }
-
-        return totalCost / workedMonths;
+        return workedMonths == 0
+            ? 0m
+            : totalCost / workedMonths;
     }
 }

@@ -68,31 +68,15 @@ public abstract class BaseMonthlyCalculationModel
     public double IncomeTaxBase =>
         CalcIncomeTaxBase(CalculatedGrossSalary, EmployeeSgkDeduction, EmployeeUnemploymentInsuranceDeduction, EmployeeDisabledIncomeTaxBaseAmount);
 
-    public double CumulativeIncomeTaxBase
-    {
-        get
-        {
-            if (PreviousMonthCalculationModel != null)
-            {
-                return IncomeTaxBase + PreviousMonthCalculationModel.CumulativeIncomeTaxBase;
-            }
+    public double CumulativeIncomeTaxBase =>
+        PreviousMonthCalculationModel != null
+            ? IncomeTaxBase + PreviousMonthCalculationModel.CumulativeIncomeTaxBase
+            : IncomeTaxBase;
 
-            return IncomeTaxBase;
-        }
-    }
-
-    public double CumulativeMinWageIncomeTaxBase
-    {
-        get
-        {
-            if (PreviousMonthCalculationModel != null)
-            {
-                return CalcMinWageIncomeTaxBase() + PreviousMonthCalculationModel.CumulativeMinWageIncomeTaxBase;
-            }
-
-            return CalcMinWageIncomeTaxBase();
-        }
-    }
+    public double CumulativeMinWageIncomeTaxBase =>
+        PreviousMonthCalculationModel != null
+            ? CalcMinWageIncomeTaxBase() + PreviousMonthCalculationModel.CumulativeMinWageIncomeTaxBase
+            : CalcMinWageIncomeTaxBase();
 
     public uint WorkedDay => EmployeeMonthlyParameters.MonthlySalary.WorkedDay;
 
@@ -136,12 +120,7 @@ public abstract class BaseMonthlyCalculationModel
 
         var disability = yearParams.DisabledMonthlyIncomeTaxDiscountBases.FirstOrDefault(option => option.Degree == disabilityDegree);
 
-        if (disability == null)
-        {
-            return 0;
-        }
-
-        return disability.Amount * workedDays / monthDayCount;
+        return disability?.Amount * workedDays / monthDayCount ?? 0;
     }
 
     public static double CalcEmployeeSgkDeduction(EmployeeTypeParameter employeeType, CalculationConstants constants, double sgkBase, bool isPensioner = false)
@@ -220,12 +199,7 @@ public abstract class BaseMonthlyCalculationModel
         ArgumentNullException.ThrowIfNull(employeeType);
         ArgumentNullException.ThrowIfNull(constants);
 
-        if (!employeeType.StampTaxApplicable)
-        {
-            return 0;
-        }
-
-        return grossSalary * constants.StampTaxRate;
+        return !employeeType.StampTaxApplicable ? 0 : grossSalary * constants.StampTaxRate;
     }
 
     public static double CalcEmployerStampTaxExemption(YearParameter yearParams, EmployeeTypeParameter employeeType, MinGrossWageParameter minGrossWage,
@@ -783,7 +757,8 @@ public abstract class BaseMonthlyCalculationModel
         EmployeeSgkExemptionAmount = CalcEmployeeSgkExemption(workedDay, EmployeeSgkDeduction, EmployeeMonthlyParameters.IsPensioner);
         EmployeeUnemploymentInsuranceDeduction = CalcEmployeeUnemploymentInsuranceDeduction(SgkBase, EmployeeMonthlyParameters.IsPensioner);
 
-        EmployeeUnemploymentInsuranceExemptionAmount = CalcEmployeeUnemploymentInsuranceExemption(workedDay, EmployeeUnemploymentInsuranceDeduction, EmployeeMonthlyParameters.IsPensioner);
+        EmployeeUnemploymentInsuranceExemptionAmount =
+            CalcEmployeeUnemploymentInsuranceExemption(workedDay, EmployeeUnemploymentInsuranceDeduction, EmployeeMonthlyParameters.IsPensioner);
 
         StampTax = CalcStampTax(salaryAmount);
         EmployeeStampTaxExemption = CalcEmployeeStampTaxExemption(StampTax, applyMinWageTaxExemption);

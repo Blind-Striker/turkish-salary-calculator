@@ -30,7 +30,7 @@ public class BaseNetToGrossYearlyCalcModel<TMonthlyCalcModel> where TMonthlyCalc
 
         foreach (var monthlyCalcModel in MonthlyCalcModelsInt)
         {
-            monthlyCalcModel.Calculate(ApplyEmployerDiscount5746, IsAgiCalculationEnabled, IsAgiIncludedTax, ApplyMinWageTaxExemption);
+            _ = monthlyCalcModel.Calculate(ApplyEmployerDiscount5746, IsAgiCalculationEnabled, IsAgiIncludedTax, ApplyMinWageTaxExemption);
 
             if (monthlyCalcModel.CalculatedGrossSalary > 0)
             {

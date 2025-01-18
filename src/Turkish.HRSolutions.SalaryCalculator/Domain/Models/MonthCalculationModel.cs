@@ -124,12 +124,9 @@ public sealed class MonthCalculationModel
 
     public decimal CumulativeMinWageIncomeTaxBase()
     {
-        if (_previousMonthCalculation == null)
-        {
-            return CalcMinWageIncomeTaxBase();
-        }
-
-        return CalcMinWageIncomeTaxBase() + _previousMonthCalculation.CumulativeMinWageIncomeTaxBase();
+        return _previousMonthCalculation == null
+            ? CalcMinWageIncomeTaxBase()
+            : CalcMinWageIncomeTaxBase() + _previousMonthCalculation.CumulativeMinWageIncomeTaxBase();
     }
 
     private void DoMonthCalculation(decimal grossSalary)

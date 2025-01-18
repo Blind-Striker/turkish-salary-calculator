@@ -119,12 +119,7 @@ public static class CalculationFormulasDomainService
         ArgumentNullException.ThrowIfNull(employeeType);
         ArgumentNullException.ThrowIfNull(yearParameter);
 
-        if (!employeeType.StampTaxApplicable)
-        {
-            return 0;
-        }
-
-        return grossSalary * (decimal)constants.StampTaxRate;
+        return !employeeType.StampTaxApplicable ? 0 : grossSalary * (decimal)constants.StampTaxRate;
     }
 
     public static decimal CalcEmployerStampTaxExemption(
@@ -604,11 +599,6 @@ public static class CalculationFormulasDomainService
     {
         ArgumentNullException.ThrowIfNull(employeeType);
 
-        if (!employeeType.EmployerStampTaxApplicable)
-        {
-            return 0m;
-        }
-
-        return stampTax - stampTaxExemption;
+        return !employeeType.EmployerStampTaxApplicable ? 0m : stampTax - stampTaxExemption;
     }
 }

@@ -61,7 +61,7 @@ var turkishCulture = CultureInfo.CreateSpecificCulture("tr-TR");
 
 foreach (var month in yearCalculationModel.Months)
 {
-    table.AddRow(
+    _ = table.AddRow(
         "1", // Ay
         month.WorkedDays.ToString("N", turkishCulture), // Gün Sayısı
         month.ResearchAndDevelopmentWorkedDays.ToString("N", turkishCulture), // Ar-Ge Gün Sayısı
@@ -70,7 +70,6 @@ foreach (var month in yearCalculationModel.Months)
         month.EmployeeSgkExemption.ToString("N2", turkishCulture), // Çalışan SGK Primi İstinası
         month.EmployeeUnemploymentInsuranceDeduction.ToString("N2", turkishCulture), // Çalışan İşsizlik Sigortası
         month.EmployeeUnemploymentInsuranceExemption.ToString("N2", turkishCulture), // Çalışan İşsizlik Sigortası İstinası
-                                                                                     // month.EmployeeUnemploymentInsuranceExemption.ToString(turkishCulture), // Vergi Dilimi
         month.EmployeeIncomeTax.ToString("N2", turkishCulture), // Gelir Vergisi
         month.EmployerIncomeTaxExemptionAmount.ToString("N2", turkishCulture), // Gelir Vergisi İstinası
         month.StampTax.ToString("N2", turkishCulture), // Damga Vergisi

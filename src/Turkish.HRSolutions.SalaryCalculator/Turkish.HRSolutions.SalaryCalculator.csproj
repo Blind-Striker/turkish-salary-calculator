@@ -13,8 +13,4 @@
     <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers"/>
     <PackageReference Include="TestableIO.System.IO.Abstractions.Extensions"/>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
 </Project>

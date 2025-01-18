@@ -203,6 +203,12 @@ dotnet_diagnostic.IDE0072.severity = error
 # IDE0180: Use tuple to swap values
 dotnet_diagnostic.IDE0180.severity = error
 
+# IDE0032: Use auto property
+dotnet_diagnostic.IDE0032.severity = suggestion
+
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = suggestion
+
 # Avoid "this." and "Me." if not necessary
 dotnet_style_qualification_for_field = false:error
 dotnet_style_qualification_for_property = false:error

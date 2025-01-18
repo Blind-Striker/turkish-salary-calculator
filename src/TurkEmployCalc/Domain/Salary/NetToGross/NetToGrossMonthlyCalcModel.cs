@@ -42,11 +42,6 @@ public class NetToGrossMonthlyCalcModel : BaseMonthlyCalculationModel
             middle = (right + left) / 2;
         }
 
-        if (i == itLimit)
-        {
-            return -1;
-        }
-
-        return middle;
+        return i == itLimit ? -1 : middle;
     }
 }

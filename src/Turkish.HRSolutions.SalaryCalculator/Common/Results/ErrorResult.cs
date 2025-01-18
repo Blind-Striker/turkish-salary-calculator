@@ -11,11 +11,20 @@ public sealed record ErrorResult
         Exception = exception;
     }
 
-    public static implicit operator ErrorResult(string message) => FromString(message);
+    public static implicit operator ErrorResult(string message)
+    {
+        return FromString(message);
+    }
 
-    public static implicit operator ErrorResult(Exception exception) => FromException(exception);
+    public static implicit operator ErrorResult(Exception exception)
+    {
+        return FromException(exception);
+    }
 
-    public static ErrorResult FromString(string message) => new(message);
+    public static ErrorResult FromString(string message)
+    {
+        return new ErrorResult(message);
+    }
 
     public static ErrorResult FromException(Exception exception)
     {

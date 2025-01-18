@@ -1,4 +1,4 @@
-#pragma warning disable CA1000
+#pragma warning disable CA1000, MA0018
 
 namespace Turkish.HRSolutions.SalaryCalculator.Common.Results;
 
@@ -36,17 +36,40 @@ public sealed class Result
         return false;
     }
 
-    public static Result Success() => new();
+    public static Result Success()
+    {
+        return new Result();
+    }
 
-    public static implicit operator Result(ErrorResult error) => FromErrorResult(error);
-    public static implicit operator Result(string error) => FromString(error);
-    public static implicit operator Result(Exception exception) => FromException(exception);
+    public static implicit operator Result(ErrorResult error)
+    {
+        return FromErrorResult(error);
+    }
 
-    public static Result FromErrorResult(ErrorResult error) => new(error);
+    public static implicit operator Result(string error)
+    {
+        return FromString(error);
+    }
 
-    public static Result FromString(string message) => new(message);
+    public static implicit operator Result(Exception exception)
+    {
+        return FromException(exception);
+    }
 
-    public static Result FromException(Exception exception) => new(exception);
+    public static Result FromErrorResult(ErrorResult error)
+    {
+        return new Result(error);
+    }
+
+    public static Result FromString(string message)
+    {
+        return new Result(message);
+    }
+
+    public static Result FromException(Exception exception)
+    {
+        return new Result(exception);
+    }
 }
 
 public sealed class Result<T>
@@ -101,9 +124,28 @@ public sealed class Result<T>
         return false;
     }
 
-    public static Result<T> Success(T value) => new(value);
-    public static Result<T> Failure(ErrorResult error) => new(error);
-    public static Result<T> Failure(string message) => new(message);
-    public static Result<T> Failure(Exception exception) => new(exception);
-    public static Result<T> Failure(string message, Exception exception) => new(new ErrorResult(message, exception));
+    public static Result<T> Success(T value)
+    {
+        return new Result<T>(value);
+    }
+
+    public static Result<T> Failure(ErrorResult error)
+    {
+        return new Result<T>(error);
+    }
+
+    public static Result<T> Failure(string message)
+    {
+        return new Result<T>(message);
+    }
+
+    public static Result<T> Failure(Exception exception)
+    {
+        return new Result<T>(exception);
+    }
+
+    public static Result<T> Failure(string message, Exception exception)
+    {
+        return new Result<T>(new ErrorResult(message, exception));
+    }
 }
