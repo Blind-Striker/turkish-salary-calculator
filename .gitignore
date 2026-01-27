@@ -811,4 +811,5 @@ fabric.properties
 *.zip
 
 .vscode
+.claude
 external/
