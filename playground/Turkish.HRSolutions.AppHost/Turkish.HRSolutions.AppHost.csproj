@@ -1,0 +1,15 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.1.0">
+
+  <PropertyGroup>
+    <TargetFramework>$(CurrentNetVersion)</TargetFramework>
+    <UserSecretsId>aca7dd17-f58a-42ea-a2de-389f03ec7622</UserSecretsId>
+    <OutputType>Exe</OutputType>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CA1812;EnableGenerateDocumentationFile</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Turkish.HRSolutions.SalaryCalculatorApi\Turkish.HRSolutions.SalaryCalculatorApi.csproj" />
+  </ItemGroup>
+
+</Project>
