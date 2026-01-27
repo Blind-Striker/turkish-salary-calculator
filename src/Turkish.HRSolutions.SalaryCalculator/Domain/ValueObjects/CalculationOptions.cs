@@ -1,4 +1,4 @@
-﻿namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 
 public record CalculationOptions(
     bool ApplyMinWageTaxExemption = true,

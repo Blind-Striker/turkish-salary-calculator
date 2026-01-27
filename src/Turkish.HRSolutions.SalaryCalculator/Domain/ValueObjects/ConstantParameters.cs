@@ -1,4 +1,4 @@
-﻿#pragma warning disable MA0048
+#pragma warning disable MA0048
 
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;

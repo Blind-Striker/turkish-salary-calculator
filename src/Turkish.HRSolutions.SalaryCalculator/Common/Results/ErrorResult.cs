@@ -1,4 +1,4 @@
-﻿namespace Turkish.HRSolutions.SalaryCalculator.Common.Results;
+namespace Turkish.HRSolutions.SalaryCalculator.Common.Results;
 
 public sealed record ErrorResult
 {

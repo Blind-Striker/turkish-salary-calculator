@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using System.Text.Json;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;

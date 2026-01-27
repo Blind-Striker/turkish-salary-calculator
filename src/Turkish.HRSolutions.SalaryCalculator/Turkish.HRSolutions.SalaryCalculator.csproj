@@ -2,10 +2,10 @@
   <PropertyGroup>
     <TargetFramework>$(CurrentNetVersion)</TargetFramework>
     <NoWarn>
-      $(NoWarn);CA1008
+      $(NoWarn);
     </NoWarn>
     <NoError>
-      $(NoError);CA1008
+      $(NoError);
     </NoError>
   </PropertyGroup>
 

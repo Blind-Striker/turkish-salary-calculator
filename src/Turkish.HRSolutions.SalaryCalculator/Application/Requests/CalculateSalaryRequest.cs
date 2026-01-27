@@ -1,4 +1,4 @@
-﻿using Turkish.HRSolutions.SalaryCalculator.Application.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Application.Enums;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Requests;

@@ -1,4 +1,4 @@
-﻿#pragma warning disable S3963, CA1810
+#pragma warning disable S3963, CA1810
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -26,11 +26,11 @@ namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure;
 [JsonSerializable(typeof(AgiConstant))]
 internal sealed partial class SalaryCalculatorJsonContext : JsonSerializerContext
 {
-    public static readonly JsonSerializerOptions JsonOptions;
+    public static readonly JsonSerializerOptions JsonOptions = InitJsonSerializerOptions();
 
-    static SalaryCalculatorJsonContext()
+    private static JsonSerializerOptions InitJsonSerializerOptions()
     {
-        JsonOptions = new JsonSerializerOptions
+        return new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             TypeInfoResolver = Default,

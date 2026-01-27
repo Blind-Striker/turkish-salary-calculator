@@ -1,4 +1,4 @@
-﻿namespace Turkish.HRSolutions.SalaryCalculator.Application.Enums;
+namespace Turkish.HRSolutions.SalaryCalculator.Application.Enums;
 
 public enum DisabilityDegree
 {

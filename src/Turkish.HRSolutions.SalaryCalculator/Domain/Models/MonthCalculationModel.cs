@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
 using static Turkish.HRSolutions.SalaryCalculator.Domain.Services.CalculationFormulasDomainService;
@@ -38,7 +38,9 @@ public sealed class MonthCalculationModel
     private int _workedDays;
     private int _researchAndDevelopmentWorkedDays;
 
-    // The applied tax slices for logging or debug
+    /// <summary>
+    /// The applied tax slices for logging or debug
+    /// </summary>
     private List<TaxSlice> _appliedTaxSlices = [];
 
     public MonthCalculationModel(

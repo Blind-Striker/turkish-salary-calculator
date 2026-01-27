@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Enums.Extensions;

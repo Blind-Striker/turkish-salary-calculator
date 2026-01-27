@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
 
@@ -83,7 +83,6 @@ public sealed class YearCalculationModel
             ? TotalResearchAndDevelopmentWorkedDays / _numOfCalculatedMonths
             : 0;
 
-    // -- CalculatedGrossSalary
     public decimal CalculatedGrossSalary => _months.Sum(m => m.CalculatedGrossSalary);
 
     public decimal AvgCalculatedGrossSalary
@@ -91,7 +90,6 @@ public sealed class YearCalculationModel
             ? CalculatedGrossSalary / _numOfCalculatedMonths
             : 0;
 
-    // -- Employee SGK
     public decimal EmployeeSgkDeduction => _months.Sum(m => m.EmployeeSgkDeduction);
 
     public decimal AvgEmployeeSgkDeduction
@@ -106,32 +104,27 @@ public sealed class YearCalculationModel
             ? EmployeeSgkExemption / _numOfCalculatedMonths
             : 0;
 
-    public decimal EmployeeFinalSgkDeduction
-        => _months.Sum(m => m.EmployeeFinalSgkDeduction);
+    public decimal EmployeeFinalSgkDeduction => _months.Sum(m => m.EmployeeFinalSgkDeduction);
 
     public decimal AvgEmployeeFinalSgkDeduction
         => _numOfCalculatedMonths > 0
             ? EmployeeFinalSgkDeduction / _numOfCalculatedMonths
             : 0;
 
-    // -- Employee Unemployment
-    public decimal EmployeeUnemploymentInsuranceDeduction
-        => _months.Sum(m => m.EmployeeUnemploymentInsuranceDeduction);
+    public decimal EmployeeUnemploymentInsuranceDeduction => _months.Sum(m => m.EmployeeUnemploymentInsuranceDeduction);
 
     public decimal AvgEmployeeUnemploymentInsuranceDeduction
         => _numOfCalculatedMonths > 0
             ? EmployeeUnemploymentInsuranceDeduction / _numOfCalculatedMonths
             : 0;
 
-    public decimal EmployeeUnemploymentInsuranceExemption
-        => _months.Sum(m => m.EmployeeUnemploymentInsuranceExemption);
+    public decimal EmployeeUnemploymentInsuranceExemption => _months.Sum(m => m.EmployeeUnemploymentInsuranceExemption);
 
     public decimal AvgEmployeeUnemploymentInsuranceExemption
         => _numOfCalculatedMonths > 0
             ? EmployeeUnemploymentInsuranceExemption / _numOfCalculatedMonths
             : 0;
 
-    // -- Income tax
     public decimal EmployeeIncomeTax
         => _months.Sum(m => m.EmployeeIncomeTax);
 
@@ -140,7 +133,6 @@ public sealed class YearCalculationModel
             ? EmployeeIncomeTax / _numOfCalculatedMonths
             : 0;
 
-    // -- Stamp tax
     public decimal StampTax
         => _months.Sum(m => m.StampTax);
 
@@ -149,42 +141,35 @@ public sealed class YearCalculationModel
             ? StampTax / _numOfCalculatedMonths
             : 0;
 
-    public decimal EmployerStampTax
-        => _months.Sum(m => m.EmployerStampTax);
+    public decimal EmployerStampTax => _months.Sum(m => m.EmployerStampTax);
 
     public decimal AvgEmployerStampTax
         => _numOfCalculatedMonths > 0
             ? EmployerStampTax / _numOfCalculatedMonths
             : 0;
 
-    public decimal EmployerStampTaxExemption
-        => _months.Sum(m => m.EmployerStampTaxExemption);
+    public decimal EmployerStampTaxExemption => _months.Sum(m => m.EmployerStampTaxExemption);
 
     public decimal AvgEmployerStampTaxExemption
         => _numOfCalculatedMonths > 0
             ? EmployerStampTaxExemption / _numOfCalculatedMonths
             : 0;
 
-    public decimal TotalStampTaxExemption
-        => _months.Sum(m => m.TotalStampTaxExemption);
+    public decimal TotalStampTaxExemption => _months.Sum(m => m.TotalStampTaxExemption);
 
     public decimal AvgTotalStampTaxExemption
         => _numOfCalculatedMonths > 0
             ? TotalStampTaxExemption / _numOfCalculatedMonths
             : 0;
 
-    // -- Net salary
-    public decimal NetSalary
-        => _months.Sum(m => m.NetSalary);
+    public decimal NetSalary => _months.Sum(m => m.NetSalary);
 
     public decimal AvgNetSalary
         => _numOfCalculatedMonths > 0
             ? NetSalary / _numOfCalculatedMonths
             : 0;
 
-    // -- AGI
-    public decimal AgiAmount
-        => _months.Sum(m => m.AgiAmount);
+    public decimal AgiAmount => _months.Sum(m => m.AgiAmount);
 
     public decimal AvgAgiAmount
         => _numOfCalculatedMonths > 0
@@ -199,7 +184,6 @@ public sealed class YearCalculationModel
             ? FinalNetSalary / _numOfCalculatedMonths
             : 0;
 
-    // -- Employer SGK
     public decimal EmployerSgkDeduction
         => _months.Sum(m => m.EmployerSgkDeduction);
 
@@ -224,7 +208,6 @@ public sealed class YearCalculationModel
             ? EmployerTotalSgkCost / _numOfCalculatedMonths
             : 0;
 
-    // -- Employer Unemployment
     public decimal EmployerUnemploymentInsuranceDeduction
         => _months.Sum(m => m.EmployerUnemploymentInsuranceDeduction);
 

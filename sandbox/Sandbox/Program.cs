@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO.Abstractions;
 using Spectre.Console;
 using Turkish.HRSolutions.SalaryCalculator.Application.Requests;

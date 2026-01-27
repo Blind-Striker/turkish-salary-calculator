@@ -1,4 +1,4 @@
-﻿namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
 
 public enum CalculationMode
 {
