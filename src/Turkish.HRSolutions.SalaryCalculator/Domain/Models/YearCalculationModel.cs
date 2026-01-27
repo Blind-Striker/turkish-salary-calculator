@@ -23,6 +23,7 @@ public sealed class YearCalculationModel
                 YearParameter: _parameters.YearParameter,
                 MonthlySalary: monthlyInput,
                 EmployeeTypeConstant: _parameters.EmployeeTypeConstant,
+                StandardEmployeeTypeConstant: _parameters.StandardEmployeeTypeConstant,
                 CalculationConstants: _parameters.CalculationConstants,
                 EmployeeEducationExemptionRate: _parameters.EmployeeEducationExemptionRate,
                 AgiRate: _parameters.AgiRate,

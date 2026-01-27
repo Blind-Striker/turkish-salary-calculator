@@ -813,3 +813,8 @@ fabric.properties
 .vscode
 .claude
 external/
+
+CLAUDE.md
+
+# Test harness fixtures (generated from Angular, gitignored)
+test-harness/

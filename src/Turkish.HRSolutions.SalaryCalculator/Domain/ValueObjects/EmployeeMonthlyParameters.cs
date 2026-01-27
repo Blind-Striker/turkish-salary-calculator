@@ -4,6 +4,7 @@ public record EmployeeMonthlyParameters(
     YearParameter YearParameter,
     MonthlySalary MonthlySalary,
     EmployeeTypeConstant EmployeeTypeConstant,
+    EmployeeTypeConstant StandardEmployeeTypeConstant,
     CalculationConstant CalculationConstants,
     double EmployeeEducationExemptionRate,
     double AgiRate,

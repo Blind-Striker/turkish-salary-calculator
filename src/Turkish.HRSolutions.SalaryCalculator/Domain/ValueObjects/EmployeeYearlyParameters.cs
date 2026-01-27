@@ -4,6 +4,7 @@ public record EmployeeYearlyParameters(
     YearParameter YearParameter,
     IEnumerable<MonthlySalary> MonthlySalaries,
     EmployeeTypeConstant EmployeeTypeConstant,
+    EmployeeTypeConstant StandardEmployeeTypeConstant,
     CalculationConstant CalculationConstants,
     double EmployeeEducationExemptionRate,
     double AgiRate,

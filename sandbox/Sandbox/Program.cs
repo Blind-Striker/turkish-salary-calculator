@@ -41,7 +41,7 @@ var monthlySalaries = new List<MonthlySalary>()
     new(MonthsOfYear.December, salary),
 };
 
-var calculateSalaryRequest = new CalculateSalaryRequest(2025, monthlySalaries);
+var calculateSalaryRequest = new CalculateSalaryRequest(2026, monthlySalaries);
 
 var service = new SalaryCalculationService(yearParameters.Value, fixtures.Value);
 var yearCalculationModel = service.CalculateSalary(calculateSalaryRequest);

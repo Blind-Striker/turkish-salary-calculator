@@ -161,13 +161,13 @@ public sealed class MonthCalculationModel
         _employerStampTaxExemption = CalcEmployerStampTaxExemption(calcConstants, empTypeConst, yearParam, _minGrossWage, _stampTax, _workedDays, _researchAndDevelopmentWorkedDays,
             _employeeStampTaxExemption);
         _employerStampTax = empTypeConst.EmployerStampTaxApplicable
-            ? _stampTax - _employerStampTaxExemption
+            ? _stampTax - TotalStampTaxExemption
             : 0;
         var (appliedSlices, taxValue) = CalcEmployeeIncomeTax(empTypeConst, yearParam, cumulativeSalary: cumulativeIncomeTaxBase, incomeTaxBase: IncomeTaxBase);
         _employeeIncomeTax = taxValue;
         _appliedTaxSlices = [.. appliedSlices];
 
-        _employeeIncomeTaxExemptionAmount = CalcEmployeeIncomeTaxExemption(yearParam, _minGrossWage, empTypeConst, calcConstants, EmployeeIncomeTax, disabilityDegree,
+        _employeeIncomeTaxExemptionAmount = CalcEmployeeIncomeTaxExemption(yearParam, _minGrossWage, empTypeConst, _parameters.StandardEmployeeTypeConstant, calcConstants, EmployeeIncomeTax, disabilityDegree,
             cumulativeMinWageIncomeTaxBase, applyMinWageTaxExemption);
         _agiAmount = CalcAgi(yearParam, _minGrossWage, empTypeConst, agiRate, _employeeIncomeTax, isAgiCalculationEnabled);
         _netSalary = CalcNetSalary(
@@ -178,7 +178,8 @@ public sealed class MonthCalculationModel
             _employeeStampTaxExemption,
             _employerStampTaxExemption,
             _employeeIncomeTax,
-            _employeeIncomeTaxExemptionAmount
+            _employeeIncomeTaxExemptionAmount,
+            yearParam.MinWageEmployeeTaxExemption
         );
 
         _employerSgkDeduction = CalcEmployerSgkDeduction(calcConstants, empTypeConst, _sgkBase, isPensioner);

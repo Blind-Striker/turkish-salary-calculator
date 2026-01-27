@@ -279,10 +279,12 @@ public static class CalculationFormulasDomainService
         decimal employeeStampTaxExemption,
         decimal employerStampTaxExemption,
         decimal employeeIncomeTax,
-        decimal employeeIncomeTaxExemption
+        decimal employeeIncomeTaxExemption,
+        bool minWageEmployeeTaxExemption
     )
     {
-        var stampTaxExemption = employeeStampTaxExemption + employerStampTaxExemption;
+        // Angular: stampTaxExemption += yearParams.minWageEmployeeTaxExemption ? employerStampTaxExemption : 0;
+        var stampTaxExemption = employeeStampTaxExemption + (minWageEmployeeTaxExemption ? employerStampTaxExemption : 0);
         return grossSalary + stampTaxExemption + employeeIncomeTaxExemption - (sgkDeduction + employeeUnemploymentInsuranceDeduction + stampTax + employeeIncomeTax);
     }
 
@@ -440,15 +442,17 @@ public static class CalculationFormulasDomainService
         YearParameter yearParameter,
         MinGrossWage minGrossWage,
         EmployeeTypeConstant employeeType,
+        EmployeeTypeConstant standardEmployeeType,
         CalculationConstant constants,
         decimal employeeIncomeTax,
         int disabilityDegree,
-        decimal cumulativeIncomeTaxBase = 0m, // default
+        decimal cumulativeIncomeTaxBase = 0m,
         bool applyMinWageTaxExemption = false)
     {
         ArgumentNullException.ThrowIfNull(yearParameter);
         ArgumentNullException.ThrowIfNull(minGrossWage);
         ArgumentNullException.ThrowIfNull(employeeType);
+        ArgumentNullException.ThrowIfNull(standardEmployeeType);
         ArgumentNullException.ThrowIfNull(constants);
 
         const decimal exemption = 0m;
@@ -463,17 +467,18 @@ public static class CalculationFormulasDomainService
             return exemption;
         }
 
-        // 1) We need to compute the "minWageBasedIncomeTax"
+        // Compute the min wage based income tax using STANDARD employee type
+        // (the exemption is based on what a standard employee would pay, not the actual employee type)
         var (_, minWageBasedTax) = CalcEmployeeIncomeTaxOfTheGivenGrossSalary(
             yearParameter,
             minGrossWage,
-            employeeType,
+            standardEmployeeType,
             constants,
-            grossSalary: minGrossWage.Amount, // TS uses "minGrossWage.amount"
+            grossSalary: minGrossWage.Amount,
             workedDays: constants.MonthDayCount,
-            isPensioner: false, // TS snippet calls with "false"
+            isPensioner: false,
             disabilityDegree: disabilityDegree,
-            cumulativeIncomeTaxBase // pass the parameter
+            cumulativeIncomeTaxBase
         );
 
         // Exemption is the lesser of "employeeIncomeTax" or that "minWageBasedTax"
