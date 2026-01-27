@@ -811,3 +811,4 @@ fabric.properties
 *.zip
 
 .vscode
+external/

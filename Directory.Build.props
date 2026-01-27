@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <CurrentNetVersion>net9.0</CurrentNetVersion>
-    <LangVersion>13.0</LangVersion>
+    <CurrentNetVersion>net10.0</CurrentNetVersion>
+    <LangVersion>14.0</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
@@ -29,10 +29,6 @@
 
   <ItemGroup>
     <!-- Analyzers -->
-    <PackageReference Include="FluentAssertions.Analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Meziantou.Analyzer">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -68,10 +64,6 @@
     <PackageReference Include="TestableIO.System.IO.Abstractions.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit.analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
