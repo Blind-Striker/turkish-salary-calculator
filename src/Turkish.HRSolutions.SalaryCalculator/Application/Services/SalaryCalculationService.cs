@@ -30,8 +30,8 @@ public class SalaryCalculationService
     /// </summary>
     /// <param name="request">The salary calculation request containing all input parameters.</param>
     /// <returns>A <see cref="YearCalculationModel"/> containing monthly and aggregated calculation results.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when request is null.</exception>
-    /// <exception cref="InvalidOperationException">Thrown when year parameter is not found.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the request is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the year parameter is not found.</exception>
     public YearCalculationModel CalculateSalary(CalculateSalaryRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);

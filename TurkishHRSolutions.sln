@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turkish.HRSolutions.Service
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turkish.HRSolutions.SalaryCalculatorApi", "playground\Turkish.HRSolutions.SalaryCalculatorApi\Turkish.HRSolutions.SalaryCalculatorApi.csproj", "{DCB59278-8D61-429D-B7B0-506A67E95B41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turkish.HRSolutions.SalaryCalculator.Tests", "tests\Turkish.HRSolutions.SalaryCalculator.Tests\Turkish.HRSolutions.SalaryCalculator.Tests.csproj", "{6B343530-39EA-4E58-9F0F-20F9034A5B37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,7 @@ Global
 		{2E18ED22-B905-43A6-A36E-4AEC8418C7A4} = {441E6CC1-7071-4AED-AE2B-3B8FF719C0C4}
 		{9FF3F9E2-FE47-4342-BF1F-FE25A4F6D07A} = {441E6CC1-7071-4AED-AE2B-3B8FF719C0C4}
 		{DCB59278-8D61-429D-B7B0-506A67E95B41} = {441E6CC1-7071-4AED-AE2B-3B8FF719C0C4}
+		{6B343530-39EA-4E58-9F0F-20F9034A5B37} = {C8D361B3-BBCF-4FD2-A3FD-D8A1D496BACB}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D70BBC74-B988-44FD-9C0C-D332CF87A197}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -51,5 +54,9 @@ Global
 		{DCB59278-8D61-429D-B7B0-506A67E95B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCB59278-8D61-429D-B7B0-506A67E95B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCB59278-8D61-429D-B7B0-506A67E95B41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B343530-39EA-4E58-9F0F-20F9034A5B37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B343530-39EA-4E58-9F0F-20F9034A5B37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B343530-39EA-4E58-9F0F-20F9034A5B37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B343530-39EA-4E58-9F0F-20F9034A5B37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

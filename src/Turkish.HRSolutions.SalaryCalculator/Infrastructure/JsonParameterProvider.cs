@@ -5,58 +5,59 @@ using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure;
 
-public class JsonParameterProvider
+public class JsonParameterProvider(IFileSystem fileSystem)
 {
-    private readonly IFileSystem _fileSystem;
+    public async Task<Result<YearParameters>> LoadYearParametersAsync(string filePath, CancellationToken ct = default) =>
+        await LoadParameterAsync<YearParameters>(filePath, ct).ConfigureAwait(false);
 
-    public JsonParameterProvider(IFileSystem fileSystem)
-    {
-        _fileSystem = fileSystem;
-    }
-
-    public async Task<Result<YearParameters>> LoadYearParametersAsync(string filePath, CancellationToken ct = default)
-    {
-        return await LoadParameterAsync<YearParameters>(filePath, ct);
-    }
-
-    public async Task<Result<ConstantParameters>> LoadFixtureAsync(string filePath, CancellationToken ct = default)
-    {
-        return await LoadParameterAsync<ConstantParameters>(filePath, ct);
-    }
+    public async Task<Result<ConstantParameters>> LoadFixtureAsync(string filePath, CancellationToken ct = default) =>
+        await LoadParameterAsync<ConstantParameters>(filePath, ct).ConfigureAwait(false);
 
     private async Task<Result<TModel>> LoadParameterAsync<TModel>(string filePath, CancellationToken ct) where TModel : class
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
 
-        var fileInfo = _fileSystem.FileInfo.New(filePath);
+        var fileInfo = fileSystem.FileInfo.New(filePath);
 
         if (!fileInfo.Exists)
         {
-            return Result<TModel>.Failure($"{typeof(TModel).Name} file not found at {fileInfo.FullName}");
+            return Result<TModel>.Failure(Error.Configuration(
+                ErrorCode.ConfigurationFileNotFound,
+                $"{typeof(TModel).Name} file not found at {fileInfo.FullName}"));
         }
 
         try
         {
-            var rawParameterJson = await fileInfo.ReadAllTextAsync(ct);
+            var rawParameterJson = await fileInfo.ReadAllTextAsync(ct).ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(rawParameterJson))
             {
-                return Result<TModel>.Failure($"Parameter file '{fileInfo.FullName}' is empty.");
+                return Result<TModel>.Failure(Error.Configuration(
+                    ErrorCode.ConfigurationFileEmpty,
+                    $"Parameter file '{fileInfo.FullName}' is empty."));
             }
 
             var deserialized = JsonSerializer.Deserialize<TModel>(rawParameterJson, SalaryCalculatorJsonContext.JsonOptions);
 
             return deserialized != null
                 ? Result<TModel>.Success(deserialized)
-                : Result<TModel>.Failure("JSON deserialization failed, deserialized value is null");
+                : Result<TModel>.Failure(Error.Configuration(
+                    ErrorCode.JsonDeserializationFailed,
+                    "JSON deserialization failed, deserialized value is null"));
         }
         catch (IOException ex)
         {
-            return Result<TModel>.Failure("File read failed", ex);
+            return Result<TModel>.Failure(Error.Infrastructure(
+                ErrorCode.FileReadFailed,
+                "File read failed",
+                ex));
         }
         catch (JsonException ex)
         {
-            return Result<TModel>.Failure("JSON deserialization failed", ex);
+            return Result<TModel>.Failure(Error.Infrastructure(
+                ErrorCode.JsonDeserializationFailed,
+                "JSON deserialization failed",
+                ex));
         }
     }
 }

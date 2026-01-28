@@ -457,12 +457,7 @@ public static class CalculationFormulasDomainService
 
         const decimal exemption = 0m;
 
-        if (!applyMinWageTaxExemption || !yearParameter.MinWageEmployeeTaxExemption)
-        {
-            return exemption;
-        }
-
-        if (employeeIncomeTax <= 0)
+        if (!applyMinWageTaxExemption || !yearParameter.MinWageEmployeeTaxExemption || employeeIncomeTax <= 0)
         {
             return exemption;
         }

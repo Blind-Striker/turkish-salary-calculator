@@ -1,6 +1,6 @@
 namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
 
-public readonly struct MonthsOfYear : IEquatable<MonthsOfYear>
+public readonly struct MonthsOfYear : IEquatable<MonthsOfYear>, IComparable<MonthsOfYear>, IComparable
 {
     public static readonly MonthsOfYear January = new("January", 1, "Winter");
     public static readonly MonthsOfYear February = new("February", 2, "Winter");
@@ -14,6 +14,15 @@ public readonly struct MonthsOfYear : IEquatable<MonthsOfYear>
     public static readonly MonthsOfYear October = new("October", 10, "Autumn");
     public static readonly MonthsOfYear November = new("November", 11, "Autumn");
     public static readonly MonthsOfYear December = new("December", 12, "Winter");
+
+    /// <summary>
+    /// Gets all months in order from January to December.
+    /// </summary>
+    public static IReadOnlyList<MonthsOfYear> AllMonths { get; } =
+    [
+        January, February, March, April, May, June,
+        July, August, September, October, November, December,
+    ];
 
     /// <summary>
     /// Gets the name.
@@ -78,4 +87,21 @@ public readonly struct MonthsOfYear : IEquatable<MonthsOfYear>
     {
         return HashCode.Combine(Name, Number, Season);
     }
+
+    /// <inheritdoc />
+    public override string ToString() => Name ?? string.Empty;
+
+    /// <inheritdoc />
+    public int CompareTo(MonthsOfYear other) => Number.CompareTo(other.Number);
+
+    /// <inheritdoc />
+    public int CompareTo(object? obj) => obj is MonthsOfYear other ? CompareTo(other) : 1;
+
+    public static bool operator <(MonthsOfYear left, MonthsOfYear right) => left.Number < right.Number;
+
+    public static bool operator >(MonthsOfYear left, MonthsOfYear right) => left.Number > right.Number;
+
+    public static bool operator <=(MonthsOfYear left, MonthsOfYear right) => left.Number <= right.Number;
+
+    public static bool operator >=(MonthsOfYear left, MonthsOfYear right) => left.Number >= right.Number;
 }

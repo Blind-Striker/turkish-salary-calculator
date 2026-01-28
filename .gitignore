@@ -818,3 +818,5 @@ CLAUDE.md
 
 # Test harness fixtures (generated from Angular, gitignored)
 test-harness/
+docs/
+.cursor/
