@@ -58,10 +58,7 @@ public sealed class FileSystemYearParameterProvider : IYearParameterProvider
     public IReadOnlyList<int> AvailableYears => _lazyAvailableYears.Value;
 
     /// <inheritdoc />
-    public YearParameter? GetParameter(int year)
-    {
-        return _lazyYearLookup.Value.TryGetValue(year, out var param) ? param : null;
-    }
+    public YearParameter? GetParameter(int year) => CollectionExtensions.GetValueOrDefault(_lazyYearLookup.Value, year);
 
     /// <inheritdoc />
     public bool HasYear(int year) => _lazyYearLookup.Value.ContainsKey(year);

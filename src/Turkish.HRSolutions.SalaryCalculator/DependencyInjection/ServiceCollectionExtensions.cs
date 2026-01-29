@@ -1,6 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Turkish.HRSolutions.SalaryCalculator.Configuration;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 
@@ -12,80 +10,83 @@ namespace Turkish.HRSolutions.SalaryCalculator.DependencyInjection;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds Turkish Salary Calculator services to the service collection.
+    /// Configures Turkish salary calculator services.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    /// By default, this registers:
-    /// <list type="bullet">
-    ///   <item><c>IYearParameterProvider</c> → <c>EmbeddedYearParameterProvider</c> (singleton)</item>
-    ///   <item><c>ICalculationConstantsProvider</c> → <c>EmbeddedCalculationConstantsProvider</c> (singleton)</item>
-    /// </list>
-    /// </para>
-    /// <para>
-    /// Use the <paramref name="configure"/> delegate to customize options:
-    /// <list type="bullet">
-    ///   <item>Set <c>YearParametersFilePath</c> to load year parameters from a file</item>
-    ///   <item>Set <c>CalculationConstantsFilePath</c> to load constants from a file</item>
-    /// </list>
-    /// </para>
-    /// <para>
-    /// To use custom providers, register them before calling this method:
-    /// <code>
-    /// services.AddSingleton&lt;IYearParameterProvider, MyDatabaseProvider&gt;();
-    /// services.AddSalaryCalculator(); // Won't override your provider
-    /// </code>
-    /// </para>
-    /// </remarks>
-    /// <param name="services">The service collection.</param>
-    /// <param name="configure">Optional configuration delegate.</param>
-    /// <returns>The service collection for chaining.</returns>
-    /// <example>
-    /// <code>
-    /// // Default: embedded resources
-    /// services.AddSalaryCalculator();
-    ///
-    /// // With file-based configuration
-    /// services.AddSalaryCalculator(opts =>
-    /// {
-    ///     opts.YearParametersFilePath = configuration["SalaryCalculator:YearParametersPath"];
-    /// });
-    ///
-    /// // With custom provider
-    /// services.AddSingleton&lt;IYearParameterProvider, MyDatabaseYearProvider&gt;();
-    /// services.AddSalaryCalculator();
-    /// </code>
-    /// </example>
-    public static IServiceCollection AddSalaryCalculator(
-        this IServiceCollection services,
-        Action<SalaryCalculatorOptions>? configure = null)
+#pragma warning disable CA1034 // False positive https://github.com/dotnet/sdk/issues/51681
+    extension(IServiceCollection services)
+#pragma warning restore CA1034
     {
-        ArgumentNullException.ThrowIfNull(services);
-
-        // Register options using the proper Options pattern
-        services.AddOptions<SalaryCalculatorOptions>();
-
-        if (configure is not null)
+        /// <summary>
+        /// Adds Turkish Salary Calculator services to the service collection using the Configurator pattern.
+        /// </summary>
+        /// <param name="configure">Delegate to configure the calculator (optional).</param>
+        /// <returns>The service collection for chaining.</returns>
+        /// <example>
+        /// <code>
+        /// // Default (Embedded resources)
+        /// services.AddSalaryCalculator();
+        ///
+        /// // Advanced: Use FileSystem
+        /// services.AddSalaryCalculator(config =>
+        ///     config.UseFileSystem("/data/years.json", "/data/constants.json"));
+        ///
+        /// // Expert: Custom Providers with Scoped/Transient lifecycles
+        /// services.AddSalaryCalculator(config =>
+        ///     config.WithCustomYearProvider&lt;MySqlYearProvider&gt;(ServiceLifetime.Scoped));
+        /// </code>
+        /// </example>
+        public IServiceCollection AddSalaryCalculator(Action<IServiceCollectionCalculatorConfigurator>? configure = null)
         {
-            services.Configure(configure);
+            ArgumentNullException.ThrowIfNull(services);
+
+            var configurator = new ServiceCollectionCalculatorConfigurator(services);
+
+            if (configure is null)
+            {
+                // Default to embedded if no configuration provided
+                configurator.UseEmbeddedResources();
+            }
+            else
+            {
+                // Apply user configuration
+                configure(configurator);
+
+                // Fail-fast: Ensure providers are registered when user supplies a configure action
+                // This makes it explicit that when you provide configuration, you must register providers
+                ValidateProvidersRegistered(services);
+            }
+
+            // ISalaryCalculator and ISalaryCalculatorMetadata registrations
+            // will be added in Phase 3 when those interfaces are implemented.
+
+            return services;
+        }
+    }
+
+    private static void ValidateProvidersRegistered(IServiceCollection services)
+    {
+        var hasYearProvider = services.Any(sd => sd.ServiceType == typeof(IYearParameterProvider));
+        var hasConstantsProvider = services.Any(sd => sd.ServiceType == typeof(ICalculationConstantsProvider));
+
+        if (hasYearProvider && hasConstantsProvider)
+        {
+            return;
         }
 
-        // TryAdd = won't override if user already registered custom providers
-        services.TryAddSingleton<IYearParameterProvider>(sp =>
+        var missing = new List<string>();
+        if (!hasYearProvider)
         {
-            var options = sp.GetRequiredService<IOptions<SalaryCalculatorOptions>>().Value;
-            return TurkishSalaryCalculator.BuildYearProvider(options);
-        });
+            missing.Add(nameof(IYearParameterProvider));
+        }
 
-        services.TryAddSingleton<ICalculationConstantsProvider>(sp =>
+        if (!hasConstantsProvider)
         {
-            var options = sp.GetRequiredService<IOptions<SalaryCalculatorOptions>>().Value;
-            return TurkishSalaryCalculator.BuildConstantsProvider(options);
-        });
+            missing.Add(nameof(ICalculationConstantsProvider));
+        }
 
-        // ISalaryCalculator and ISalaryCalculatorMetadata registrations
-        // will be added in Phase 3 when those interfaces are implemented.
-
-        return services;
+        throw new InvalidOperationException(
+            "When providing a configure action, you must register all required providers. " +
+            "Missing: " + string.Join(", ", missing) + ". " +
+            "Call UseEmbeddedResources(), UseFileSystem(), or WithCustom...Provider() to register providers.");
     }
 }
