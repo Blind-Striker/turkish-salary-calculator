@@ -1,3 +1,5 @@
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+
 namespace Turkish.HRSolutions.SalaryCalculator.Api.Requests;
 
 /// <summary>
@@ -13,16 +15,22 @@ namespace Turkish.HRSolutions.SalaryCalculator.Api.Requests;
 /// and number of children. It is deducted from the income tax calculated.
 /// </para>
 /// </remarks>
-/// <param name="SpouseStatus">Employment status of the spouse.</param>
+/// <param name="SpouseStatus">Employment status of the spouse. Default is Unmarried if not specified.</param>
 /// <param name="NumberOfChildren">Number of children (affects AGI rate).</param>
 /// <param name="IncludeInTax">
 /// If true, AGI is shown as a separate deduction.
 /// If false, AGI is applied but not shown separately (pre-applied to net).
 /// </param>
+/// <param name="IncludeInNet">
+/// If true, the desired net salary includes AGI amount.
+/// Only meaningful for Net-to-Gross calculations (binary search target adjustment).
+/// Default: false.
+/// </param>
 public sealed record AgiSettings(
-    SpouseStatus SpouseStatus = SpouseStatus.Unmarried,
+    SpouseStatus SpouseStatus = default,
     int NumberOfChildren = 0,
-    bool IncludeInTax = true)
+    bool IncludeInTax = true,
+    bool IncludeInNet = false)
 {
     /// <summary>
     /// Default AGI settings for an unmarried employee with no children.
@@ -32,18 +40,18 @@ public sealed record AgiSettings(
     /// <summary>
     /// Creates AGI settings for a single/unmarried employee.
     /// </summary>
-    public static AgiSettings Unmarried(int numberOfChildren = 0, bool includeInTax = true) =>
-        new(SpouseStatus.Unmarried, numberOfChildren, includeInTax);
+    public static AgiSettings Unmarried(int numberOfChildren = 0, bool includeInTax = true, bool includeInNet = false) =>
+        new(SpouseStatus.Unmarried, numberOfChildren, includeInTax, includeInNet);
 
     /// <summary>
     /// Creates AGI settings for a married employee with a working spouse.
     /// </summary>
-    public static AgiSettings MarriedSpouseWorking(int numberOfChildren = 0, bool includeInTax = true) =>
-        new(SpouseStatus.SpouseWorking, numberOfChildren, includeInTax);
+    public static AgiSettings MarriedSpouseWorking(int numberOfChildren = 0, bool includeInTax = true, bool includeInNet = false) =>
+        new(SpouseStatus.SpouseWorking, numberOfChildren, includeInTax, includeInNet);
 
     /// <summary>
     /// Creates AGI settings for a married employee with a non-working spouse.
     /// </summary>
-    public static AgiSettings MarriedSpouseNotWorking(int numberOfChildren = 0, bool includeInTax = true) =>
-        new(SpouseStatus.SpouseNotWorking, numberOfChildren, includeInTax);
+    public static AgiSettings MarriedSpouseNotWorking(int numberOfChildren = 0, bool includeInTax = true, bool includeInNet = false) =>
+        new(SpouseStatus.SpouseNotWorking, numberOfChildren, includeInTax, includeInNet);
 }

@@ -74,19 +74,6 @@ public class EmployeeTypeIdTests
         await Assert.That(value).IsEqualTo(2);
     }
 
-    [Test]
-    public async Task ToInt32_Should_Return_Value()
-    {
-        // Arrange
-        var type = EmployeeTypeId.RnD5746;
-
-        // Act
-        var value = type.ToInt32();
-
-        // Assert
-        await Assert.That(value).IsEqualTo(3);
-    }
-
     // ═══════════════════════════════════════════════════════════════
     // ToString Tests
     // ═══════════════════════════════════════════════════════════════

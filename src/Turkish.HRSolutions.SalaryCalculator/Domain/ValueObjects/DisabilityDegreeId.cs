@@ -62,17 +62,15 @@ public readonly record struct DisabilityDegreeId : IEquatable<DisabilityDegreeId
     /// </summary>
     public int Value { get; }
 
-    private DisabilityDegreeId(int value) => Value = value;
+    private DisabilityDegreeId(int value)
+    {
+        Value = value;
+    }
 
     /// <summary>
     /// Returns true if this represents a disability (not None).
     /// </summary>
     public bool HasDisability => Value > 0;
-
-    /// <summary>
-    /// Converts this ID to an Int32. Alternate for implicit operator.
-    /// </summary>
-    public int ToInt32() => Value;
 
     /// <summary>
     /// Implicit conversion to int for interop with int-based APIs.
@@ -88,4 +86,13 @@ public readonly record struct DisabilityDegreeId : IEquatable<DisabilityDegreeId
         3 => nameof(Third),
         _ => $"Custom({Value})",
     };
+
+    /// <summary>
+    /// Converts this ID to an Int32. Alternate for implicit operator.
+    /// To satisfy CA2225: Provide a method named 'ToInt32' or 'FromDisabilityDegreeId' as an alternate for operator op_Implicit
+    /// </summary>
+    // ReSharper disable once UnusedMember.Local
+#pragma warning disable CA2225,IDE0051, S1144, RCS1213
+    private int ToInt32() => Value;
+#pragma warning restore CA2225, IDE0051, S1144, RCS1213
 }

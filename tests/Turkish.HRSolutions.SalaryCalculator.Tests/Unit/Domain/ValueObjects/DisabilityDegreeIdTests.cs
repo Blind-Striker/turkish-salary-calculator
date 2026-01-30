@@ -114,19 +114,6 @@ public class DisabilityDegreeIdTests
         await Assert.That(value).IsEqualTo(2);
     }
 
-    [Test]
-    public async Task ToInt32_Should_Return_Value()
-    {
-        // Arrange
-        var degree = DisabilityDegreeId.Third;
-
-        // Act
-        var value = degree.ToInt32();
-
-        // Assert
-        await Assert.That(value).IsEqualTo(3);
-    }
-
     // ═══════════════════════════════════════════════════════════════
     // ToString Tests
     // ═══════════════════════════════════════════════════════════════

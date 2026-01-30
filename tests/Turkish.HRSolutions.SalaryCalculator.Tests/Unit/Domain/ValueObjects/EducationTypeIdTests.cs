@@ -74,13 +74,6 @@ public class EducationTypeIdTests
         await Assert.That(value).IsEqualTo(2);
     }
 
-    [Test]
-    public async Task ToInt32_Should_Return_Value()
-    {
-        // Assert
-        await Assert.That(EducationTypeId.MastersOrFundamentalSciences.ToInt32()).IsEqualTo(3);
-    }
-
     // ═══════════════════════════════════════════════════════════════
     // ToString Tests
     // ═══════════════════════════════════════════════════════════════

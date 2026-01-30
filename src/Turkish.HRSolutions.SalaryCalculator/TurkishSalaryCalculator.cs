@@ -1,4 +1,5 @@
 using Turkish.HRSolutions.SalaryCalculator.Api;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Configuration;
 
 namespace Turkish.HRSolutions.SalaryCalculator;
@@ -29,13 +30,7 @@ public static class TurkishSalaryCalculator
         configurator.UseEmbeddedResources();
         configure?.Invoke(configurator);
 
-        // Phase 3: We will likely use these providers to instantiate the service.
         var (yearProvider, constantsProvider) = configurator.Build();
-        _ = yearProvider;
-        _ = constantsProvider;
-
-        // Pending Phase 3 implementation
-        // return new SalaryCalculationService(yearProvider, constantsProvider);
-        throw new NotSupportedException("SalaryCalculator service construction will be implemented in Phase 3.");
+        return new V2SalaryCalculatorService(yearProvider, constantsProvider);
     }
 }

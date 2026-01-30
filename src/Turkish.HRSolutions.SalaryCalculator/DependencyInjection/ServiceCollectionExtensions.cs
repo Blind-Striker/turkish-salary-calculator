@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Turkish.HRSolutions.SalaryCalculator.Api;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Configuration;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 
@@ -56,8 +58,13 @@ public static class ServiceCollectionExtensions
                 ValidateProvidersRegistered(services);
             }
 
-            // ISalaryCalculator and ISalaryCalculatorMetadata registrations
-            // will be added in Phase 3 when those interfaces are implemented.
+            // Register ISalaryCalculator using providers from DI
+            services.AddSingleton<ISalaryCalculator>(sp =>
+            {
+                var yearProvider = sp.GetRequiredService<IYearParameterProvider>();
+                var constantsProvider = sp.GetRequiredService<ICalculationConstantsProvider>();
+                return new V2SalaryCalculatorService(yearProvider, constantsProvider);
+            });
 
             return services;
         }
