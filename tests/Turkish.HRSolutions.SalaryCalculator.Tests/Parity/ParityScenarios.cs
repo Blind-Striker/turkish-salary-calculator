@@ -1,6 +1,6 @@
-using Turkish.HRSolutions.SalaryCalculator.Api;
+using Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
+using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
-using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Tests.Parity;
 
@@ -36,7 +36,7 @@ public sealed record ParityScenario
 public static class ParityScenarios
 {
     /// <summary>Calculator instance for accessing providers.</summary>
-    private static readonly ISalaryCalculator Calculator = TurkishSalaryCalculator.Create();
+    private static readonly ISalaryCalculator Calculator = SalaryCalculatorBuilder.Create();
 
     /// <summary>Year parameter provider from calculator.</summary>
     private static readonly IYearParameterProvider YearProvider = Calculator.YearProvider.Value;

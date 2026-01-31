@@ -20,7 +20,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 /// This is the default provider used when no custom provider is configured.
 /// </para>
 /// </remarks>
-public sealed class EmbeddedCalculationConstantsProvider : ICalculationConstantsProvider
+public sealed class EmbeddedCalculationConstantsProvider : Application.Providers.ICalculationConstantsProvider
 {
     private const string ResourceName = "Turkish.HRSolutions.SalaryCalculator.Assets.calculation-constants.json";
 
@@ -97,6 +97,50 @@ public sealed class EmbeddedCalculationConstantsProvider : ICalculationConstants
     /// <inheritdoc />
     public AgiConstant? GetAgi(int agiId) =>
         _lazyAgiLookup.Value.TryGetValue(agiId, out var constant) ? constant : null;
+
+    /// <inheritdoc />
+    public double GetAgiRate(SpouseStatus spouseStatus, int numberOfChildren)
+    {
+        var agiOptions = AllAgiOptions;
+        if (agiOptions.Count == 0)
+        {
+            return 0d;
+        }
+
+        // Use SpouseStatus.EffectiveAgiTypeKey directly
+        var typeFilter = spouseStatus.EffectiveAgiTypeKey;
+
+        var filtered = agiOptions.Where(a => a.Type.Equals(typeFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+        if (filtered.Count == 0)
+        {
+            return 0d;
+        }
+
+        // Unmarried has a single entry (no children matching)
+        if (spouseStatus == SpouseStatus.Unmarried)
+        {
+            return filtered[0].Rate;
+        }
+
+        // Match by equality operator + children count
+        var match = filtered.FirstOrDefault(p => p.Equality switch
+        {
+            "Eq" => numberOfChildren == p.Children,
+            "Gt" => numberOfChildren > p.Children,
+            "Gte" => numberOfChildren >= p.Children,
+            "Lt" => numberOfChildren < p.Children,
+            "Lte" => numberOfChildren <= p.Children,
+            _ => false,
+        });
+
+        if (match is not null)
+        {
+            return match.Rate;
+        }
+
+        // Fallback: closest match by children difference
+        return filtered.OrderBy(p => Math.Abs(p.Children - numberOfChildren)).First().Rate;
+    }
 
     /// <summary>
     /// Gets the result of loading the embedded resource.

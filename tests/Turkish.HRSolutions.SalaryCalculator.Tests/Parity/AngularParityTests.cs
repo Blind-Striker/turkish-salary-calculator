@@ -1,13 +1,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using TUnit.Core.Interfaces;
-using Turkish.HRSolutions.SalaryCalculator.Api;
-using Turkish.HRSolutions.SalaryCalculator.Api.Requests;
-using Turkish.HRSolutions.SalaryCalculator.Api.Responses;
+using Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
+using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
+using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
+using Turkish.HRSolutions.SalaryCalculator.Application.Responses;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.DependencyInjection;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
-using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
+using Turkish.HRSolutions.SalaryCalculator.Infrastructure.DependencyInjection;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Tests.Parity;
 
@@ -107,7 +107,8 @@ public class AngularParityTests
                 input.ApplyMinWageTaxExemption,
                 input.ApplyEmployerDiscount5746,
                 agi,
-                rnd)),
+                rnd,
+                input.IsAgiIncludedNet)),
             "TOTAL_TO_GROSS" => DotNet.Calculator.Calculate(new TotalToGrossRequest(
                 input.Year,
                 months,
@@ -130,7 +131,7 @@ public class AngularParityTests
         }
 
         var (spouseStatus, children) = MapAgiRate(input.AgiRate);
-        return new AgiSettings(spouseStatus, children, input.IsAgiIncludedTax, input.IsAgiIncludedNet);
+        return new AgiSettings(spouseStatus, children, input.IsAgiIncludedTax);
     }
 
     private RnDSettings? BuildRnDSettings(TestInput input, EmployeeTypeId employeeTypeId)

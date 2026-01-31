@@ -23,7 +23,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 /// or wrong calculations. Only use this provider if you know what you're doing.
 /// </para>
 /// </remarks>
-public sealed class FileSystemCalculationConstantsProvider : ICalculationConstantsProvider
+public sealed class FileSystemCalculationConstantsProvider : Application.Providers.ICalculationConstantsProvider
 {
     private readonly string _filePath;
     private readonly IFileSystem _fileSystem;
@@ -117,6 +117,50 @@ public sealed class FileSystemCalculationConstantsProvider : ICalculationConstan
     /// <inheritdoc />
     public AgiConstant? GetAgi(int agiId) =>
         _lazyAgiLookup.Value.TryGetValue(agiId, out var constant) ? constant : null;
+
+    /// <inheritdoc />
+    public double GetAgiRate(SpouseStatus spouseStatus, int numberOfChildren)
+    {
+        var agiOptions = AllAgiOptions;
+        if (agiOptions.Count == 0)
+        {
+            return 0d;
+        }
+
+        // Use SpouseStatus.EffectiveAgiTypeKey directly
+        var typeFilter = spouseStatus.EffectiveAgiTypeKey;
+
+        var filtered = agiOptions.Where(a => a.Type.Equals(typeFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+        if (filtered.Count == 0)
+        {
+            return 0d;
+        }
+
+        // Unmarried has a single entry (no children matching)
+        if (spouseStatus == SpouseStatus.Unmarried)
+        {
+            return filtered[0].Rate;
+        }
+
+        // Match by equality operator + children count
+        var match = filtered.FirstOrDefault(p => p.Equality switch
+        {
+            "Eq" => numberOfChildren == p.Children,
+            "Gt" => numberOfChildren > p.Children,
+            "Gte" => numberOfChildren >= p.Children,
+            "Lt" => numberOfChildren < p.Children,
+            "Lte" => numberOfChildren <= p.Children,
+            _ => false,
+        });
+
+        if (match is not null)
+        {
+            return match.Rate;
+        }
+
+        // Fallback: closest match by children difference
+        return filtered.OrderBy(p => Math.Abs(p.Children - numberOfChildren)).First().Rate;
+    }
 
     /// <summary>
     /// Gets the result of loading the file.

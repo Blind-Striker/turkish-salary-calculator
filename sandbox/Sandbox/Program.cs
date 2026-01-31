@@ -1,50 +1,37 @@
 using System.Globalization;
-using System.IO.Abstractions;
 using Spectre.Console;
+using Turkish.HRSolutions.SalaryCalculator;
 using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
-using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
-using Turkish.HRSolutions.SalaryCalculator.Infrastructure;
 
 #pragma warning disable S1075,S1481,S125, IDE0059
 
 var turkishCulture = CultureInfo.CreateSpecificCulture("tr-TR");
 
-// var parsed = decimal.TryParse(args[0], NumberStyles.Number, turkishCulture, out var salary);
 const decimal salary = 27_000m;
 
-var fileSystem = new FileSystem();
-var parameterProvider = new JsonParameterProvider(fileSystem);
+// Use V2 API with public static entry point
+var calculator = SalaryCalculatorBuilder.Create();
 
-var currentDirectory = fileSystem.Directory.GetCurrentDirectory();
+var request = GrossToNetRequest.For(year: 2026)
+    .WithMonths(MonthlyInput.Uniform(salary))
+    .WithEmployeeType(EmployeeTypeId.Standard)
+    .Build();
 
-var yearConstants = fileSystem.Path.Combine(currentDirectory, "Constants", "year-constants.json");
-var calcConstants = fileSystem.Path.Combine(currentDirectory, "Constants", "calculation-constants.json");
+var result = calculator.Calculate(request);
 
-var yearParameters = await parameterProvider.LoadYearParametersAsync(yearConstants);
-var fixtures = await parameterProvider.LoadFixtureAsync(calcConstants);
-
-var monthlySalaries = new List<MonthlySalary>()
+if (result.IsFailure)
 {
-    new(MonthsOfYear.January, salary),
-    new(MonthsOfYear.February, salary),
-    new(MonthsOfYear.March, salary),
-    new(MonthsOfYear.April, salary),
-    new(MonthsOfYear.May, salary),
-    new(MonthsOfYear.June, salary),
-    new(MonthsOfYear.July, salary),
-    new(MonthsOfYear.August, salary),
-    new(MonthsOfYear.September, salary),
-    new(MonthsOfYear.October, salary),
-    new(MonthsOfYear.November, salary),
-    new(MonthsOfYear.December, salary),
-};
+    AnsiConsole.MarkupLine("[red]Calculation failed:[/]");
+    foreach (var error in result.Errors)
+    {
+        AnsiConsole.MarkupLine($"  [red]{error.Code}: {error.Message}[/]");
+    }
 
-var calculateSalaryRequest = new CalculateSalaryRequest(2026, monthlySalaries);
+    return;
+}
 
-var service = new SalaryCalculationService(yearParameters.Value, fixtures.Value);
-var yearCalculationModel = service.CalculateSalary(calculateSalaryRequest);
+var yearCalculationModel = result.Value;
 
 var table = new Table();
 
@@ -56,19 +43,17 @@ table.AddColumn("Çalışan SGK Primi");
 table.AddColumn("Çalışan SGK Primi İstinası");
 table.AddColumn("Çalışan İşsizlik Sigortası");
 table.AddColumn("Çalışan İşsizlik Sigortası İstinası");
-// table.AddColumn("Vergi Dilimi");
 table.AddColumn("Gelir Vergisi");
 table.AddColumn("Gelir Vergisi İstinası");
 table.AddColumn("Damga Vergisi");
 table.AddColumn("Damga Vergisi İstinası");
-// table.AddColumn("Asgari Ücret Vergi İstisnası");
 table.AddColumn("Net Ücret");
 table.AddColumn("Maaş");
 
-foreach (var month in yearCalculationModel.Months)
+foreach (var month in yearCalculationModel.MonthlyBreakdowns)
 {
     _ = table.AddRow(
-        "1", // Ay
+        month.Month.Number.ToString(turkishCulture), // Ay
         month.WorkedDays.ToString("N", turkishCulture), // Gün Sayısı
         month.ResearchAndDevelopmentWorkedDays.ToString("N", turkishCulture), // Ar-Ge Gün Sayısı
         month.CalculatedGrossSalary.ToString("N2", turkishCulture), // Bordroya Esas Brüt

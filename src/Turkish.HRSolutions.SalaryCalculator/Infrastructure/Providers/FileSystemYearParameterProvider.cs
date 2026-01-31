@@ -18,7 +18,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 /// JSON file rather than using the embedded assembly resources.
 /// </para>
 /// </remarks>
-public sealed class FileSystemYearParameterProvider : IYearParameterProvider
+public sealed class FileSystemYearParameterProvider : Application.Providers.IYearParameterProvider
 {
     private readonly string _filePath;
     private readonly IFileSystem _fileSystem;

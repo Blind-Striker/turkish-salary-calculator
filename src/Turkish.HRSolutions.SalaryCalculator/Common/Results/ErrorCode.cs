@@ -37,6 +37,9 @@ public enum ErrorCode
     /// <summary>Duplicate month entries found.</summary>
     DuplicateMonthEntries = 1008,
 
+    /// <summary>R&amp;D days cannot be negative.</summary>
+    InvalidRnDDays = 1009,
+
     // ═══════════════════════════════════════════════════════════════
     // Input Structure - FillForward/FillBackward (2000-2999)
     // ═══════════════════════════════════════════════════════════════
@@ -77,6 +80,15 @@ public enum ErrorCode
 
     /// <summary>Min wage tax exemption is only available for years 2022 and later.</summary>
     MinWageExemptionNotApplicableForYear = 3005,
+
+    /// <summary>AGI is not applicable for this configuration.</summary>
+    AgiNotApplicable = 3006,
+
+    /// <summary>5746 SGK discount is not applicable for this configuration.</summary>
+    Discount5746NotApplicable = 3007,
+
+    /// <summary>AGI included in net is only applicable in NET_TO_GROSS mode.</summary>
+    AgiIncludedInNetNotApplicable = 3008,
 
     // ═══════════════════════════════════════════════════════════════
     // Calculation Runtime (4000-4999)

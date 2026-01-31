@@ -16,7 +16,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 /// This is the default provider used when no custom provider is configured.
 /// </para>
 /// </remarks>
-public sealed class EmbeddedYearParameterProvider : IYearParameterProvider
+public sealed class EmbeddedYearParameterProvider : Application.Providers.IYearParameterProvider
 {
     private const string ResourceName = "Turkish.HRSolutions.SalaryCalculator.Assets.year-constants.json";
 

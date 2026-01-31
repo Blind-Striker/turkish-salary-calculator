@@ -8,7 +8,7 @@ The test suite consists of two main categories:
 
 | Category | Purpose | Count | Run by Default |
 |----------|---------|-------|----------------|
-| **Unit Tests** | Test individual components in isolation | ~167 | ✅ Yes |
+| **Unit Tests** | Test individual components in isolation | ~227 | ✅ Yes |
 | **Parity Tests** | Verify .NET matches Angular (source of truth) | ~76 | ❌ No (`[Explicit]`) |
 
 ## Test Framework
@@ -35,18 +35,22 @@ tests/
 │   └── angular-parity-fixtures/                      # TypeScript CLI for Angular calculations
 │       ├── package.json
 │       ├── src/
-│       │   ├── calculate.ts                          # CLI entry point (TODO: refactor)
-│       │   ├── generate-fixtures.ts                  # Current batch generator
+│       │   ├── calculate.ts                          # CLI entry point for parity tests
 │       │   └── angular-types.ts                      # Type definitions
 │       └── tsconfig.json
 └── Turkish.HRSolutions.SalaryCalculator.Tests/
     ├── Unit/                                         # Unit tests by layer
-    │   ├── Api/                                      # API layer tests
+    │   ├── Application/                              # Application layer tests
+    │   │   ├── Mappings/                            # Mapping extension tests
+    │   │   ├── Requests/                            # Request/MonthlyInput tests
+    │   │   └── Validation/                          # ValidationEngine tests
     │   ├── Common/                                   # Cross-cutting concern tests
-    │   ├── Configuration/                            # Configurator tests
-    │   ├── DependencyInjection/                      # DI extension tests
     │   ├── Domain/                                   # Domain model tests
-    │   └── Infrastructure/                           # Provider tests
+    │   └── Infrastructure/                           # Infrastructure layer tests
+    │       ├── Configuration/                       # Configurator tests
+    │       ├── DependencyInjection/                 # DI extension tests
+    │       ├── Providers/                           # Provider tests
+    │       └── Services/                            # Service tests
     └── Parity/                                       # Angular parity tests
         ├── AngularParityTests.cs                     # Main parity test class
         ├── FieldComparer.cs                          # Tolerance-based comparison
@@ -128,13 +132,15 @@ Tests mirror the source structure:
 
 | Source Layer | Test Location |
 |--------------|---------------|
-| `Api/Requests/` | `Unit/Api/Requests/` |
-| `Api/Mappings/` | `Unit/Api/Mappings/` |
+| `Application/Requests/` | `Unit/Application/Requests/` |
+| `Application/Mappings/` | `Unit/Application/Mappings/` |
+| `Application/Validation/` | `Unit/Application/Validation/` |
 | `Common/Results/` | `Unit/Common/Results/` |
-| `Configuration/` | `Unit/Configuration/` |
 | `Domain/ValueObjects/` | `Unit/Domain/ValueObjects/` |
+| `Infrastructure/Configuration/` | `Unit/Infrastructure/Configuration/` |
+| `Infrastructure/DependencyInjection/` | `Unit/Infrastructure/DependencyInjection/` |
 | `Infrastructure/Providers/` | `Unit/Infrastructure/Providers/` |
-| `DependencyInjection/` | `Unit/DependencyInjection/` |
+| `Infrastructure/Services/` | `Unit/Infrastructure/Services/` |
 
 ### Example Unit Test
 
@@ -390,10 +396,6 @@ dotnet test -- --treenode-filter "/*/*/*/*[TestId=2026-standard-grosstonet-50000
 
 # Verbose output
 dotnet test -- --output Detailed --log-level Debug
-
-# Generate fixtures manually
-cd tests/tools/angular-parity-fixtures
-bun run generate
 ```
 
 ---
