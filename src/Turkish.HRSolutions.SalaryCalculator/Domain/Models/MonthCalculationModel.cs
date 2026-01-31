@@ -108,18 +108,19 @@ public sealed class MonthCalculationModel
     public decimal CalcMinWageIncomeTaxBase()
     {
         var yearParam = _parameters.YearParameter;
-        var empTypeConst = _parameters.EmployeeTypeConstant;
         var calcConstants = _parameters.CalculationConstants;
         var disabilityDegree = _parameters.DisabilityDegree;
         var isPensioner = _parameters.IsPensioner;
 
+        // Angular parity: Use STANDARD employee type (not actual) and FULL month (30 days)
+        // The cumulative min wage tax base represents what a standard full-time employee would accumulate
         return CalcTaxBaseOfGivenGrossSalary(
             yearParam,
             _minGrossWage,
-            empTypeConst,
+            _parameters.StandardEmployeeTypeConstant,
             calcConstants,
             _grossSalaryForTaxBaseCalculation,
-            _workedDays,
+            calcConstants.MonthDayCount,
             disabilityDegree,
             isPensioner);
     }
@@ -235,7 +236,8 @@ public sealed class MonthCalculationModel
             middle = (left + right) / 2m;
         }
 
-        return -1m;
+        // Angular parity: return best approximation after max iterations
+        return middle;
     }
 
     private decimal FindGrossFromTotalCost(decimal desiredTotalCost)

@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CliWrap"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
     <PackageReference Include="TUnit"/>
     <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers"/>

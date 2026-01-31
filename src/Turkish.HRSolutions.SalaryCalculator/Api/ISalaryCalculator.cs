@@ -1,6 +1,7 @@
 using Turkish.HRSolutions.SalaryCalculator.Api.Requests;
 using Turkish.HRSolutions.SalaryCalculator.Api.Responses;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
+using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Api;
 
@@ -17,9 +18,30 @@ namespace Turkish.HRSolutions.SalaryCalculator.Api;
 /// All methods return <see cref="Result{T}"/> instead of throwing exceptions
 /// for expected validation failures.
 /// </para>
+/// <para>
+/// Provider access is exposed for introspection (available years, employee types, etc.).
+/// Providers are immutable and set at construction time.
+/// </para>
 /// </remarks>
 public interface ISalaryCalculator
 {
+    /// <summary>
+    /// Gets the year parameter provider used by this calculator instance.
+    /// </summary>
+    /// <remarks>
+    /// Provides access to available years, tax brackets, minimum wages, and other year-specific parameters.
+    /// Immutable - set at construction time.
+    /// </remarks>
+    public Result<IYearParameterProvider> YearProvider { get; }
+
+    /// <summary>
+    /// Gets the calculation constants provider used by this calculator instance.
+    /// </summary>
+    /// <remarks>
+    /// Provides access to employee types, AGI options, disability degrees, and other constants.
+    /// Immutable - set at construction time.
+    /// </remarks>
+    public Result<ICalculationConstantsProvider> ConstantsProvider { get; }
     /// <summary>
     /// Calculates salary from gross amounts.
     /// </summary>

@@ -32,6 +32,14 @@ internal sealed class V2SalaryCalculatorService : ISalaryCalculator
     }
 
     /// <inheritdoc />
+    public Result<IYearParameterProvider> YearProvider =>
+        Result<IYearParameterProvider>.Success(_yearProvider);
+
+    /// <inheritdoc />
+    public Result<ICalculationConstantsProvider> ConstantsProvider =>
+        Result<ICalculationConstantsProvider>.Success(_constantsProvider);
+
+    /// <inheritdoc />
     public Result<YearlySalarySnapshot> Calculate(GrossToNetRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);

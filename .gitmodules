@@ -1,0 +1,3 @@
+[submodule "external/maas-hesaplama"]
+	path = external/maas-hesaplama
+	url = https://github.com/nuryagdym/maas-hesaplama
