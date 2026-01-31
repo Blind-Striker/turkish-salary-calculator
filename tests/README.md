@@ -79,15 +79,15 @@ dotnet test -- --treenode-filter "/*/*/*/*[Category=Parity]"
 
 ### Prerequisites for Parity Tests
 
-1. **Node.js 20+** - Required to run Angular calculator
+1. **Bun 1.0+** - Required to run Angular calculator (fast TypeScript runtime)
 2. **Git submodule initialized** - Angular project at `external/maas-hesaplama`
 
 ```bash
 # Initialize submodule (first time)
 git submodule update --init --recursive
 
-# Verify Node.js version
-node --version  # Should be v20.x or higher
+# Verify Bun version
+bun --version  # Should be v1.x or higher
 ```
 
 ### Useful Commands
@@ -179,7 +179,7 @@ The parity testing architecture uses C# as the single source of truth for test s
 │ public async Task Scenario_Should_Match_Angular(ParityScenario) │
 │                                                                  │
 │     ┌─────────────┐                                              │
-│     │ 1. Call CLI │ → npx ts-node calculate.ts < input.json     │
+│     │ 1. Call CLI │ → bun run calculate.ts < input.json          │
 │     │ 2. Parse    │ ← stdout JSON (Angular result)              │
 │     │ 3. Calculate│ → ISalaryCalculator.Calculate(request)      │
 │     │ 4. Compare  │ → FieldComparer with tolerance              │
@@ -201,7 +201,7 @@ The parity testing architecture uses C# as the single source of truth for test s
 | File | Purpose |
 |------|---------|
 | `ParityScenarios.cs` | Provider-driven data source with ~76 test scenarios |
-| `AngularCalculatorClient.cs` | CLI wrapper (handles init, npm install) |
+| `AngularCalculatorClient.cs` | CLI wrapper (handles init, bun install) |
 | `calculate.ts` | Pure Angular CLI tool (stdin JSON → stdout JSON) |
 | `AngularParityTests.cs` | TUnit test class using `[MethodDataSource]` |
 
@@ -358,21 +358,21 @@ dotnet test -- --report-trx --report-trx-filename results.trx
 
    Fix: `git submodule update --init --recursive`
 
-2. **Node.js not found**:
+2. **Bun not found**:
 
    ```
-   Required command failed: node --version
+   'bun' is not recognized as a command
    ```
 
-   Fix: Install Node.js 20+
+   Fix: Install Bun 1.0+ from https://bun.sh
 
-3. **npm dependencies missing**:
+3. **Dependencies missing**:
 
    ```
    Cannot find module '...'
    ```
 
-   Fix: `cd tests/tools/angular-parity-fixtures && npm ci`
+   Fix: `cd tests/tools/angular-parity-fixtures && bun install`
 
 4. **Tolerance exceeded**:
 
@@ -393,7 +393,7 @@ dotnet test -- --output Detailed --log-level Debug
 
 # Generate fixtures manually
 cd tests/tools/angular-parity-fixtures
-npm run generate
+bun run generate
 ```
 
 ---

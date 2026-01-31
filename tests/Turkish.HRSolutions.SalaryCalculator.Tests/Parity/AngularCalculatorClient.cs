@@ -42,7 +42,7 @@ public sealed class AngularCalculatorClient : IAsyncInitializer, IAsyncDisposabl
     }
 
     /// <summary>
-    /// Initializes the client by verifying prerequisites and installing npm dependencies.
+    /// Initializes the client by verifying prerequisites and installing Bun dependencies.
     /// </summary>
     public async Task InitializeAsync()
     {
@@ -74,8 +74,8 @@ public sealed class AngularCalculatorClient : IAsyncInitializer, IAsyncDisposabl
                     "Angular calculator CLI not found at " + calculateTsPath);
             }
 
-            // Ensure node_modules is installed
-            await EnsureNodeModulesAsync();
+            // Ensure dependencies are installed via Bun
+            await EnsureDependenciesAsync();
 
             _initialized = true;
         }
@@ -106,8 +106,8 @@ public sealed class AngularCalculatorClient : IAsyncInitializer, IAsyncDisposabl
 
         try
         {
-            var result = await Cli.Wrap("npx")
-                .WithArguments(["ts-node", "--transpile-only", "src/calculate.ts"])
+            var result = await Cli.Wrap("bun")
+                .WithArguments(["run", "src/calculate.ts"])
                 .WithWorkingDirectory(_cliDirectory!)
                 .WithStandardInputPipe(PipeSource.FromString(inputJson))
                 .WithValidation(CommandResultValidation.None)
@@ -168,7 +168,7 @@ public sealed class AngularCalculatorClient : IAsyncInitializer, IAsyncDisposabl
         }
     }
 
-    private async Task EnsureNodeModulesAsync()
+    private async Task EnsureDependenciesAsync()
     {
         var nodeModulesPath = _fileSystem.Path.Combine(_cliDirectory!, "node_modules");
         if (_fileSystem.Directory.Exists(nodeModulesPath))
@@ -176,19 +176,16 @@ public sealed class AngularCalculatorClient : IAsyncInitializer, IAsyncDisposabl
             return;
         }
 
-        // Run npm ci (or npm install if no lock file)
-        var lockFilePath = _fileSystem.Path.Combine(_cliDirectory!, "package-lock.json");
-        var installCommand = _fileSystem.File.Exists(lockFilePath) ? "ci" : "install";
-
-        var result = await Cli.Wrap("npm")
-            .WithArguments(installCommand)
+        // Run bun install (reads package.json, creates node_modules/)
+        var result = await Cli.Wrap("bun")
+            .WithArguments("install")
             .WithWorkingDirectory(_cliDirectory!)
             .ExecuteBufferedAsync();
 
         if (result.ExitCode != 0)
         {
             throw new InvalidOperationException(
-                "npm " + installCommand + " failed: " + result.StandardError);
+                "bun install failed: " + result.StandardError);
         }
     }
 
