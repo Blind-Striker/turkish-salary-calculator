@@ -1,8 +1,8 @@
 using Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
-namespace Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
+namespace Turkish.HRSolutions.SalaryCalculator.Application.Services;
 
 /// <summary>
 /// Service for querying calculator metadata, constants, and capabilities.
@@ -12,14 +12,9 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
 /// Use this interface to:
 /// </para>
 /// <list type="bullet">
-/// <item><description>Build dynamic UIs that mirror Angular's disabled field behavior</description></item>
 /// <item><description>Expose REST API metadata endpoints</description></item>
 /// <item><description>Query available years, employee types, and other configuration options</description></item>
 /// </list>
-/// <para>
-/// The GetCapabilities method returns capability information that matches
-/// the Angular UI's disabled states, ensuring feature parity between .NET and Angular.
-/// </para>
 /// </remarks>
 public interface ISalaryCalculatorMetadata
 {
@@ -54,7 +49,7 @@ public interface ISalaryCalculatorMetadata
     /// <param name="year">The calculation year.</param>
     /// <param name="employeeType">The employee type (defaults to Standard if not specified).</param>
     /// <param name="isPensioner">Whether the employee is a pensioner.</param>
-    /// <returns>A result containing capability information, or errors if validation fails.</returns>
+    /// <returns>A result containing capability information or errors if validation fails.</returns>
     public Result<CapabilityInfo> GetCapabilities(int year, EmployeeTypeId? employeeType = null, bool isPensioner = false);
 
     /// <summary>

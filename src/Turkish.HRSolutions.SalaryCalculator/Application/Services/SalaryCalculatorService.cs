@@ -6,11 +6,12 @@ using Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
 using Turkish.HRSolutions.SalaryCalculator.Domain.Models;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
-namespace Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
+namespace Turkish.HRSolutions.SalaryCalculator.Application.Services;
 
 /// <summary>
-/// V2 implementation of <see cref="ISalaryCalculator"/> that maps V2 API requests
+/// Implementation of <see cref="ISalaryCalculator"/> that maps API requests
 /// to the domain calculation engine and returns immutable snapshots.
 /// </summary>
 internal sealed class SalaryCalculatorService : ISalaryCalculator
@@ -25,10 +26,7 @@ internal sealed class SalaryCalculatorService : ISalaryCalculator
     /// <param name="validationEngine">Validation engine used for request and provider validation.</param>
     /// <param name="yearProvider">Provider for year-specific parameters.</param>
     /// <param name="constantsProvider">Provider for calculation constants.</param>
-    internal SalaryCalculatorService(
-        IValidationEngine validationEngine,
-        IYearParameterProvider yearProvider,
-        ICalculationConstantsProvider constantsProvider)
+    internal SalaryCalculatorService(IValidationEngine validationEngine, IYearParameterProvider yearProvider, ICalculationConstantsProvider constantsProvider)
     {
         _validationEngine = validationEngine ?? throw new ArgumentNullException(nameof(validationEngine));
         _yearProvider = yearProvider ?? throw new ArgumentNullException(nameof(yearProvider));
@@ -36,41 +34,23 @@ internal sealed class SalaryCalculatorService : ISalaryCalculator
     }
 
     /// <inheritdoc />
-    public Result<IYearParameterProvider> YearProvider =>
-        Result<IYearParameterProvider>.Success(_yearProvider);
+    public Result<IYearParameterProvider> YearProvider => Result<IYearParameterProvider>.Success(_yearProvider);
 
     /// <inheritdoc />
-    public Result<ICalculationConstantsProvider> ConstantsProvider =>
-        Result<ICalculationConstantsProvider>.Success(_constantsProvider);
+    public Result<ICalculationConstantsProvider> ConstantsProvider => Result<ICalculationConstantsProvider>.Success(_constantsProvider);
 
     /// <inheritdoc />
-    public Result<YearlySalarySnapshot> Calculate(GrossToNetRequest request)
+    public Result<YearlySalarySnapshot> Calculate(SalaryCalculationRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
         var context = ValidationContext.FromRequest(request);
-        return ValidateAndCalculate(context, CalculationMode.GrossToNet);
-    }
-
-    /// <inheritdoc />
-    public Result<YearlySalarySnapshot> Calculate(NetToGrossRequest request)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-        var context = ValidationContext.FromRequest(request);
-        return ValidateAndCalculate(context, CalculationMode.NetToGross);
-    }
-
-    /// <inheritdoc />
-    public Result<YearlySalarySnapshot> Calculate(TotalToGrossRequest request)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-        var context = ValidationContext.FromRequest(request);
-        return ValidateAndCalculate(context, CalculationMode.TotalToGross);
+        return ValidateAndCalculate(context, request.Mode);
     }
 
     private Result<YearlySalarySnapshot> ValidateAndCalculate(ValidationContext context, CalculationMode mode)
     {
         // 1. Validate using ValidationEngine (single source of truth)
-        var validationResult = _validationEngine.Validate(context, _yearProvider, _constantsProvider);
+        var validationResult = _validationEngine.Validate(context);
 
         if (validationResult.IsFailure)
         {
@@ -83,12 +63,12 @@ internal sealed class SalaryCalculatorService : ISalaryCalculator
         // 2. Resolve lookups (guaranteed to succeed after validation)
         var yearParam = _yearProvider.GetParameter(context.Year)!;
         var employeeType = _constantsProvider.GetEmployeeType(context.EmployeeType)!;
-        var standardType = _constantsProvider.GetEmployeeType(Domain.ValueObjects.EmployeeTypeId.Standard)!;
+        var standardType = _constantsProvider.GetEmployeeType(EmployeeTypeId.Standard)!;
         var disability = _constantsProvider.GetDisability(context.Disability)!;
-        var educationType = context.RnD?.Education ?? Domain.ValueObjects.EducationTypeId.OtherRnDPersonnel;
+        var educationType = context.RnD?.Education ?? EducationTypeId.OtherRnDPersonnel;
         var educationRate = _constantsProvider.GetEducationType(educationType)?.ExemptionRate ?? 0d;
         var agiRate = _constantsProvider.GetAgiRate(
-            context.Agi?.SpouseStatus ?? Domain.ValueObjects.SpouseStatus.Unmarried,
+            context.Agi?.SpouseStatus ?? SpouseStatus.Unmarried,
             context.Agi?.NumberOfChildren ?? 0);
 
         // 3. Map to domain types (pure conversion)
@@ -121,17 +101,11 @@ internal sealed class SalaryCalculatorService : ISalaryCalculator
         {
             // Domain layer may still throw for edge cases (binary search failure)
             // This is a safety net - proper validation should catch most issues
-            return Result<YearlySalarySnapshot>.Failure(
-                ErrorCode.CalculationFailed,
-                ex.Message,
-                ex);
+            return Result<YearlySalarySnapshot>.Failure(ErrorCode.CalculationFailed, ex.Message, ex);
         }
         catch (Exception ex)
         {
-            return Result<YearlySalarySnapshot>.Failure(
-                ErrorCode.UnexpectedError,
-                "Unhandled exception during salary calculation.",
-                ex);
+            return Result<YearlySalarySnapshot>.Failure(ErrorCode.UnexpectedError, "Unhandled exception during salary calculation.", ex);
         }
     }
 }

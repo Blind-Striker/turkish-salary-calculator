@@ -1,3 +1,5 @@
+#pragma warning disable CA1707
+
 using System.IO.Abstractions.TestingHelpers;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 

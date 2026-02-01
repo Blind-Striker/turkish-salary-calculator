@@ -1,7 +1,7 @@
 using Turkish.HRSolutions.SalaryCalculator.Application.Responses;
 using Turkish.HRSolutions.SalaryCalculator.Domain.Models;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Mappings;
 
@@ -10,95 +10,88 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Mappings;
 /// </summary>
 public static class MonthCalculationModelExtensions
 {
+#pragma warning disable CA1034 // False positive https://github.com/dotnet/sdk/issues/51681
     /// <summary>
-    /// Maps a <see cref="MonthCalculationModel"/> to a <see cref="MonthlyBreakdown"/> snapshot.
+    /// Provides extension methods for the <see cref="MonthCalculationModel"/> class to enable mapping- and transformation-
+    /// specific to application requirements.
     /// </summary>
-    /// <param name="model">The domain model containing calculated values.</param>
-    /// <param name="month">The month this calculation represents.</param>
-    /// <returns>An immutable snapshot of the monthly calculation.</returns>
-    public static MonthlyBreakdown ToBreakdown(this MonthCalculationModel model, MonthsOfYear month)
+    extension(MonthCalculationModel model)
+#pragma warning restore CA1034
     {
-        ArgumentNullException.ThrowIfNull(model);
-
-        return new MonthlyBreakdown
+        /// <summary>
+        /// Maps a <see cref="MonthCalculationModel"/> to a <see cref="MonthlyBreakdown"/> snapshot.
+        /// </summary>
+        /// <param name="month">The month this calculation represents.</param>
+        /// <returns>An immutable snapshot of the monthly calculation.</returns>
+        public MonthlyBreakdown ToBreakdown(MonthsOfYear month)
         {
-            // Month Identification
-            Month = month,
-            WorkedDays = (int)model.WorkedDays,
-            ResearchAndDevelopmentWorkedDays = (int)model.ResearchAndDevelopmentWorkedDays,
+            ArgumentNullException.ThrowIfNull(model);
 
-            // Gross and Net Salary
-            CalculatedGrossSalary = model.CalculatedGrossSalary,
-            SgkBase = model.SgkBase,
-            NetSalary = model.NetSalary,
-            FinalNetSalary = model.FinalNetSalary,
+            return new MonthlyBreakdown
+            {
+                // Month Identification
+                Month = month,
+                WorkedDays = (int)model.WorkedDays,
+                ResearchAndDevelopmentWorkedDays = (int)model.ResearchAndDevelopmentWorkedDays,
 
-            // Employee SGK
-            EmployeeSgkDeduction = model.EmployeeSgkDeduction,
-            EmployeeSgkExemption = model.EmployeeSgkExemption,
-            EmployeeFinalSgkDeduction = model.EmployeeFinalSgkDeduction,
+                // Gross and Net Salary
+                CalculatedGrossSalary = model.CalculatedGrossSalary,
+                SgkBase = model.SgkBase,
+                NetSalary = model.NetSalary,
+                FinalNetSalary = model.FinalNetSalary,
 
-            // Employee Unemployment Insurance
-            EmployeeUnemploymentInsuranceDeduction = model.EmployeeUnemploymentInsuranceDeduction,
-            EmployeeUnemploymentInsuranceExemption = model.EmployeeUnemploymentInsuranceExemption,
-            EmployeeFinalUnemploymentInsuranceDeduction = model.EmployeeFinalUnemploymentInsuranceDeduction,
+                // Employee SGK
+                EmployeeSgkDeduction = model.EmployeeSgkDeduction,
+                EmployeeSgkExemption = model.EmployeeSgkExemption,
+                EmployeeFinalSgkDeduction = model.EmployeeFinalSgkDeduction,
 
-            // Income Tax
-            IncomeTaxBase = model.IncomeTaxBase,
-            CumulativeIncomeTaxBase = model.CumulativeIncomeTaxBase,
-            CumulativeSalary = model.CumulativeSalary,
-            EmployeeIncomeTax = model.EmployeeIncomeTax,
-            EmployeeIncomeTaxExemptionAmount = model.EmployeeIncomeTaxExemptionAmount,
-            EmployeeMinWageTaxExemptionAmount = model.EmployeeMinWageTaxExemptionAmount,
+                // Employee Unemployment Insurance
+                EmployeeUnemploymentInsuranceDeduction = model.EmployeeUnemploymentInsuranceDeduction,
+                EmployeeUnemploymentInsuranceExemption = model.EmployeeUnemploymentInsuranceExemption,
+                EmployeeFinalUnemploymentInsuranceDeduction = model.EmployeeFinalUnemploymentInsuranceDeduction,
 
-            // Stamp Tax
-            StampTax = model.StampTax,
-            EmployeeStampTaxExemption = model.EmployeeStampTaxExemption,
-            EmployerStampTax = model.EmployerStampTax,
-            EmployerStampTaxExemption = model.EmployerStampTaxExemption,
-            TotalStampTaxExemption = model.TotalStampTaxExemption,
+                // Income Tax
+                IncomeTaxBase = model.IncomeTaxBase,
+                CumulativeIncomeTaxBase = model.CumulativeIncomeTaxBase,
+                CumulativeSalary = model.CumulativeSalary,
+                EmployeeIncomeTax = model.EmployeeIncomeTax,
+                EmployeeIncomeTaxExemptionAmount = model.EmployeeIncomeTaxExemptionAmount,
+                EmployeeMinWageTaxExemptionAmount = model.EmployeeMinWageTaxExemptionAmount,
 
-            // AGI
-            AgiAmount = model.AgiAmount,
+                // Stamp Tax
+                StampTax = model.StampTax,
+                EmployeeStampTaxExemption = model.EmployeeStampTaxExemption,
+                EmployerStampTax = model.EmployerStampTax,
+                EmployerStampTaxExemption = model.EmployerStampTaxExemption,
+                TotalStampTaxExemption = model.TotalStampTaxExemption,
 
-            // Employer SGK
-            EmployerSgkDeduction = model.EmployerSgkDeduction,
-            EmployerSgkExemption = model.EmployerSgkExemption,
-            EmployerFinalSgkDeduction = model.EmployerFinalSgkDeduction,
+                // AGI
+                AgiAmount = model.AgiAmount,
 
-            // Employer Unemployment Insurance
-            EmployerUnemploymentInsuranceDeduction = model.EmployerUnemploymentInsuranceDeduction,
-            EmployerUnemploymentInsuranceExemption = model.EmployerUnemploymentInsuranceExemption,
-            EmployerFinalUnemploymentInsuranceDeduction = model.EmployerFinalUnemploymentInsuranceDeduction,
+                // Employer SGK
+                EmployerSgkDeduction = model.EmployerSgkDeduction,
+                EmployerSgkExemption = model.EmployerSgkExemption,
+                EmployerFinalSgkDeduction = model.EmployerFinalSgkDeduction,
 
-            // Employer Income Tax
-            EmployerIncomeTaxExemptionAmount = model.EmployerIncomeTaxExemptionAmount,
-            EmployerFinalIncomeTax = model.EmployerFinalIncomeTax,
+                // Employer Unemployment Insurance
+                EmployerUnemploymentInsuranceDeduction = model.EmployerUnemploymentInsuranceDeduction,
+                EmployerUnemploymentInsuranceExemption = model.EmployerUnemploymentInsuranceExemption,
+                EmployerFinalUnemploymentInsuranceDeduction = model.EmployerFinalUnemploymentInsuranceDeduction,
 
-            // Totals
-            TotalSgkExemption = model.TotalSgkExemption,
-            EmployerTotalSgkCost = model.EmployerTotalSgkCost,
-            EmployerTotalCost = model.EmployerTotalCost,
+                // Employer Income Tax
+                EmployerIncomeTaxExemptionAmount = model.EmployerIncomeTaxExemptionAmount,
+                EmployerFinalIncomeTax = model.EmployerFinalIncomeTax,
 
-            // Applied Tax Slices
-            AppliedTaxSlices = MapTaxSlices(model.AppliedTaxSlices),
-        };
+                // Totals
+                TotalSgkExemption = model.TotalSgkExemption,
+                EmployerTotalSgkCost = model.EmployerTotalSgkCost,
+                EmployerTotalCost = model.EmployerTotalCost,
+
+                // Applied Tax Slices
+                AppliedTaxSlices = MapTaxSlices(model.AppliedTaxSlices),
+            };
+        }
     }
 
-    /// <summary>
-    /// Maps a <see cref="TaxSlice"/> to a <see cref="TaxSliceSnapshot"/>.
-    /// </summary>
-    public static TaxSliceSnapshot ToSnapshot(this TaxSlice taxSlice)
-    {
-        return new TaxSliceSnapshot
-        {
-            Rate = taxSlice.Rate,
-            Ceil = taxSlice.Ceil,
-        };
-    }
-
-    private static IReadOnlyList<TaxSliceSnapshot> MapTaxSlices(IEnumerable<TaxSlice> taxSlices)
-    {
-        return [.. taxSlices.Select(ts => ts.ToSnapshot())];
-    }
+    private static IReadOnlyList<TaxSliceSnapshot> MapTaxSlices(IEnumerable<TaxSlice> taxSlices) => [.. taxSlices.Select(ts => ts.ToSnapshot())];
 }

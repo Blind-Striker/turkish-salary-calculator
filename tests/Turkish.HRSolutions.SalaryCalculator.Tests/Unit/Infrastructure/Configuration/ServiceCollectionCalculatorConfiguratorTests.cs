@@ -1,7 +1,9 @@
+#pragma warning disable CA1707
+
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Configuration;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 

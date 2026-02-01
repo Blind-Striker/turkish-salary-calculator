@@ -1,4 +1,6 @@
-namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
+
+namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Models;
 
 public record EmployeeYearlyParameters(
     YearParameter YearParameter,

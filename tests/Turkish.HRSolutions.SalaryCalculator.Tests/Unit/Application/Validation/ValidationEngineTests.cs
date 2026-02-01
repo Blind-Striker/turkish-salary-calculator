@@ -1,10 +1,13 @@
+#pragma warning disable CA1707
+
 using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
 using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
 using Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
+using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Services;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Tests.Unit.Application.Validation;
 
@@ -15,14 +18,20 @@ public sealed class ValidationEngineTests
 {
     private static IYearParameterProvider YearProvider { get; } = new EmbeddedYearParameterProvider();
     private static ICalculationConstantsProvider ConstantsProvider { get; } = new EmbeddedCalculationConstantsProvider();
-    private static ValidationEngine Engine { get; } = new();
+
+    private static CapabilityResolver CapabilityResolver { get; } = new(YearProvider, ConstantsProvider);
+
+    private static ValidationEngine Engine { get; } = new(CapabilityResolver, YearProvider, ConstantsProvider);
 
     [Test]
     public async Task Validate_Should_FailWithYearNotSpecified_When_YearIsZero()
     {
-        var context = CreateValidContext() with { Year = 0 };
+        var context = CreateValidContext() with
+        {
+            Year = 0
+        };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsFailure).IsTrue();
         await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.YearNotSpecified)).IsTrue();
@@ -31,9 +40,12 @@ public sealed class ValidationEngineTests
     [Test]
     public async Task Validate_Should_FailWithYearNotSupported_When_YearDoesNotExist()
     {
-        var context = CreateValidContext() with { Year = 1900 };
+        var context = CreateValidContext() with
+        {
+            Year = 1900
+        };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsFailure).IsTrue();
         await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.YearNotSupported)).IsTrue();
@@ -42,9 +54,12 @@ public sealed class ValidationEngineTests
     [Test]
     public async Task Validate_Should_FailWithMissingEmployeeType_When_EmployeeTypeIsZero()
     {
-        var context = CreateValidContext() with { EmployeeType = EmployeeTypeId.FromId(0) };
+        var context = CreateValidContext() with
+        {
+            EmployeeType = EmployeeTypeId.FromId(0)
+        };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsFailure).IsTrue();
         await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.MissingEmployeeTypeDefinition)).IsTrue();
@@ -53,9 +68,12 @@ public sealed class ValidationEngineTests
     [Test]
     public async Task Validate_Should_FailWithInvalidMonthCount_When_NoMonthsProvided()
     {
-        var context = CreateValidContext() with { Months = [] };
+        var context = CreateValidContext() with
+        {
+            Months = []
+        };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsFailure).IsTrue();
         await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.InvalidMonthCount)).IsTrue();
@@ -72,24 +90,46 @@ public sealed class ValidationEngineTests
             ],
         };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsFailure).IsTrue();
         await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.InvalidMonthCount)).IsTrue();
     }
 
     [Test]
-    public async Task Validate_Should_FailWithInvalidSalaryAmount_When_SalaryIsZeroOrNegative()
+    public async Task Validate_Should_FailWithInvalidSalaryAmount_When_SalaryIsNegative()
     {
+        // Negative salary should be rejected
         var months = MonthsOfYear.AllMonths
-            .Select((m, i) => new MonthlyInput(m, i == 0 ? 0m : 30_000m))
+            .Select((m, i) => new MonthlyInput(m, i == 0 ? -1000m : 30_000m))
             .ToList();
-        var context = CreateValidContext() with { Months = months };
+        var context = CreateValidContext() with
+        {
+            Months = months
+        };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsFailure).IsTrue();
         await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.InvalidSalaryAmount)).IsTrue();
+    }
+
+    [Test]
+    public async Task Validate_Should_AllowZeroSalary_For_NewHireScenarios()
+    {
+        // Zero salary is allowed for months where employee didn't work (new hire scenarios)
+        // This aligns with Angular behavior
+        var months = MonthsOfYear.AllMonths
+            .Select((m, i) => new MonthlyInput(m, i < 2 ? 0m : 30_000m, i < 2 ? 0 : 30))
+            .ToList();
+        var context = CreateValidContext() with
+        {
+            Months = months
+        };
+
+        var result = Engine.Validate(context);
+
+        await Assert.That(result.IsSuccess).IsTrue();
     }
 
     [Test]
@@ -98,9 +138,12 @@ public sealed class ValidationEngineTests
         var months = MonthsOfYear.AllMonths
             .Select((m, i) => new MonthlyInput(m, 30_000m, i == 0 ? 31 : 30))
             .ToList();
-        var context = CreateValidContext() with { Months = months };
+        var context = CreateValidContext() with
+        {
+            Months = months
+        };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsFailure).IsTrue();
         await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.InvalidWorkedDays)).IsTrue();
@@ -112,9 +155,12 @@ public sealed class ValidationEngineTests
         var months = MonthsOfYear.AllMonths
             .Select((m, i) => new MonthlyInput(m, 30_000m, i == 0 ? 15 : 30, i == 0 ? 20 : 0))
             .ToList();
-        var context = CreateValidContext() with { Months = months };
+        var context = CreateValidContext() with
+        {
+            Months = months
+        };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsFailure).IsTrue();
         await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.RnDDaysExceedWorkedDays)).IsTrue();
@@ -125,7 +171,7 @@ public sealed class ValidationEngineTests
     {
         var context = CreateValidContext();
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsSuccess).IsTrue();
     }
@@ -141,7 +187,7 @@ public sealed class ValidationEngineTests
             EmployeeType = EmployeeTypeId.FromId(employeeTypeId),
         };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsSuccess).IsTrue();
         var isDisabled = !result.Value.IsAvailable(Capability.AgiSelection);
@@ -170,7 +216,7 @@ public sealed class ValidationEngineTests
             EmployeeType = EmployeeTypeId.FromId(employeeTypeId),
         };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsSuccess).IsTrue();
         var isDisabled = !result.Value.IsAvailable(Capability.EducationType);
@@ -198,7 +244,7 @@ public sealed class ValidationEngineTests
             IsPensioner = isPensioner,
         };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsSuccess).IsTrue();
         var isDisabled = !result.Value.IsAvailable(Capability.Discount5746);
@@ -225,7 +271,7 @@ public sealed class ValidationEngineTests
             EmployeeType = EmployeeTypeId.FromId(employeeTypeId),
         };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsSuccess).IsTrue();
         var isDisabled = !result.Value.IsAvailable(Capability.RnDDaysInput);
@@ -249,9 +295,12 @@ public sealed class ValidationEngineTests
     public async Task Validate_Should_DisableAgiIncludedInNet_When_ModeIsNotNetToGross(
         CalculationMode mode, bool expectedDisabled)
     {
-        var context = CreateValidContext() with { Mode = mode };
+        var context = CreateValidContext() with
+        {
+            Mode = mode
+        };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsSuccess).IsTrue();
         var isDisabled = !result.Value.IsAvailable(Capability.AgiIncludedInNet);
@@ -274,7 +323,7 @@ public sealed class ValidationEngineTests
             Agi = new AgiSettings(SpouseStatus.SpouseNotWorking, 2),
         };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsSuccess).IsTrue();
         await Assert.That(result.Warnings.Any(w => w.Code == ErrorCode.AgiNotApplicable)).IsTrue();
@@ -289,7 +338,7 @@ public sealed class ValidationEngineTests
             Apply5746Discount = true,
         };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsSuccess).IsTrue();
         await Assert.That(result.Warnings.Any(w => w.Code == ErrorCode.Discount5746NotApplicable)).IsTrue();
@@ -307,40 +356,10 @@ public sealed class ValidationEngineTests
             Months = months,
         };
 
-        var result = Engine.Validate(context, YearProvider, ConstantsProvider);
+        var result = Engine.Validate(context);
 
         await Assert.That(result.IsSuccess).IsTrue();
         await Assert.That(result.Warnings.Any(w => w.Code == ErrorCode.RnDDaysNotApplicable)).IsTrue();
-    }
-
-    [Test]
-    public async Task ValidateProviders_Should_Succeed_When_ProvidersAreValid()
-    {
-        var result = Engine.ValidateProviders(YearProvider, ConstantsProvider);
-
-        await Assert.That(result.IsSuccess).IsTrue();
-    }
-
-    [Test]
-    public async Task ValidateCapabilities_Should_ReturnCapabilities_When_ValidInput()
-    {
-        var result = Engine.ValidateCapabilities(
-            2024, EmployeeTypeId.Standard, false, CalculationMode.GrossToNet,
-            YearProvider, ConstantsProvider);
-
-        await Assert.That(result.IsSuccess).IsTrue();
-        await Assert.That(result.Value).IsNotNull();
-    }
-
-    [Test]
-    public async Task ValidateCapabilities_Should_Fail_When_YearNotSupported()
-    {
-        var result = Engine.ValidateCapabilities(
-            1900, EmployeeTypeId.Standard, false, CalculationMode.GrossToNet,
-            YearProvider, ConstantsProvider);
-
-        await Assert.That(result.IsFailure).IsTrue();
-        await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.YearNotSupported)).IsTrue();
     }
 
     private static ValidationContext CreateValidContext() => new()

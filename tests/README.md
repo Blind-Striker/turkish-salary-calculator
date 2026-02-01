@@ -8,8 +8,8 @@ The test suite consists of two main categories:
 
 | Category | Purpose | Count | Run by Default |
 |----------|---------|-------|----------------|
-| **Unit Tests** | Test individual components in isolation | ~227 | ✅ Yes |
-| **Parity Tests** | Verify .NET matches Angular (source of truth) | ~76 | ❌ No (`[Explicit]`) |
+| **Unit Tests** | Test individual components in isolation | ~365 | ✅ Yes |
+| **Parity Tests** | Verify .NET matches Angular (source of truth) | ~127 | ❌ No (`[Explicit]`) |
 
 ## Test Framework
 
@@ -41,6 +41,7 @@ tests/
 └── Turkish.HRSolutions.SalaryCalculator.Tests/
     ├── Unit/                                         # Unit tests by layer
     │   ├── Application/                              # Application layer tests
+    │   │   ├── Builders/                            # Fluent builder consistency tests
     │   │   ├── Mappings/                            # Mapping extension tests
     │   │   ├── Requests/                            # Request/MonthlyInput tests
     │   │   └── Validation/                          # ValidationEngine tests
@@ -54,7 +55,8 @@ tests/
     └── Parity/                                       # Angular parity tests
         ├── AngularParityTests.cs                     # Main parity test class
         ├── FieldComparer.cs                          # Tolerance-based comparison
-        └── FixtureModels.cs                          # JSON deserialization models
+        ├── FixtureModels.cs                          # JSON models (per-month arrays)
+        └── ParityScenarios.cs                        # Provider-driven test scenarios
 ```
 
 ## Running Tests
@@ -133,6 +135,7 @@ Tests mirror the source structure:
 | Source Layer | Test Location |
 |--------------|---------------|
 | `Application/Requests/` | `Unit/Application/Requests/` |
+| `Application/Builders/` | `Unit/Application/Builders/` |
 | `Application/Mappings/` | `Unit/Application/Mappings/` |
 | `Application/Validation/` | `Unit/Application/Validation/` |
 | `Common/Results/` | `Unit/Common/Results/` |
@@ -141,6 +144,16 @@ Tests mirror the source structure:
 | `Infrastructure/DependencyInjection/` | `Unit/Infrastructure/DependencyInjection/` |
 | `Infrastructure/Providers/` | `Unit/Infrastructure/Providers/` |
 | `Infrastructure/Services/` | `Unit/Infrastructure/Services/` |
+
+### Notable Test Classes
+
+| Test Class | Purpose |
+|------------|---------|
+| `BuilderConsistencyTests` | Verifies that mode-specific builders (`UseGrossToNet`, etc.) and request-based builders (`SalaryCalculationRequest.For()`) produce identical results |
+| `InputConstructionParityTests` | Ensures different `MonthlyInput` construction methods (Uniform, FillForward, FillBackward, manual) produce identical calculation outputs |
+| `GrossToNetBuilderTests` | Tests for the `IGrossToNetBuilder` fluent interface |
+| `NetToGrossBuilderTests` | Tests for the `INetToGrossBuilder` including `WithAgiIncludedInNet` |
+| `TotalToGrossBuilderTests` | Tests for the `ITotalToGrossBuilder` fluent interface |
 
 ### Example Unit Test
 
@@ -206,10 +219,11 @@ The parity testing architecture uses C# as the single source of truth for test s
 
 | File | Purpose |
 |------|---------|
-| `ParityScenarios.cs` | Provider-driven data source with ~76 test scenarios |
+| `ParityScenarios.cs` | Provider-driven data source with ~127 test scenarios |
 | `AngularCalculatorClient.cs` | CLI wrapper (handles init, bun install) |
 | `calculate.ts` | Pure Angular CLI tool (stdin JSON → stdout JSON) |
 | `AngularParityTests.cs` | TUnit test class using `[MethodDataSource]` |
+| `FixtureModels.cs` | JSON models including per-month array support |
 
 **Benefits:**
 
@@ -222,8 +236,8 @@ The parity testing architecture uses C# as the single source of truth for test s
 
 **Performance:**
 
-- ~1.7s per test (CLI startup overhead)
-- 4 parallel tests = ~33s for 76 tests
+- ~30ms per test average (with parallelization)
+- 4 parallel tests = ~4s for 127 tests
 - Acceptable for explicit parity tests
 
 ### Comparison Tolerance
@@ -250,18 +264,64 @@ Current parity scenarios cover (all derived from library providers):
 - **5746 Discount**: Employee types where `EmployerSgkDiscount5746Applicable` is true
 - **Education Exemption**: R&D types with rates from `ConstantsProvider.AllEducationTypes`
 - **High Salary**: Tax bracket boundary testing
+- **New Hire Scenarios**: Employees starting mid-year with zero salary months (see below)
+
+### New Hire Scenarios (Per-Month Arrays)
+
+New hire scenarios test employees who start mid-year, with zero salary/worked days for months before employment. These scenarios use **per-month arrays** instead of uniform values.
+
+**Supported scenarios:**
+
+| Scenario | Description |
+|----------|-------------|
+| `newhire-march-50000` | Standard employee starting March |
+| `newhire-july-60000` | Standard employee starting July |
+| `newhire-november-55000` | Standard employee starting November |
+| `newhire-march-partial` | Partial first month (15 days) |
+| `newhire-raise` | New hire with mid-year salary raise |
+| `newhire-teknokent-may` | Teknokent employee with R&D days |
+| `newhire-nettogross-june` | NetToGross binary search with zeros |
+| `newhire-totaltogross-august` | TotalToGross with zero months |
+
+**TestInput per-month arrays:**
+
+```csharp
+// Optional arrays in TestInput (when null, uses uniform values)
+public IReadOnlyList<decimal>? MonthlySalaryAmounts { get; init; }
+public IReadOnlyList<int>? MonthlyWorkedDays { get; init; }
+public IReadOnlyList<int>? MonthlyRnDDays { get; init; }
+```
+
+**Angular CLI support:**
+
+The Angular CLI (`calculate.ts`) accepts optional per-month arrays:
+
+```json
+{
+  "year": 2026,
+  "calculationMode": "GROSS_TO_NET",
+  "employeeTypeId": 1,
+  "salaryAmount": 50000,
+  "workedDays": 30,
+  "researchAndDevelopmentWorkedDays": 0,
+  "monthlySalaryAmounts": [0, 0, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000],
+  "monthlyWorkedDays": [0, 0, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
+  "monthlyRnDDays": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ...
+}
+```
 
 ### Adding New Parity Scenarios
 
 Scenarios are derived from library providers. To add a new category, edit `ParityScenarios.cs`:
 
+**Uniform scenarios (same value all 12 months):**
+
 ```csharp
-// Use provider data instead of hardcoded values
 private static IEnumerable<ParityScenario> GetMyNewScenarios()
 {
     var year = LatestYear;  // From YearProvider
 
-    // Loop through provider data
     foreach (var empType in AllEmployeeTypes.Where(t => t.SomeProperty))
     {
         yield return CreateScenario(
@@ -274,23 +334,49 @@ private static IEnumerable<ParityScenario> GetMyNewScenarios()
             workedDays: 30);
     }
 }
+```
 
-// Then include in GetAllScenarios():
+**Per-month array scenarios (new hire, varying salaries):**
+
+```csharp
+private static IEnumerable<ParityScenario> GetMyNewHireScenarios()
+{
+    var year = LatestYear;
+    var standardType = GetEmployeeType(1);
+
+    // New hire starting in April with salary raise in September
+    yield return CreateMonthlyInputScenario(
+        year + "-newhire-raise",
+        "Year " + year + ", New hire April with raise in September",
+        year,
+        "GROSS_TO_NET",
+        standardType.Id,
+        monthlySalaries: [0, 0, 0, 40_000, 40_000, 40_000, 40_000, 40_000, 60_000, 60_000, 60_000, 60_000],
+        monthlyWorkedDays: [0, 0, 0, 30, 30, 30, 30, 30, 30, 30, 30, 30],
+        monthlyRnDDays: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+}
+```
+
+**Key points:**
+
+- Use `AvailableYears`, `AllEmployeeTypes`, `AllAgiOptions`, `AllEducationTypes` from providers
+- Check properties like `ResearchAndDevelopmentTaxExemption`, `EmployerSgkDiscount5746Applicable`
+- Use `empType.Text` for names instead of hardcoded switch statements
+- Use `CreateMonthlyInputScenario` for scenarios with per-month variation
+
+Then include in `GetAllScenarios()`:
+
+```csharp
 public static IEnumerable<Func<ParityScenario>> GetAllScenarios()
 {
     // ... existing scenarios ...
 
-    foreach (var scenario in GetMyNewScenarios())
+    foreach (var scenario in GetNewHireScenarios())
     {
         yield return () => scenario;
     }
 }
 ```
-
-**Key points:**
-- Use `AvailableYears`, `AllEmployeeTypes`, `AllAgiOptions`, `AllEducationTypes` from providers
-- Check properties like `ResearchAndDevelopmentTaxExemption`, `EmployerSgkDiscount5746Applicable`
-- Use `empType.Text` for names instead of hardcoded switch statements
 
 Run the tests to verify the new scenario passes.
 
@@ -370,7 +456,7 @@ dotnet test -- --report-trx --report-trx-filename results.trx
    'bun' is not recognized as a command
    ```
 
-   Fix: Install Bun 1.0+ from https://bun.sh
+   Fix: Install Bun 1.0+ from <https://bun.sh>
 
 3. **Dependencies missing**:
 
@@ -404,5 +490,3 @@ dotnet test -- --output Detailed --log-level Debug
 
 - [TUnit Documentation](https://tunit.dev/)
 - [Angular Source (maas-hesaplama)](https://github.com/nuryagdym/maas-hesaplama)
-- [Architecture V2](../docs/ARCHITECTURE-V2.md)
-- [Parity Testing Handover](../docs/ANGULAR-PARITY-TESTING-HANDOVER.md)

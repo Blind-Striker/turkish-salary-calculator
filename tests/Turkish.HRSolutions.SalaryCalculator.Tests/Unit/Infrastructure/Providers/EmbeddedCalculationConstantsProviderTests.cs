@@ -1,3 +1,5 @@
+#pragma warning disable CA1707
+
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Tests.Unit.Infrastructure.Providers;

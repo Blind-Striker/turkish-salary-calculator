@@ -1,9 +1,9 @@
-using Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
 using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Services;
 
@@ -13,22 +13,22 @@ namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Services;
 /// </summary>
 internal sealed class SalaryCalculatorMetadataService : ISalaryCalculatorMetadata
 {
-    private readonly IValidationEngine _validationEngine;
+    private readonly ICapabilityResolver _capabilityResolver;
     private readonly IYearParameterProvider _yearProvider;
     private readonly ICalculationConstantsProvider _constantsProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SalaryCalculatorMetadataService"/> class.
     /// </summary>
-    /// <param name="validationEngine">Validation engine used for capability queries and provider validation.</param>
+    /// <param name="capabilityResolver">Resolver for determining calculator capabilities.</param>
     /// <param name="yearProvider">Provider for year-specific parameters.</param>
     /// <param name="constantsProvider">Provider for calculation constants.</param>
     public SalaryCalculatorMetadataService(
-        IValidationEngine validationEngine,
+        ICapabilityResolver capabilityResolver,
         IYearParameterProvider yearProvider,
         ICalculationConstantsProvider constantsProvider)
     {
-        _validationEngine = validationEngine ?? throw new ArgumentNullException(nameof(validationEngine));
+        _capabilityResolver = capabilityResolver ?? throw new ArgumentNullException(nameof(capabilityResolver));
         _yearProvider = yearProvider ?? throw new ArgumentNullException(nameof(yearProvider));
         _constantsProvider = constantsProvider ?? throw new ArgumentNullException(nameof(constantsProvider));
     }
@@ -41,13 +41,11 @@ internal sealed class SalaryCalculatorMetadataService : ISalaryCalculatorMetadat
     {
         return
         [
-            .. _constantsProvider.AllEmployeeTypes
+            .. _constantsProvider
+                .AllEmployeeTypes
                 .Where(t => t.Show) // Only include types marked as visible
                 .OrderBy(t => t.Order)
-                .Select(t => new EmployeeTypeInfo(
-                    EmployeeTypeId.FromId(t.Id),
-                    t.Text,
-                    t.Desc)),
+                .Select(t => new EmployeeTypeInfo(EmployeeTypeId.FromId(t.Id), t.Text, t.Desc)),
         ];
     }
 
@@ -56,10 +54,9 @@ internal sealed class SalaryCalculatorMetadataService : ISalaryCalculatorMetadat
     {
         return
         [
-            .. _constantsProvider.AllEducationTypes
-                .Select(t => new EducationTypeInfo(
-                    EducationTypeId.FromId(t.Id),
-                    t.Text)),
+            .. _constantsProvider
+                .AllEducationTypes
+                .Select(t => new EducationTypeInfo(EducationTypeId.FromId(t.Id), t.Text)),
         ];
     }
 
@@ -78,26 +75,18 @@ internal sealed class SalaryCalculatorMetadataService : ISalaryCalculatorMetadat
     }
 
     /// <inheritdoc />
-    public Result<CapabilityInfo> GetCapabilities(
-        int year,
-        EmployeeTypeId? employeeType = null,
-        bool isPensioner = false)
+    public Result<CapabilityInfo> GetCapabilities(int year, EmployeeTypeId? employeeType = null, bool isPensioner = false)
     {
-        return _validationEngine.ValidateCapabilities(
+        // Delegate directly to ICapabilityResolver - no more static mode hack
+        return _capabilityResolver.ResolveCapabilities(
             year,
             employeeType ?? EmployeeTypeId.Standard,
             isPensioner,
-            CalculationMode.GrossToNet, // Mode doesn't affect most capability checks
-            _yearProvider,
-            _constantsProvider);
+            CalculationMode.GrossToNet); // Mode only affects AgiIncludedInNet, which is N/A for metadata queries
     }
 
     /// <inheritdoc />
-    public bool IsCapabilityAvailable(
-        Capability capability,
-        int year,
-        EmployeeTypeId? employeeType = null,
-        bool isPensioner = false)
+    public bool IsCapabilityAvailable(Capability capability, int year, EmployeeTypeId? employeeType = null, bool isPensioner = false)
     {
         var result = GetCapabilities(year, employeeType, isPensioner);
         return result.IsSuccess && result.Value.IsAvailable(capability);

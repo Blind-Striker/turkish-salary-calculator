@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
+using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 
@@ -16,7 +17,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 /// This is the default provider used when no custom provider is configured.
 /// </para>
 /// </remarks>
-public sealed class EmbeddedYearParameterProvider : Application.Providers.IYearParameterProvider
+public sealed class EmbeddedYearParameterProvider : IYearParameterProvider
 {
     private const string ResourceName = "Turkish.HRSolutions.SalaryCalculator.Assets.year-constants.json";
 
@@ -31,18 +32,14 @@ public sealed class EmbeddedYearParameterProvider : Application.Providers.IYearP
     {
         _lazyParameters = new Lazy<Result<YearParameters>>(LoadFromEmbeddedResource);
         _lazyYearLookup = new Lazy<ImmutableDictionary<int, YearParameter>>(BuildYearLookup);
-        _lazyAvailableYears = new Lazy<IReadOnlyList<int>>(() =>
-            [.. _lazyYearLookup.Value.Keys.Order()]);
+        _lazyAvailableYears = new Lazy<IReadOnlyList<int>>(() => [.. _lazyYearLookup.Value.Keys.Order()]);
     }
 
     /// <inheritdoc />
     public IReadOnlyList<int> AvailableYears => _lazyAvailableYears.Value;
 
     /// <inheritdoc />
-    public YearParameter? GetParameter(int year)
-    {
-        return _lazyYearLookup.Value.TryGetValue(year, out var param) ? param : null;
-    }
+    public YearParameter? GetParameter(int year) => CollectionExtensions.GetValueOrDefault(_lazyYearLookup.Value, year);
 
     /// <inheritdoc />
     public bool HasYear(int year) => _lazyYearLookup.Value.ContainsKey(year);

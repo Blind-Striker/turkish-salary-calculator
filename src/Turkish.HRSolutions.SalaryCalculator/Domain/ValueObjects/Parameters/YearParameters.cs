@@ -3,7 +3,7 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 
-namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 public record YearParameters([property: JsonPropertyName("yearParameters")] ImmutableList<YearParameter> Parameters);
 

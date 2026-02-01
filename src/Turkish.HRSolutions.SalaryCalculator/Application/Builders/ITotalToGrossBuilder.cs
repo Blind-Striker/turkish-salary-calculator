@@ -1,8 +1,8 @@
-using Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
 using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
 using Turkish.HRSolutions.SalaryCalculator.Application.Responses;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Builders;
 
@@ -37,7 +37,7 @@ public interface ITotalToGrossBuilder
     public ITotalToGrossBuilder WithRnDSettings(Action<IRnDBuilder> configure);
 
     /// <summary>Builds the request object without calculating (for serialization/inspection).</summary>
-    public TotalToGrossRequest Build(IEnumerable<MonthlyInput> months);
+    public SalaryCalculationRequest Build(IEnumerable<MonthlyInput> months);
 
     /// <summary>Calculate with uniform total cost budget for all 12 months.</summary>
     public Result<YearlySalarySnapshot> Calculate(decimal totalCostBudget);

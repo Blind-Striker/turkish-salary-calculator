@@ -6,20 +6,52 @@ namespace Turkish.HRSolutions.SalaryCalculator.Common.Results;
 /// Represents the result of an operation that has no return value.
 /// Contains either success or a collection of errors.
 /// </summary>
-public sealed class Result
+/// <remarks>
+/// <para>
+/// This is the base class for all result types. Use <see cref="Result"/> when an operation
+/// has no return value, and <see cref="Result{T}"/> when it returns a value.
+/// </para>
+/// <para>
+/// <see cref="Result{T}"/> inherits from <see cref="Result"/>, allowing polymorphic handling
+/// of results when the value is not needed:
+/// <code>
+/// Result result = calculator.Calculate(request); // Upcast from Result&lt;T&gt;
+/// if (result.IsFailure) HandleErrors(result.Errors);
+/// </code>
+/// </para>
+/// </remarks>
+public class Result
 {
-    private readonly IReadOnlyList<Error>? _errors;
+    private readonly IReadOnlyList<Error> _errors;
 
-    private Result()
+    /// <summary>
+    /// Initializes a new successful result.
+    /// </summary>
+    protected Result()
     {
         IsSuccess = true;
         _errors = [];
     }
 
-    private Result(IReadOnlyList<Error> errors)
+    /// <summary>
+    /// Initializes a new successful result with warnings.
+    /// </summary>
+    /// <param name="warnings">The warnings to include.</param>
+    protected Result(IReadOnlyList<Error> warnings)
+    {
+        IsSuccess = true;
+        _errors = warnings;
+    }
+
+    /// <summary>
+    /// Initializes a new failed result.
+    /// </summary>
+    /// <param name="errors">The errors that caused the failure.</param>
+    /// <param name="isFailure">Must be true to indicate this is a failure constructor.</param>
+    protected Result(IReadOnlyList<Error> errors, bool isFailure)
     {
         _errors = errors;
-        IsSuccess = false;
+        IsSuccess = !isFailure;
     }
 
     /// <summary>
@@ -33,9 +65,9 @@ public sealed class Result
     public bool IsFailure => !IsSuccess;
 
     /// <summary>
-    /// Gets all errors (empty if successful).
+    /// Gets all errors (empty if successful without warnings).
     /// </summary>
-    public IReadOnlyList<Error> Errors => _errors ?? [];
+    public IReadOnlyList<Error> Errors => _errors;
 
     /// <summary>
     /// Gets only blocking errors (severity = Error).
@@ -60,20 +92,25 @@ public sealed class Result
     public static Result Success() => new();
 
     /// <summary>
+    /// Creates a successful result with warnings.
+    /// </summary>
+    public static Result Success(IEnumerable<Error> warnings) => new([.. warnings]);
+
+    /// <summary>
     /// Creates a failed result with a single error.
     /// </summary>
-    public static Result Failure(Error error) => new([error]);
+    public static Result Failure(Error error) => new([error], isFailure: true);
 
     /// <summary>
     /// Creates a failed result with multiple errors.
     /// </summary>
-    public static Result Failure(IEnumerable<Error> errors) => new([.. errors]);
+    public static Result Failure(IEnumerable<Error> errors) => new([.. errors], isFailure: true);
 
     /// <summary>
     /// Creates a failed result with a single error from code and message.
     /// </summary>
     public static Result Failure(ErrorCode code, string message) =>
-        new([new Error(code, message)]);
+        new([new Error(code, message)], isFailure: true);
 
     /// <summary>
     /// Creates a failed result from a single error (alternate for implicit operator).
@@ -97,33 +134,30 @@ public sealed class Result
 /// Contains either the value (with optional warnings) or a collection of errors.
 /// </summary>
 /// <typeparam name="T">The type of the return value.</typeparam>
-public sealed class Result<T>
+/// <remarks>
+/// <para>
+/// Inherits from <see cref="Result"/>, allowing polymorphic handling when the value is not needed.
+/// </para>
+/// </remarks>
+public sealed class Result<T> : Result
 {
     private readonly T? _value;
-    private readonly IReadOnlyList<Error> _errors;
 
-    private Result(T value, IReadOnlyList<Error>? warnings = null)
+    private Result(T value)
     {
         _value = value;
-        _errors = warnings ?? [];
-        IsSuccess = true;
+    }
+
+    private Result(T value, IReadOnlyList<Error> warnings)
+        : base(warnings)
+    {
+        _value = value;
     }
 
     private Result(IReadOnlyList<Error> errors)
+        : base(errors, isFailure: true)
     {
-        _errors = errors;
-        IsSuccess = false;
     }
-
-    /// <summary>
-    /// Returns true if the operation succeeded.
-    /// </summary>
-    public bool IsSuccess { get; }
-
-    /// <summary>
-    /// Returns true if the operation failed.
-    /// </summary>
-    public bool IsFailure => !IsSuccess;
 
     /// <summary>
     /// Gets the value if successful. Throws if failed.
@@ -132,27 +166,7 @@ public sealed class Result<T>
     public T Value => IsSuccess
         ? _value!
         : throw new InvalidOperationException(
-            $"Cannot access value of failed result. Errors: {string.Join("; ", _errors.Select(e => e.Message))}");
-
-    /// <summary>
-    /// Gets all errors (blocking errors if failed, warnings if successful).
-    /// </summary>
-    public IReadOnlyList<Error> Errors => _errors;
-
-    /// <summary>
-    /// Gets only blocking errors (severity = Error).
-    /// </summary>
-    public IEnumerable<Error> BlockingErrors => Errors.Where(e => e.IsError);
-
-    /// <summary>
-    /// Gets only warnings (severity = Warning).
-    /// </summary>
-    public IEnumerable<Error> Warnings => Errors.Where(e => e.IsWarning);
-
-    /// <summary>
-    /// Returns true if there are any warnings.
-    /// </summary>
-    public bool HasWarnings => Errors.Any(e => e.IsWarning);
+            $"Cannot access value of failed result. Errors: {string.Join("; ", Errors.Select(e => e.Message))}");
 
     // ─── Access Methods ───
 
@@ -199,17 +213,17 @@ public sealed class Result<T>
     /// <summary>
     /// Creates a failed result with a single error.
     /// </summary>
-    public static Result<T> Failure(Error error) => new([error]);
+    public static new Result<T> Failure(Error error) => new([error]);
 
     /// <summary>
     /// Creates a failed result with multiple errors.
     /// </summary>
-    public static Result<T> Failure(IEnumerable<Error> errors) => new([.. errors]);
+    public static new Result<T> Failure(IEnumerable<Error> errors) => new([.. errors]);
 
     /// <summary>
     /// Creates a failed result with a single error from code and message.
     /// </summary>
-    public static Result<T> Failure(ErrorCode code, string message) =>
+    public static new Result<T> Failure(ErrorCode code, string message) =>
         new([new Error(code, message)]);
 
     /// <summary>
@@ -221,12 +235,12 @@ public sealed class Result<T>
     /// <summary>
     /// Creates a failed result from a single error (alternate for implicit operator).
     /// </summary>
-    public static Result<T> FromError(Error error) => Failure(error);
+    public static new Result<T> FromError(Error error) => Failure(error);
 
     /// <summary>
     /// Creates a failed result from multiple errors (alternate for implicit operator).
     /// </summary>
-    public static Result<T> FromErrors(IReadOnlyList<Error> errors) => Failure(errors);
+    public static new Result<T> FromErrors(IReadOnlyList<Error> errors) => Failure(errors);
 
     // ─── Implicit Conversions ───
 
@@ -243,6 +257,6 @@ public sealed class Result<T>
     {
         isSuccess = IsSuccess;
         value = _value;
-        errors = _errors;
+        errors = Errors;
     }
 }

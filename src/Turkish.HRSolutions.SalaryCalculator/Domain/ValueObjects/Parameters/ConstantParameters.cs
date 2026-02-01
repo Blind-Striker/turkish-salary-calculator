@@ -3,7 +3,7 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 
-namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 public record ConstantParameters(
     [property: JsonPropertyName("CALCULATION_CONSTANTS")] CalculationConstant CalculationConstants,

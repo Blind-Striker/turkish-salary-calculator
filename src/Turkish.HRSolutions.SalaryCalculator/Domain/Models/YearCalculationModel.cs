@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Models;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Domain.Models;
 

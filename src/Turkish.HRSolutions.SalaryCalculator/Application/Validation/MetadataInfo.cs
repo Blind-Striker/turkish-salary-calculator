@@ -1,4 +1,4 @@
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 

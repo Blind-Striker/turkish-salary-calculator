@@ -1,4 +1,4 @@
-namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 /// <summary>
 /// Identifies an employee type for salary calculation.

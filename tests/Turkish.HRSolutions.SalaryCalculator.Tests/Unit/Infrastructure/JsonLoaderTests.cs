@@ -1,3 +1,5 @@
+#pragma warning disable CA1707
+
 using System.Text;
 using System.Text.Json.Serialization;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;

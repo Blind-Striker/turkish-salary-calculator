@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
+using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 
@@ -20,7 +22,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 /// This is the default provider used when no custom provider is configured.
 /// </para>
 /// </remarks>
-public sealed class EmbeddedCalculationConstantsProvider : Application.Providers.ICalculationConstantsProvider
+public sealed class EmbeddedCalculationConstantsProvider : ICalculationConstantsProvider
 {
     private const string ResourceName = "Turkish.HRSolutions.SalaryCalculator.Assets.calculation-constants.json";
 
@@ -79,68 +81,19 @@ public sealed class EmbeddedCalculationConstantsProvider : Application.Providers
         GetEmployeeType(typeId.Value);
 
     /// <inheritdoc />
-    public EmployeeTypeConstant? GetEmployeeType(int typeId) =>
-        _lazyEmployeeTypeLookup.Value.TryGetValue(typeId, out var constant) ? constant : null;
+    public EmployeeTypeConstant? GetEmployeeType(int typeId) => CollectionExtensions.GetValueOrDefault(_lazyEmployeeTypeLookup.Value, typeId);
 
     /// <inheritdoc />
-    public DisabilityConstant? GetDisability(DisabilityDegreeId degreeId) =>
-        GetDisability(degreeId.Value);
+    public DisabilityConstant? GetDisability(DisabilityDegreeId degreeId) => GetDisability(degreeId.Value);
 
     /// <inheritdoc />
-    public DisabilityConstant? GetDisability(int degree) =>
-        _lazyDisabilityLookup.Value.TryGetValue(degree, out var constant) ? constant : null;
+    public DisabilityConstant? GetDisability(int degree) => CollectionExtensions.GetValueOrDefault(_lazyDisabilityLookup.Value, degree);
 
     /// <inheritdoc />
-    public EmployeeEducationTypeConstant? GetEducationType(EducationTypeId typeId) =>
-        _lazyEducationTypeLookup.Value.TryGetValue(typeId.Value, out var constant) ? constant : null;
+    public EmployeeEducationTypeConstant? GetEducationType(EducationTypeId typeId) => CollectionExtensions.GetValueOrDefault(_lazyEducationTypeLookup.Value, typeId.Value);
 
     /// <inheritdoc />
-    public AgiConstant? GetAgi(int agiId) =>
-        _lazyAgiLookup.Value.TryGetValue(agiId, out var constant) ? constant : null;
-
-    /// <inheritdoc />
-    public double GetAgiRate(SpouseStatus spouseStatus, int numberOfChildren)
-    {
-        var agiOptions = AllAgiOptions;
-        if (agiOptions.Count == 0)
-        {
-            return 0d;
-        }
-
-        // Use SpouseStatus.EffectiveAgiTypeKey directly
-        var typeFilter = spouseStatus.EffectiveAgiTypeKey;
-
-        var filtered = agiOptions.Where(a => a.Type.Equals(typeFilter, StringComparison.OrdinalIgnoreCase)).ToList();
-        if (filtered.Count == 0)
-        {
-            return 0d;
-        }
-
-        // Unmarried has a single entry (no children matching)
-        if (spouseStatus == SpouseStatus.Unmarried)
-        {
-            return filtered[0].Rate;
-        }
-
-        // Match by equality operator + children count
-        var match = filtered.FirstOrDefault(p => p.Equality switch
-        {
-            "Eq" => numberOfChildren == p.Children,
-            "Gt" => numberOfChildren > p.Children,
-            "Gte" => numberOfChildren >= p.Children,
-            "Lt" => numberOfChildren < p.Children,
-            "Lte" => numberOfChildren <= p.Children,
-            _ => false,
-        });
-
-        if (match is not null)
-        {
-            return match.Rate;
-        }
-
-        // Fallback: closest match by children difference
-        return filtered.OrderBy(p => Math.Abs(p.Children - numberOfChildren)).First().Rate;
-    }
+    public AgiConstant? GetAgi(int agiId) => CollectionExtensions.GetValueOrDefault(_lazyAgiLookup.Value, agiId);
 
     /// <summary>
     /// Gets the result of loading the embedded resource.

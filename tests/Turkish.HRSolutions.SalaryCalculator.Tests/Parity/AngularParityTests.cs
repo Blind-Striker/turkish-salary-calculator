@@ -1,12 +1,14 @@
+#pragma warning disable CA1707
+
 using Microsoft.Extensions.DependencyInjection;
 using TUnit.Core.Interfaces;
-using Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
 using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
 using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
 using Turkish.HRSolutions.SalaryCalculator.Application.Responses;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.DependencyInjection;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Tests.Parity;
@@ -41,7 +43,7 @@ public class AngularParityTests
     public async Task Scenario_Should_Match_Angular(ParityScenario scenario)
     {
         // 1. Call Angular CLI
-        var angularResponse = await AngularClient.CalculateAsync(scenario.Input);
+        var angularResponse = await AngularClient.CalculateAsync(scenario.Input).ConfigureAwait(false);
 
         await Assert.That(angularResponse.Success)
             .IsTrue()
@@ -73,13 +75,17 @@ public class AngularParityTests
 
     private Result<YearlySalarySnapshot> CalculateWithDotNet(TestInput input)
     {
-        var months = MonthsOfYear.AllMonths
-            .Select(month => new MonthlyInput(
-                month,
-                input.SalaryAmount,
-                (int)input.WorkedDays,
-                (int)input.ResearchAndDevelopmentWorkedDays))
-            .ToList();
+        // Build monthly inputs - use per-month arrays if provided, otherwise uniform values
+        var allMonths = MonthsOfYear.AllMonths;
+        var months = new List<MonthlyInput>(12);
+
+        for (var i = 0; i < 12; i++)
+        {
+            var salary = input.MonthlySalaryAmounts?[i] ?? input.SalaryAmount;
+            var workedDays = input.MonthlyWorkedDays?[i] ?? (int)input.WorkedDays;
+            var rndDays = input.MonthlyRnDDays?[i] ?? (int)input.ResearchAndDevelopmentWorkedDays;
+            months.Add(new MonthlyInput(allMonths[i], salary, workedDays, rndDays));
+        }
 
         var employeeTypeId = EmployeeTypeId.FromId(input.EmployeeTypeId);
         var disability = DisabilityDegreeId.FromDegree(input.DisabilityDegree);
@@ -88,7 +94,8 @@ public class AngularParityTests
 
         return input.CalculationMode switch
         {
-            "GROSS_TO_NET" => DotNet.Calculator.Calculate(new GrossToNetRequest(
+            "GROSS_TO_NET" => DotNet.Calculator.Calculate(new SalaryCalculationRequest(
+                CalculationMode.GrossToNet,
                 input.Year,
                 months,
                 employeeTypeId,
@@ -98,7 +105,8 @@ public class AngularParityTests
                 input.ApplyEmployerDiscount5746,
                 agi,
                 rnd)),
-            "NET_TO_GROSS" => DotNet.Calculator.Calculate(new NetToGrossRequest(
+            "NET_TO_GROSS" => DotNet.Calculator.Calculate(new SalaryCalculationRequest(
+                CalculationMode.NetToGross,
                 input.Year,
                 months,
                 employeeTypeId,
@@ -109,7 +117,8 @@ public class AngularParityTests
                 agi,
                 rnd,
                 input.IsAgiIncludedNet)),
-            "TOTAL_TO_GROSS" => DotNet.Calculator.Calculate(new TotalToGrossRequest(
+            "TOTAL_TO_GROSS" => DotNet.Calculator.Calculate(new SalaryCalculationRequest(
+                CalculationMode.TotalToGross,
                 input.Year,
                 months,
                 employeeTypeId,
@@ -119,7 +128,7 @@ public class AngularParityTests
                 input.ApplyEmployerDiscount5746,
                 agi,
                 rnd)),
-            _ => throw new InvalidOperationException($"Unsupported calculation mode: {input.CalculationMode}")
+            _ => throw new InvalidOperationException($"Unsupported calculation mode: {input.CalculationMode}"),
         };
     }
 
@@ -163,7 +172,7 @@ public class AngularParityTests
             0.75m => (SpouseStatus.SpouseWorking, 3),
             0.80m => (SpouseStatus.SpouseWorking, 4),
             0.85m => (SpouseStatus.SpouseWorking, 5),
-            _ => (SpouseStatus.Unmarried, 0)
+            _ => (SpouseStatus.Unmarried, 0),
         };
     }
 
@@ -200,7 +209,7 @@ public class AngularParityTests
             TestId = scenario.TestId,
             Description = scenario.Description,
             Passed = results.All(f => f.Passed),
-            FieldResults = results
+            FieldResults = results,
         };
     }
 

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Models;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 using static Turkish.HRSolutions.SalaryCalculator.Domain.Services.CalculationFormulasDomainService;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Domain.Models;
@@ -112,7 +113,6 @@ public sealed class MonthCalculationModel
         var disabilityDegree = _parameters.DisabilityDegree;
         var isPensioner = _parameters.IsPensioner;
 
-        // Angular parity: Use STANDARD employee type (not actual) and FULL month (30 days)
         // The cumulative min wage tax base represents what a standard full-time employee would accumulate
         return CalcTaxBaseOfGivenGrossSalary(
             yearParam,
@@ -168,7 +168,8 @@ public sealed class MonthCalculationModel
         _employeeIncomeTax = taxValue;
         _appliedTaxSlices = [.. appliedSlices];
 
-        _employeeIncomeTaxExemptionAmount = CalcEmployeeIncomeTaxExemption(yearParam, _minGrossWage, empTypeConst, _parameters.StandardEmployeeTypeConstant, calcConstants, EmployeeIncomeTax, disabilityDegree,
+        _employeeIncomeTaxExemptionAmount = CalcEmployeeIncomeTaxExemption(yearParam, _minGrossWage, empTypeConst, _parameters.StandardEmployeeTypeConstant, calcConstants,
+            EmployeeIncomeTax, disabilityDegree,
             cumulativeMinWageIncomeTaxBase, applyMinWageTaxExemption);
         _agiAmount = CalcAgi(yearParam, _minGrossWage, empTypeConst, agiRate, _employeeIncomeTax, isAgiCalculationEnabled);
         _netSalary = CalcNetSalary(
@@ -236,7 +237,7 @@ public sealed class MonthCalculationModel
             middle = (left + right) / 2m;
         }
 
-        // Angular parity: return best approximation after max iterations
+        // Return the best approximation after max iterations
         return middle;
     }
 

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
@@ -17,10 +18,8 @@ internal static class JsonLoader
     /// <param name="typeInfo">The source-generated type info for AOT-safe deserialization.</param>
     /// <param name="sourceName">A descriptive name for the source (for error messages).</param>
     /// <returns>A result containing the deserialized object or errors.</returns>
-    public static Result<T> LoadFromStream<T>(
-        Stream stream,
-        JsonTypeInfo<T> typeInfo,
-        string sourceName) where T : class
+    public static Result<T> LoadFromStream<T>(Stream stream, JsonTypeInfo<T> typeInfo, string sourceName)
+        where T : class
     {
         ArgumentNullException.ThrowIfNull(stream);
         ArgumentNullException.ThrowIfNull(typeInfo);
@@ -53,10 +52,8 @@ internal static class JsonLoader
     /// <param name="typeInfo">The source-generated type info for AOT-safe deserialization.</param>
     /// <param name="sourceName">A descriptive name for the source (for error messages).</param>
     /// <returns>A result containing the deserialized object or errors.</returns>
-    public static Result<T> LoadFromString<T>(
-        string json,
-        JsonTypeInfo<T> typeInfo,
-        string sourceName) where T : class
+    public static Result<T> LoadFromString<T>(string json, JsonTypeInfo<T> typeInfo, string sourceName)
+        where T : class
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(json);
         ArgumentNullException.ThrowIfNull(typeInfo);
@@ -68,16 +65,11 @@ internal static class JsonLoader
 
             return result is not null
                 ? Result<T>.Success(result)
-                : Result<T>.Failure(Error.Infrastructure(
-                    ErrorCode.JsonDeserializationFailed,
-                    $"Deserialization of '{sourceName}' returned null."));
+                : Result<T>.Failure(Error.Infrastructure(ErrorCode.JsonDeserializationFailed, $"Deserialization of '{sourceName}' returned null."));
         }
         catch (JsonException ex)
         {
-            return Result<T>.Failure(Error.Infrastructure(
-                ErrorCode.JsonDeserializationFailed,
-                $"Failed to deserialize '{sourceName}': {ex.Message}",
-                ex));
+            return Result<T>.Failure(Error.Infrastructure(ErrorCode.JsonDeserializationFailed, $"Failed to deserialize '{sourceName}': {ex.Message}", ex));
         }
     }
 
@@ -89,10 +81,8 @@ internal static class JsonLoader
     /// <param name="resourceName">The fully-qualified resource name.</param>
     /// <param name="typeInfo">The source-generated type info for AOT-safe deserialization.</param>
     /// <returns>A result containing the deserialized object or errors.</returns>
-    public static Result<T> LoadFromEmbeddedResource<T>(
-        System.Reflection.Assembly assembly,
-        string resourceName,
-        JsonTypeInfo<T> typeInfo) where T : class
+    public static Result<T> LoadFromEmbeddedResource<T>(Assembly assembly, string resourceName, JsonTypeInfo<T> typeInfo)
+        where T : class
     {
         ArgumentNullException.ThrowIfNull(assembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);

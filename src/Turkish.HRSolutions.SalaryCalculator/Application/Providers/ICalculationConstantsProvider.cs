@@ -1,4 +1,5 @@
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Providers;
 
@@ -91,5 +92,40 @@ public interface ICalculationConstantsProvider
     /// <param name="spouseStatus">The spouse/marital status.</param>
     /// <param name="numberOfChildren">The number of children.</param>
     /// <returns>The AGI rate (typically 0.0 to 0.5 range).</returns>
-    public double GetAgiRate(SpouseStatus spouseStatus, int numberOfChildren);
+    public double GetAgiRate(SpouseStatus spouseStatus, int numberOfChildren)
+    {
+        var agiOptions = AllAgiOptions;
+        if (agiOptions.Count == 0)
+        {
+            return 0d;
+        }
+
+        // Use SpouseStatus.EffectiveAgiTypeKey directly
+        var typeFilter = spouseStatus.EffectiveAgiTypeKey;
+
+        var filtered = agiOptions.Where(a => a.Type.Equals(typeFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+        if (filtered.Count == 0)
+        {
+            return 0d;
+        }
+
+        // Unmarried has a single entry (no children matching)
+        if (spouseStatus == SpouseStatus.Unmarried)
+        {
+            return filtered[0].Rate;
+        }
+
+        // Match by equality operator + children count
+        var match = filtered.FirstOrDefault(p => p.Equality switch
+        {
+            "Eq" => numberOfChildren == p.Children,
+            "Gt" => numberOfChildren > p.Children,
+            "Gte" => numberOfChildren >= p.Children,
+            "Lt" => numberOfChildren < p.Children,
+            "Lte" => numberOfChildren <= p.Children,
+            _ => false,
+        });
+
+        return match?.Rate ?? filtered.OrderBy(p => Math.Abs(p.Children - numberOfChildren)).First().Rate;
+    }
 }

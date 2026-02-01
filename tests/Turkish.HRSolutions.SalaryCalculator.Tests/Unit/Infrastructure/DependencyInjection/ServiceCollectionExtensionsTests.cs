@@ -1,5 +1,8 @@
+#pragma warning disable CA1707
+
 using Microsoft.Extensions.DependencyInjection;
 using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.DependencyInjection;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
@@ -21,7 +24,7 @@ public class ServiceCollectionExtensionsTests
         await using var serviceProvider = services.BuildServiceProvider();
         var yearProvider = serviceProvider.GetService<IYearParameterProvider>();
         var constantsProvider = serviceProvider.GetService<ICalculationConstantsProvider>();
-        var metadata = serviceProvider.GetService<Turkish.HRSolutions.SalaryCalculator.Application.Calculator.ISalaryCalculatorMetadata>();
+        var metadata = serviceProvider.GetService<ISalaryCalculatorMetadata>();
         var validationEngine = serviceProvider.GetService<IValidationEngine>();
 
         await Assert.That(yearProvider).IsTypeOf<EmbeddedYearParameterProvider>();

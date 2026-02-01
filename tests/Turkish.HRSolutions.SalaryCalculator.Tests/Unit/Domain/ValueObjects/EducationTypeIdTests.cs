@@ -1,4 +1,6 @@
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+#pragma warning disable CA1707
+
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Tests.Unit.Domain.ValueObjects;
 

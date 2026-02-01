@@ -1,4 +1,4 @@
-namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 /// <summary>
 /// Represents the spouse employment status for AGI (minimum living allowance) calculation.

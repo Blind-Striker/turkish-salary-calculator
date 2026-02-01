@@ -13,21 +13,26 @@ public static class YearCalculationModelExtensions
     private const string FirstHalf = "first";
     private const string SecondHalf = "second";
 
+#pragma warning disable CA1034 // False positive https://github.com/dotnet/sdk/issues/51681
     /// <summary>
-    /// Maps a <see cref="YearCalculationModel"/> to a <see cref="YearlySalarySnapshot"/>.
+    /// Provides extension methods for mapping a <see cref="YearCalculationModel"/> to API response models.
     /// </summary>
-    /// <param name="model">The domain model containing calculated values.</param>
-    /// <param name="year">The calculation year.</param>
-    /// <returns>An immutable snapshot of the yearly calculation.</returns>
-    public static YearlySalarySnapshot ToSnapshot(
-        this YearCalculationModel model,
-        int year)
+    extension(YearCalculationModel model)
+#pragma warning restore CA1034
     {
-        ArgumentNullException.ThrowIfNull(model);
+        /// <summary>
+        /// Maps a <see cref="YearCalculationModel"/> to a <see cref="YearlySalarySnapshot"/>.
+        /// </summary>
+        /// <param name="year">The calculation year.</param>
+        /// <returns>An immutable snapshot of the yearly calculation.</returns>
+        public YearlySalarySnapshot ToSnapshot(int year)
+        {
+            ArgumentNullException.ThrowIfNull(model);
 
-        var monthlyBreakdowns = MapMonthlyBreakdowns(model);
+            var monthlyBreakdowns = MapMonthlyBreakdowns(model);
 
-        return CreateSnapshot(model, year, monthlyBreakdowns);
+            return CreateSnapshot(model, year, monthlyBreakdowns);
+        }
     }
 
     private static IReadOnlyList<MonthlyBreakdown> MapMonthlyBreakdowns(YearCalculationModel model)
@@ -39,10 +44,7 @@ public static class YearCalculationModelExtensions
     }
 
     [SuppressMessage("Design", "MA0051:Method is too long")]
-    private static YearlySalarySnapshot CreateSnapshot(
-        YearCalculationModel model,
-        int year,
-        IReadOnlyList<MonthlyBreakdown> monthlyBreakdowns)
+    private static YearlySalarySnapshot CreateSnapshot(YearCalculationModel model, int year, IReadOnlyList<MonthlyBreakdown> monthlyBreakdowns)
     {
         return new YearlySalarySnapshot
         {
@@ -115,7 +117,7 @@ public static class YearCalculationModelExtensions
             EmployerTotalCost = model.EmployerTotalCost,
             AvgEmployerTotalCost = model.AvgEmployerTotalCost,
 
-            // First Half Semester (January - June)
+            // First Half-Semester (January - June)
             FirstHalfWorkedDays = model.GetSemesterWorkedDays(FirstHalf),
             FirstHalfEmployerTotalCost = model.EmployerHalfTotalCost(FirstHalf),
             FirstHalfEmployerAvgTotalCostSkipNonWorked = model.YearHalfEmployerAvgTotalCost(FirstHalf, skipNonWorkedMonths: true),

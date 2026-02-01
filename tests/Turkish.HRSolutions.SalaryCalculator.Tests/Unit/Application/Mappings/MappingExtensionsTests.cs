@@ -1,7 +1,11 @@
+#pragma warning disable CA1707
+
 using Turkish.HRSolutions.SalaryCalculator.Application.Mappings;
 using Turkish.HRSolutions.SalaryCalculator.Domain.Models;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Models;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Tests.Unit.Application.Mappings;
@@ -15,10 +19,7 @@ public class MappingExtensionsTests
     private static EmbeddedYearParameterProvider YearProvider { get; } = new();
     private static EmbeddedCalculationConstantsProvider ConstantsProvider { get; } = new();
 
-    private static YearCalculationModel CreateAndCalculateYearModel(
-        int year = 2024,
-        decimal grossSalary = 50_000m,
-        CalculationMode mode = CalculationMode.GrossToNet)
+    private static YearCalculationModel CreateAndCalculateYearModel(int year = 2024, decimal grossSalary = 50_000m, CalculationMode mode = CalculationMode.GrossToNet)
     {
         var yearParam = YearProvider.GetParameter(year)!;
         var employeeType = ConstantsProvider.GetEmployeeType(EmployeeTypeId.Standard)!;

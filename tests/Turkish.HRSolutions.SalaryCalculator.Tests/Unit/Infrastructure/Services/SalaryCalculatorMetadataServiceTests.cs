@@ -1,6 +1,8 @@
+#pragma warning disable CA1707
+
 using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
 using Turkish.HRSolutions.SalaryCalculator.Application.Validation;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Services;
 
@@ -13,10 +15,10 @@ public sealed class SalaryCalculatorMetadataServiceTests
 {
     private static IYearParameterProvider YearProvider { get; } = new EmbeddedYearParameterProvider();
     private static ICalculationConstantsProvider ConstantsProvider { get; } = new EmbeddedCalculationConstantsProvider();
-    private static ValidationEngine Engine { get; } = new();
+    private static CapabilityResolver CapabilityResolver { get; } = new(YearProvider, ConstantsProvider);
 
     private static SalaryCalculatorMetadataService CreateService() =>
-        new(Engine, YearProvider, ConstantsProvider);
+        new(CapabilityResolver, YearProvider, ConstantsProvider);
 
     [Test]
     public async Task GetAvailableYears_Should_ReturnNonEmptyList()

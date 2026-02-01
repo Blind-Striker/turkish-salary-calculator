@@ -1,8 +1,9 @@
 using System.Globalization;
 using Spectre.Console;
 using Turkish.HRSolutions.SalaryCalculator;
+using Turkish.HRSolutions.SalaryCalculator.Application.Extensions;
 using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 #pragma warning disable S1075,S1481,S125, IDE0059
 
@@ -10,15 +11,12 @@ var turkishCulture = CultureInfo.CreateSpecificCulture("tr-TR");
 
 const decimal salary = 27_000m;
 
-// Use V2 API with public static entry point
-var calculator = SalaryCalculatorBuilder.Create();
-
-var request = GrossToNetRequest.For(year: 2026)
-    .WithMonths(MonthlyInput.Uniform(salary))
+// Use API with a public static entry point
+var result = SalaryCalculatorBuilder.Create()
+    .UseGrossToNet
+    .ForYear(2026)
     .WithEmployeeType(EmployeeTypeId.Standard)
-    .Build();
-
-var result = calculator.Calculate(request);
+    .Calculate(MonthlyInput.Uniform(salary));
 
 if (result.IsFailure)
 {

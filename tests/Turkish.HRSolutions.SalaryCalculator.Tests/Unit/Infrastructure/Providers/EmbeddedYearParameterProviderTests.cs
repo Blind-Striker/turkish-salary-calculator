@@ -1,3 +1,5 @@
+#pragma warning disable CA1707
+
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Tests.Unit.Infrastructure.Providers;
@@ -16,7 +18,7 @@ public class EmbeddedYearParameterProviderTests
     }
 
     [Test]
-    public async Task AvailableYears_Should_contain_supported_years()
+    public async Task AvailableYears_Should_Contain_Supported_Years()
     {
         // Arrange
         var provider = new EmbeddedYearParameterProvider();

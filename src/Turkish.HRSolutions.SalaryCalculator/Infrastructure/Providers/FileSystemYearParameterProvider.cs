@@ -1,7 +1,8 @@
 using System.Collections.Immutable;
 using System.IO.Abstractions;
+using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 
@@ -18,7 +19,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Infrastructure.Providers;
 /// JSON file rather than using the embedded assembly resources.
 /// </para>
 /// </remarks>
-public sealed class FileSystemYearParameterProvider : Application.Providers.IYearParameterProvider
+public sealed class FileSystemYearParameterProvider : IYearParameterProvider
 {
     private readonly string _filePath;
     private readonly IFileSystem _fileSystem;
@@ -50,8 +51,7 @@ public sealed class FileSystemYearParameterProvider : Application.Providers.IYea
         _fileSystem = fileSystem;
         _lazyParameters = new Lazy<Result<YearParameters>>(LoadFromFile);
         _lazyYearLookup = new Lazy<ImmutableDictionary<int, YearParameter>>(BuildYearLookup);
-        _lazyAvailableYears = new Lazy<IReadOnlyList<int>>(() =>
-            [.. _lazyYearLookup.Value.Keys.Order()]);
+        _lazyAvailableYears = new Lazy<IReadOnlyList<int>>(() => [.. _lazyYearLookup.Value.Keys.Order()]);
     }
 
     /// <inheritdoc />
@@ -73,9 +73,7 @@ public sealed class FileSystemYearParameterProvider : Application.Providers.IYea
     {
         if (!_fileSystem.File.Exists(_filePath))
         {
-            return Result<YearParameters>.Failure(Error.Configuration(
-                ErrorCode.ConfigurationFileNotFound,
-                $"Year parameters file not found: '{_filePath}'"));
+            return Result<YearParameters>.Failure(Error.Configuration(ErrorCode.ConfigurationFileNotFound, $"Year parameters file not found: '{_filePath}'"));
         }
 
         try
@@ -86,22 +84,14 @@ public sealed class FileSystemYearParameterProvider : Application.Providers.IYea
 
             if (string.IsNullOrWhiteSpace(json))
             {
-                return Result<YearParameters>.Failure(Error.Configuration(
-                    ErrorCode.ConfigurationFileEmpty,
-                    $"Year parameters file is empty: '{_filePath}'"));
+                return Result<YearParameters>.Failure(Error.Configuration(ErrorCode.ConfigurationFileEmpty, $"Year parameters file is empty: '{_filePath}'"));
             }
 
-            return JsonLoader.LoadFromString(
-                json,
-                SalaryCalculatorJsonContext.Default.YearParameters,
-                _filePath);
+            return JsonLoader.LoadFromString(json, SalaryCalculatorJsonContext.Default.YearParameters, _filePath);
         }
         catch (IOException ex)
         {
-            return Result<YearParameters>.Failure(Error.Infrastructure(
-                ErrorCode.FileReadFailed,
-                $"Failed to read year parameters file '{_filePath}': {ex.Message}",
-                ex));
+            return Result<YearParameters>.Failure(Error.Infrastructure(ErrorCode.FileReadFailed, $"Failed to read year parameters file '{_filePath}': {ex.Message}", ex));
         }
     }
 

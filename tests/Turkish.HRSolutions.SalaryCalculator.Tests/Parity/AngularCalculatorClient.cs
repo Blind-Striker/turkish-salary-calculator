@@ -16,7 +16,7 @@ public sealed class AngularCalculatorClient : IAsyncInitializer, IAsyncDisposabl
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
     };
 
     private readonly IFileSystem _fileSystem;
@@ -91,9 +91,7 @@ public sealed class AngularCalculatorClient : IAsyncInitializer, IAsyncDisposabl
     /// <param name="input">Calculation input parameters.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Angular CLI response containing calculation output.</returns>
-    public async Task<AngularCliResponse> CalculateAsync(
-        TestInput input,
-        CancellationToken cancellationToken = default)
+    public async Task<AngularCliResponse> CalculateAsync(TestInput input, CancellationToken cancellationToken = default)
     {
         if (!_initialized)
         {
@@ -126,9 +124,9 @@ public sealed class AngularCalculatorClient : IAsyncInitializer, IAsyncDisposabl
                         Message = "No output from CLI",
                         Details = string.IsNullOrWhiteSpace(result.StandardError)
                             ? null
-                            : [result.StandardError]
+                            : [result.StandardError],
                     },
-                    ElapsedMs = stopwatch.ElapsedMilliseconds
+                    ElapsedMs = stopwatch.ElapsedMilliseconds,
                 };
             }
 
@@ -142,9 +140,9 @@ public sealed class AngularCalculatorClient : IAsyncInitializer, IAsyncDisposabl
                     {
                         Code = "INTERNAL_ERROR",
                         Message = "Failed to deserialize CLI response",
-                        Details = [result.StandardOutput]
+                        Details = [result.StandardOutput],
                     },
-                    ElapsedMs = stopwatch.ElapsedMilliseconds
+                    ElapsedMs = stopwatch.ElapsedMilliseconds,
                 };
             }
 
@@ -161,9 +159,9 @@ public sealed class AngularCalculatorClient : IAsyncInitializer, IAsyncDisposabl
                 {
                     Code = "INTERNAL_ERROR",
                     Message = ex.Message,
-                    Details = ex.StackTrace is not null ? [ex.StackTrace] : null
+                    Details = ex.StackTrace is not null ? [ex.StackTrace] : null,
                 },
-                ElapsedMs = stopwatch.ElapsedMilliseconds
+                ElapsedMs = stopwatch.ElapsedMilliseconds,
             };
         }
     }

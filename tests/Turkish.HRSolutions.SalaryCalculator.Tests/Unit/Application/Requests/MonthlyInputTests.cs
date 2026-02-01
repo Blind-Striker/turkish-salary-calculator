@@ -1,3 +1,5 @@
+#pragma warning disable CA1707
+
 using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;

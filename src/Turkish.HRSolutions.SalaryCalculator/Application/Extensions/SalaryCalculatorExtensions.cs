@@ -1,6 +1,6 @@
 using Turkish.HRSolutions.SalaryCalculator.Application.Builders;
 using Turkish.HRSolutions.SalaryCalculator.Application.Builders.Internal;
-using Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Extensions;
 
@@ -27,10 +27,10 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Extensions;
 /// </remarks>
 public static class SalaryCalculatorExtensions
 {
+#pragma warning disable CA1034 // False positive https://github.com/dotnet/sdk/issues/51681
     /// <summary>
     /// Provides fluent builder access for <see cref="ISalaryCalculator"/>.
     /// </summary>
-#pragma warning disable CA1034 // False positive https://github.com/dotnet/sdk/issues/51681
     extension(ISalaryCalculator calculator)
 #pragma warning restore CA1034
     {

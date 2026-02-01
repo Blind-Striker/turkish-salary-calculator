@@ -5,7 +5,6 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 /// based on year, employee type, and calculation mode.
 /// </summary>
 /// <remarks>
-/// Mirrors Angular UI disabled states for feature parity.
 /// Use ISalaryCalculatorMetadata.GetCapabilities to query available capabilities.
 /// </remarks>
 [Flags]
@@ -57,6 +56,5 @@ public enum Capability
     AgiIncludedInNet = 1 << 6,
 
     /// <summary>All capabilities enabled.</summary>
-    All = AgiSelection | EducationType | MinWageExemption | AgiCalculation
-        | Discount5746 | RnDDaysInput | AgiIncludedInNet,
+    All = AgiSelection | EducationType | MinWageExemption | AgiCalculation | Discount5746 | RnDDaysInput | AgiIncludedInNet,
 }

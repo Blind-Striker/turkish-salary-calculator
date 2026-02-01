@@ -1,6 +1,6 @@
 using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 
@@ -50,36 +50,15 @@ public sealed record ValidationContext
     public bool IsAgiIncludedInNet { get; init; }
 
     /// <summary>
-    /// Creates a validation context from a GrossToNet request.
+    /// Creates a validation context from a <see cref="SalaryCalculationRequest"/>.
     /// </summary>
-    public static ValidationContext FromRequest(GrossToNetRequest request)
+    public static ValidationContext FromRequest(SalaryCalculationRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
         return new ValidationContext
         {
             Year = request.Year,
-            Mode = CalculationMode.GrossToNet,
-            EmployeeType = request.EmployeeType,
-            IsPensioner = request.IsPensioner,
-            Months = request.Months,
-            Agi = request.Agi,
-            RnD = request.RnD,
-            ApplyMinWageExemption = request.ApplyMinWageExemption,
-            Apply5746Discount = request.Apply5746Discount,
-            Disability = request.Disability,
-        };
-    }
-
-    /// <summary>
-    /// Creates a validation context from a NetToGross request.
-    /// </summary>
-    public static ValidationContext FromRequest(NetToGrossRequest request)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-        return new ValidationContext
-        {
-            Year = request.Year,
-            Mode = CalculationMode.NetToGross,
+            Mode = request.Mode,
             EmployeeType = request.EmployeeType,
             IsPensioner = request.IsPensioner,
             Months = request.Months,
@@ -89,27 +68,6 @@ public sealed record ValidationContext
             Apply5746Discount = request.Apply5746Discount,
             Disability = request.Disability,
             IsAgiIncludedInNet = request.IsAgiIncludedInNet,
-        };
-    }
-
-    /// <summary>
-    /// Creates a validation context from a TotalToGross request.
-    /// </summary>
-    public static ValidationContext FromRequest(TotalToGrossRequest request)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-        return new ValidationContext
-        {
-            Year = request.Year,
-            Mode = CalculationMode.TotalToGross,
-            EmployeeType = request.EmployeeType,
-            IsPensioner = request.IsPensioner,
-            Months = request.Months,
-            Agi = request.Agi,
-            RnD = request.RnD,
-            ApplyMinWageExemption = request.ApplyMinWageExemption,
-            Apply5746Discount = request.Apply5746Discount,
-            Disability = request.Disability,
         };
     }
 }

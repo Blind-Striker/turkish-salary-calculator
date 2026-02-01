@@ -1,10 +1,12 @@
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
+
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Responses;
 
 /// <summary>
 /// Immutable snapshot of a tax slice applied during income tax calculation.
 /// </summary>
 /// <remarks>
-/// Mirrors <see cref="Domain.ValueObjects.TaxSlice"/> as a pure data record.
+/// Mirrors <see cref="TaxSlice"/> as a pure data record.
 /// </remarks>
 public sealed record TaxSliceSnapshot
 {

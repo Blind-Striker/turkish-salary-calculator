@@ -1,150 +1,92 @@
 using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 
 /// <summary>
-/// Centralized validation engine for salary calculations.
-/// Implements the 7 capability rules from Angular UI + input validation.
+/// Centralized validation engine for salary calculation requests.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Responsibilities:
+/// </para>
+/// <list type="bullet">
+/// <item><description>Input validation (year, employee type, monthly inputs)</description></item>
+/// <item><description>Capability violation detection (warnings for ignored settings)</description></item>
+/// </list>
+/// <para>
+/// Capability determination is delegated to <see cref="ICapabilityResolver"/>.
+/// Provider validation is also handled by <see cref="ICapabilityResolver.ValidateProviders"/>.
+/// </para>
+/// </remarks>
 internal sealed class ValidationEngine : IValidationEngine
 {
+    private readonly ICapabilityResolver _capabilityResolver;
+    private readonly IYearParameterProvider _yearProvider;
+    private readonly ICalculationConstantsProvider _constantsProvider;
+
     /// <summary>
-    /// Validates the calculation request and returns capability information.
+    /// Initializes a new instance of the <see cref="ValidationEngine"/> class.
     /// </summary>
-    /// <param name="context">The validation context.</param>
-    /// <param name="yearProvider">Year parameter provider.</param>
-    /// <param name="constantsProvider">Calculation constants provider.</param>
-    /// <returns>A result containing capability info with errors/warnings, or failure.</returns>
-    public Result<CapabilityInfo> Validate(
-        ValidationContext context,
+    /// <param name="capabilityResolver">Resolver for determining calculator capabilities.</param>
+    /// <param name="yearProvider">Provider for year-specific parameters.</param>
+    /// <param name="constantsProvider">Provider for calculation constants.</param>
+    public ValidationEngine(
+        ICapabilityResolver capabilityResolver,
         IYearParameterProvider yearProvider,
         ICalculationConstantsProvider constantsProvider)
+    {
+        _capabilityResolver = capabilityResolver ?? throw new ArgumentNullException(nameof(capabilityResolver));
+        _yearProvider = yearProvider ?? throw new ArgumentNullException(nameof(yearProvider));
+        _constantsProvider = constantsProvider ?? throw new ArgumentNullException(nameof(constantsProvider));
+    }
+
+    /// <inheritdoc />
+    public Result<CapabilityInfo> Validate(ValidationContext context)
     {
         var errors = new List<Error>();
         var warnings = new List<Error>();
 
         // 1. Input validation (blocking errors)
-        ValidateInput(context, yearProvider, constantsProvider, errors);
+        ValidateInput(context, errors);
 
         if (errors.Count > 0)
         {
             return Result<CapabilityInfo>.Failure(errors);
         }
 
-        // 2. Get employee type and year for capability rules
-        var employeeType = constantsProvider.GetEmployeeType(context.EmployeeType)!;
-        var yearParam = yearProvider.GetParameter(context.Year)!;
+        // 2. Resolve capabilities using ICapabilityResolver
+        var capabilityResult = _capabilityResolver.ResolveCapabilities(
+            context.Year,
+            context.EmployeeType,
+            context.IsPensioner,
+            context.Mode);
 
-        // 3. Determine disabled capabilities
-        var disabledCapabilities = DetermineDisabledCapabilities(
-            context, employeeType, yearParam);
+        if (capabilityResult.IsFailure)
+        {
+            return capabilityResult;
+        }
 
-        // 4. Check for capability violations (warnings)
-        CheckCapabilityViolations(context, disabledCapabilities, warnings);
+        // 3. Check for capability violations (warnings)
+        CheckCapabilityViolations(context, capabilityResult.Value.DisabledCapabilities, warnings);
 
-        var capabilityInfo = new CapabilityInfo(disabledCapabilities);
-        return Result<CapabilityInfo>.Success(capabilityInfo, warnings);
+        return Result<CapabilityInfo>.Success(capabilityResult.Value, warnings);
     }
 
-    /// <summary>
-    /// Validates only the capabilities for a given configuration.
-    /// Used by ISalaryCalculatorMetadata.GetCapabilities.
-    /// </summary>
-    public Result<CapabilityInfo> ValidateCapabilities(
-        int year,
-        EmployeeTypeId employeeType,
-        bool isPensioner,
-        CalculationMode mode,
-        IYearParameterProvider yearProvider,
-        ICalculationConstantsProvider constantsProvider)
-    {
-        var errors = new List<Error>();
-
-        // Basic validation
-        var yearParam = yearProvider.GetParameter(year);
-        if (yearParam is null)
-        {
-            errors.Add(new Error(
-                ErrorCode.YearNotSupported,
-                $"Year {year} is not supported."));
-            return Result<CapabilityInfo>.Failure(errors);
-        }
-
-        var empType = constantsProvider.GetEmployeeType(employeeType);
-        if (empType is null)
-        {
-            errors.Add(new Error(
-                ErrorCode.MissingEmployeeTypeDefinition,
-                $"Employee type {employeeType.Value} is not defined."));
-            return Result<CapabilityInfo>.Failure(errors);
-        }
-
-        // Create minimal context for capability determination
-        var context = new ValidationContext
-        {
-            Year = year,
-            Mode = mode,
-            EmployeeType = employeeType,
-            IsPensioner = isPensioner,
-            Months = [],
-        };
-
-        var disabledCapabilities = DetermineDisabledCapabilities(context, empType, yearParam);
-        return Result<CapabilityInfo>.Success(new CapabilityInfo(disabledCapabilities));
-    }
-
-    /// <summary>
-    /// Validates configuration providers at startup.
-    /// </summary>
-    public Result<Unit> ValidateProviders(
-        IYearParameterProvider yearProvider,
-        ICalculationConstantsProvider constantsProvider)
-    {
-        var errors = new List<Error>();
-
-        // Check year provider has data
-        if (yearProvider.AvailableYears.Count == 0)
-        {
-            errors.Add(Error.Configuration(
-                ErrorCode.InvalidYearParameterProvider,
-                "Year parameter provider has no available years."));
-        }
-
-        // Check all 10 known employee types exist
-        for (var id = 1; id <= 10; id++)
-        {
-            if (constantsProvider.GetEmployeeType(id) is null)
-            {
-                errors.Add(Error.Configuration(
-                    ErrorCode.MissingEmployeeTypeDefinition,
-                    $"Employee type {id} is not defined in constants provider."));
-            }
-        }
-
-        return errors.Count > 0
-            ? Result<Unit>.Failure(errors)
-            : Result<Unit>.Success(Unit.Value);
-    }
-
-    private static void ValidateInput(
-        ValidationContext context,
-        IYearParameterProvider yearProvider,
-        ICalculationConstantsProvider constantsProvider,
-        List<Error> errors)
+    private void ValidateInput(ValidationContext context, List<Error> errors)
     {
         // Year validation
         if (context.Year == 0)
         {
             errors.Add(new Error(ErrorCode.YearNotSpecified, "Calculation year is required."));
         }
-        else if (yearProvider.GetParameter(context.Year) is null)
+        else if (_yearProvider.GetParameter(context.Year) is null)
         {
             errors.Add(new Error(
                 ErrorCode.YearNotSupported,
-                $"Year {context.Year} is not supported. Available years: {string.Join(", ", yearProvider.AvailableYears)}"));
+                $"Year {context.Year} is not supported. Available years: {string.Join(", ", _yearProvider.AvailableYears)}"));
         }
 
         // Employee type validation
@@ -152,7 +94,7 @@ internal sealed class ValidationEngine : IValidationEngine
         {
             errors.Add(new Error(ErrorCode.MissingEmployeeTypeDefinition, "Employee type is required."));
         }
-        else if (constantsProvider.GetEmployeeType(context.EmployeeType) is null)
+        else if (_constantsProvider.GetEmployeeType(context.EmployeeType) is null)
         {
             errors.Add(new Error(
                 ErrorCode.MissingEmployeeTypeDefinition,
@@ -176,11 +118,13 @@ internal sealed class ValidationEngine : IValidationEngine
         {
             var month = context.Months[i];
 
-            if (month.Salary <= 0)
+            // Note: Zero salary is allowed for months where employee didn't work (new hire scenarios).
+            // Angular handles this by returning zeros for such months.
+            if (month.Salary < 0)
             {
                 errors.Add(Error.Validation(
                     ErrorCode.InvalidSalaryAmount,
-                    $"Month {i + 1}: Salary must be positive.",
+                    $"Month {i + 1}: Salary cannot be negative.",
                     $"Months[{i}].Salary",
                     month.Salary));
             }
@@ -215,69 +159,7 @@ internal sealed class ValidationEngine : IValidationEngine
     }
 
     /// <summary>
-    /// Determines which capabilities are disabled based on Angular UI logic.
-    /// </summary>
-    private static Capability DetermineDisabledCapabilities(
-        ValidationContext context,
-        EmployeeTypeConstant employeeType,
-        YearParameter yearParam)
-    {
-        var disabled = Capability.None;
-
-        // Rule 1: AGI Selection
-        // Angular: disabled = !AGIApplicable || minWageEmployeeTaxExemption
-        if (!employeeType.AgiApplicable || yearParam.MinWageEmployeeTaxExemption)
-        {
-            disabled |= Capability.AgiSelection;
-        }
-
-        // Rule 2: Education Type
-        // Angular: disabled = !employerEducationIncomeTaxExemption
-        if (!employeeType.EmployerEducationIncomeTaxExemption)
-        {
-            disabled |= Capability.EducationType;
-        }
-
-        // Rule 3: Min Wage Exemption
-        // Angular: disabled = !minWageEmployeeTaxExemption
-        if (!yearParam.MinWageEmployeeTaxExemption)
-        {
-            disabled |= Capability.MinWageExemption;
-        }
-
-        // Rule 4: AGI Calculation
-        // Angular: disabled = minWageEmployeeTaxExemption
-        if (yearParam.MinWageEmployeeTaxExemption)
-        {
-            disabled |= Capability.AgiCalculation;
-        }
-
-        // Rule 5: 5746 Discount
-        // Angular: disabled = isPensioner || !employerSGKDiscount5746Applicable
-        if (context.IsPensioner || !employeeType.EmployerSgkDiscount5746Applicable)
-        {
-            disabled |= Capability.Discount5746;
-        }
-
-        // Rule 6: R&D Days Input
-        // Angular: disabled = !researchAndDevelopmentTaxExemption
-        if (!employeeType.ResearchAndDevelopmentTaxExemption)
-        {
-            disabled |= Capability.RnDDaysInput;
-        }
-
-        // Rule 7: AGI Included In Net
-        // Angular: disabled = selectedCalcMode != 'NET_TO_GROSS'
-        if (context.Mode != CalculationMode.NetToGross)
-        {
-            disabled |= Capability.AgiIncludedInNet;
-        }
-
-        return disabled;
-    }
-
-    /// <summary>
-    /// Checks if user provided settings that conflict with disabled capabilities.
+    /// Checks if the user provided settings that conflict with disabled capabilities.
     /// Adds warnings for settings that will be ignored.
     /// </summary>
     private static void CheckCapabilityViolations(
@@ -328,15 +210,4 @@ internal sealed class ValidationEngine : IValidationEngine
                 "AGI included in net will be ignored because it is only applicable in NET_TO_GROSS mode."));
         }
     }
-}
-
-/// <summary>
-/// Unit type for Result{Unit} where no value is needed.
-/// </summary>
-public readonly struct Unit
-{
-    /// <summary>
-    /// Gets the singleton Unit value.
-    /// </summary>
-    public static Unit Value => default;
 }

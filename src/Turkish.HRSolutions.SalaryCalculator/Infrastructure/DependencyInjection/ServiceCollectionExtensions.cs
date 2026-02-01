@@ -1,8 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-
-using Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
-using Turkish.HRSolutions.SalaryCalculator.Application.Configuration;
 using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Configuration;
 using Turkish.HRSolutions.SalaryCalculator.Infrastructure.Services;
@@ -61,24 +59,38 @@ public static class ServiceCollectionExtensions
                 ValidateProvidersRegistered(services);
             }
 
-            services.AddSingleton<IValidationEngine, ValidationEngine>();
+            services.AddSingleton<ICapabilityResolver>(sp =>
+            {
+                var yearProvider = sp.GetRequiredService<IYearParameterProvider>();
+                var constantsProvider = sp.GetRequiredService<ICalculationConstantsProvider>();
+                return new CapabilityResolver(yearProvider, constantsProvider);
+            });
+
+            services.AddSingleton<IValidationEngine>(sp =>
+            {
+                var capabilityResolver = sp.GetRequiredService<ICapabilityResolver>();
+                var yearProvider = sp.GetRequiredService<IYearParameterProvider>();
+                var constantsProvider = sp.GetRequiredService<ICalculationConstantsProvider>();
+                return new ValidationEngine(capabilityResolver, yearProvider, constantsProvider);
+            });
 
             services.AddSingleton<ISalaryCalculatorMetadata>(sp =>
             {
-                var validationEngine = sp.GetRequiredService<IValidationEngine>();
+                var capabilityResolver = sp.GetRequiredService<ICapabilityResolver>();
                 var yearProvider = sp.GetRequiredService<IYearParameterProvider>();
                 var constantsProvider = sp.GetRequiredService<ICalculationConstantsProvider>();
-                return new SalaryCalculatorMetadataService(validationEngine, yearProvider, constantsProvider);
+                return new SalaryCalculatorMetadataService(capabilityResolver, yearProvider, constantsProvider);
             });
 
             // Register ISalaryCalculator using providers from DI
             services.AddSingleton<ISalaryCalculator>(sp =>
             {
+                var capabilityResolver = sp.GetRequiredService<ICapabilityResolver>();
                 var validationEngine = sp.GetRequiredService<IValidationEngine>();
                 var yearProvider = sp.GetRequiredService<IYearParameterProvider>();
                 var constantsProvider = sp.GetRequiredService<ICalculationConstantsProvider>();
 
-                var providerValidation = validationEngine.ValidateProviders(yearProvider, constantsProvider);
+                var providerValidation = capabilityResolver.ValidateProviders();
                 if (providerValidation.IsFailure)
                 {
                     throw new InvalidOperationException(

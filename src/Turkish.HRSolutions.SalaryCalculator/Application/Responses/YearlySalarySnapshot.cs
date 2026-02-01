@@ -380,17 +380,17 @@ public sealed record YearlySalarySnapshot
     public required decimal SecondHalfEmployerTotalCost { get; init; }
 
     /// <summary>
-    /// Average employer cost for second half (skipping non-worked months).
+    /// Average employer cost for the second half (skipping non-worked months).
     /// </summary>
     public required decimal SecondHalfEmployerAvgTotalCostSkipNonWorked { get; init; }
 
     /// <summary>
-    /// Average employer cost for second half (including non-worked months).
+    /// Average employer cost for the second half (including non-worked months).
     /// </summary>
     public required decimal SecondHalfEmployerAvgTotalCostIncludeNonWorked { get; init; }
 
     /// <summary>
-    /// TUBITAK average cost for second half (prorated for partial work).
+    /// TUBITAK average cost for the second half (prorated for partial work).
     /// </summary>
     public required decimal SecondHalfTubitakAvgCost { get; init; }
 }

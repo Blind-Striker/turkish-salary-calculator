@@ -1,52 +1,55 @@
-namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 /// <summary>
-/// Identifies an education type for R&amp;D (Law 5746) exemption calculation.
+/// Identifies a disability degree for tax deduction calculation.
 /// </summary>
 /// <remarks>
 /// <para>
-/// This only applies to employees with <see cref="EmployeeTypeId.RnD5746"/> or
-/// <see cref="EmployeeTypeId.EmployerRnD5746"/> types. The education level affects
-/// the employer's income tax exemption rate.
+/// Turkish tax law provides income tax base deductions for employees with disabilities.
+/// The deduction amount varies by degree (1st degree = highest deduction).
 /// </para>
 /// <para>
-/// Use <see cref="FromId"/> for runtime values or custom scenarios.
+/// Use <see cref="FromDegree"/> for runtime values or custom scenarios.
 /// </para>
 /// </remarks>
-public readonly record struct EducationTypeId : IEquatable<EducationTypeId>
+public readonly record struct DisabilityDegreeId : IEquatable<DisabilityDegreeId>
 {
     // ═══════════════════════════════════════════════════════════════
     // Known Values
     // ═══════════════════════════════════════════════════════════════
 
-    /// <summary>Other R&amp;D personnel - base exemption rate.</summary>
-    public static EducationTypeId OtherRnDPersonnel => new(1);
+    /// <summary>No disability - no tax deduction.</summary>
+    public static DisabilityDegreeId None => new(-1);
 
-    /// <summary>Doctorate degree - highest exemption rate.</summary>
-    public static EducationTypeId Doctorate => new(2);
+    /// <summary>1st degree disability - highest deduction.</summary>
+    public static DisabilityDegreeId First => new(1);
 
-    /// <summary>Master's degree or bachelor's in fundamental sciences.</summary>
-    public static EducationTypeId MastersOrFundamentalSciences => new(3);
+    /// <summary>2nd degree disability - medium deduction.</summary>
+    public static DisabilityDegreeId Second => new(2);
+
+    /// <summary>3rd degree disability - lowest deduction.</summary>
+    public static DisabilityDegreeId Third => new(3);
 
     // ═══════════════════════════════════════════════════════════════
     // Extensibility
     // ═══════════════════════════════════════════════════════════════
 
     /// <summary>
-    /// Creates an education type ID from a numeric value.
+    /// Creates a disability degree ID from a numeric value.
     /// </summary>
-    /// <param name="id">The numeric identifier for the education type.</param>
-    /// <returns>An <see cref="EducationTypeId"/> with the specified value.</returns>
-    public static EducationTypeId FromId(int id) => new(id);
+    /// <param name="degree">The numeric degree (1, 2, or 3), or -1 for none.</param>
+    /// <returns>A <see cref="DisabilityDegreeId"/> with the specified value.</returns>
+    public static DisabilityDegreeId FromDegree(int degree) => new(degree);
 
     /// <summary>
-    /// Gets all known education type options.
+    /// Gets all known disability degree options.
     /// </summary>
-    public static IReadOnlyList<EducationTypeId> KnownTypes =>
+    public static IReadOnlyList<DisabilityDegreeId> KnownDegrees =>
     [
-        OtherRnDPersonnel,
-        Doctorate,
-        MastersOrFundamentalSciences,
+        None,
+        First,
+        Second,
+        Third,
     ];
 
     // ═══════════════════════════════════════════════════════════════
@@ -54,23 +57,33 @@ public readonly record struct EducationTypeId : IEquatable<EducationTypeId>
     // ═══════════════════════════════════════════════════════════════
 
     /// <summary>
-    /// The numeric value of this education type ID.
+    /// The numeric value of this disability degree.
+    /// -1 = None, 1-3 = disability degrees.
     /// </summary>
     public int Value { get; }
 
-    private EducationTypeId(int value) => Value = value;
+    private DisabilityDegreeId(int value)
+    {
+        Value = value;
+    }
+
+    /// <summary>
+    /// Returns true if this represents a disability (not None).
+    /// </summary>
+    public bool HasDisability => Value > 0;
 
     /// <summary>
     /// Implicit conversion to int for interop with int-based APIs.
     /// </summary>
-    public static implicit operator int(EducationTypeId id) => id.Value;
+    public static implicit operator int(DisabilityDegreeId id) => id.Value;
 
     /// <inheritdoc />
     public override string ToString() => Value switch
     {
-        1 => nameof(OtherRnDPersonnel),
-        2 => nameof(Doctorate),
-        3 => nameof(MastersOrFundamentalSciences),
+        -1 => nameof(None),
+        1 => nameof(First),
+        2 => nameof(Second),
+        3 => nameof(Third),
         _ => $"Custom({Value})",
     };
 

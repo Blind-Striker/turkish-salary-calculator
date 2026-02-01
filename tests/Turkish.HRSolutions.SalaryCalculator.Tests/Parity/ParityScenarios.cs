@@ -1,6 +1,6 @@
-using Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
 using Turkish.HRSolutions.SalaryCalculator.Application.Providers;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Tests.Parity;
 
@@ -119,7 +119,8 @@ public static class ParityScenarios
             GetMixedDaysRnDScenarios(),
             GetMinWageExemptionOffScenarios(),
             GetCombinationScenarios(),
-            GetStressTestScenarios());
+            GetStressTestScenarios(),
+            GetNewHireScenarios());
     }
 
     private static IEnumerable<Func<ParityScenario>> WrapScenarios(params IEnumerable<ParityScenario>[] scenarioSets)
@@ -170,7 +171,7 @@ public static class ParityScenarios
         {
             ("GROSS_TO_NET", 50000m, "grosstonet"),
             ("NET_TO_GROSS", 35000m, "nettogross"),
-            ("TOTAL_TO_GROSS", 80000m, "totaltogross")
+            ("TOTAL_TO_GROSS", 80000m, "totaltogross"),
         };
 
         foreach (var (mode, salary, modeName) in modes)
@@ -426,7 +427,7 @@ public static class ParityScenarios
         var modes = new[]
         {
             ("NET_TO_GROSS", 40000m, "nettogross"),
-            ("TOTAL_TO_GROSS", 90000m, "totaltogross")
+            ("TOTAL_TO_GROSS", 90000m, "totaltogross"),
         };
 
         // Skip types already covered in GetCalculationModeScenarios (core types)
@@ -629,7 +630,7 @@ public static class ParityScenarios
         {
             ("GROSS_TO_NET", "grosstonet"),
             ("NET_TO_GROSS", "nettogross"),
-            ("TOTAL_TO_GROSS", "totaltogross")
+            ("TOTAL_TO_GROSS", "totaltogross"),
         };
 
         foreach (var salary in extremeSalaries)
@@ -641,7 +642,7 @@ public static class ParityScenarios
                 {
                     "NET_TO_GROSS" => salary * 0.6m, // Approximate net is 60% of gross for high salaries
                     "TOTAL_TO_GROSS" => salary * 1.3m, // Total cost is ~130% of gross
-                    _ => salary
+                    _ => salary,
                 };
 
                 yield return CreateScenario(
@@ -716,8 +717,155 @@ public static class ParityScenarios
                 IsAgiIncludedNet = isAgiIncludedNet,
                 IsAgiIncludedTax = isAgiIncludedTax,
                 ApplyMinWageTaxExemption = applyMinWageTaxExemption,
-                IsAgiCalculationEnabled = isAgiCalculationEnabled
-            }
+                IsAgiCalculationEnabled = isAgiCalculationEnabled,
+            },
+        };
+    }
+
+    /// <summary>
+    /// New hire scenarios where employee starts mid-year.
+    /// Tests zero salary/worked days for non-working months.
+    /// </summary>
+    private static IEnumerable<ParityScenario> GetNewHireScenarios()
+    {
+        return GetNewHireBasicScenarios()
+            .Concat(GetNewHireAdvancedScenarios())
+            .Concat(GetNewHireReverseModeScenarios());
+    }
+
+    private static IEnumerable<ParityScenario> GetNewHireBasicScenarios()
+    {
+        var year = LatestYear;
+        var standardType = GetEmployeeType(1);
+
+        // New hire starting in March
+        yield return CreateNewHireScenario(year, standardType.Id, "march-50000",
+            "New hire starting March, 50000 TRY", "GROSS_TO_NET", startMonth: 3, salary: 50_000m);
+
+        // New hire starting in July (second half)
+        yield return CreateNewHireScenario(year, standardType.Id, "july-60000",
+            "New hire starting July, 60000 TRY", "GROSS_TO_NET", startMonth: 7, salary: 60_000m);
+
+        // New hire starting in November (late year)
+        yield return CreateNewHireScenario(year, standardType.Id, "november-55000",
+            "New hire starting November, 55000 TRY", "GROSS_TO_NET", startMonth: 11, salary: 55_000m);
+    }
+
+    private static IEnumerable<ParityScenario> GetNewHireAdvancedScenarios()
+    {
+        var year = LatestYear;
+        var standardType = GetEmployeeType(1);
+        var teknokentType = GetEmployeeType(2);
+
+        // New hire with partial first month
+        yield return CreateScenarioWithMonthlyArrays(
+            year + "-newhire-march-partial",
+            "Year " + year + ", New hire starting mid-March (15 days), 50000 TRY",
+            year, "GROSS_TO_NET", standardType.Id,
+            [0, 0, 50_000, 50_000, 50_000, 50_000, 50_000, 50_000, 50_000, 50_000, 50_000, 50_000],
+            [0, 0, 15, 30, 30, 30, 30, 30, 30, 30, 30, 30],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+
+        // New hire with mid-year salary raise
+        yield return CreateScenarioWithMonthlyArrays(
+            year + "-newhire-raise",
+            "Year " + year + ", New hire April with raise in September, 40K→60K TRY",
+            year, "GROSS_TO_NET", standardType.Id,
+            [0, 0, 0, 40_000, 40_000, 40_000, 40_000, 40_000, 60_000, 60_000, 60_000, 60_000],
+            [0, 0, 0, 30, 30, 30, 30, 30, 30, 30, 30, 30],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+
+        // Teknokent new hire with R&D days
+        yield return CreateScenarioWithMonthlyArrays(
+            year + "-newhire-teknokent-may",
+            "Year " + year + ", Teknokent new hire starting May, 80000 TRY, 20 R&D days",
+            year, "GROSS_TO_NET", teknokentType.Id,
+            [0, 0, 0, 0, 80_000, 80_000, 80_000, 80_000, 80_000, 80_000, 80_000, 80_000],
+            [0, 0, 0, 0, 30, 30, 30, 30, 30, 30, 30, 30],
+            [0, 0, 0, 0, 20, 20, 20, 20, 20, 20, 20, 20],
+            educationExemptionRate: 0.23m);
+    }
+
+    private static IEnumerable<ParityScenario> GetNewHireReverseModeScenarios()
+    {
+        var year = LatestYear;
+        var standardType = GetEmployeeType(1);
+
+        // Net to Gross for new hire (binary search with zeros)
+        yield return CreateNewHireScenario(year, standardType.Id, "nettogross-june",
+            "New hire June, NetToGross 35000 TRY", "NET_TO_GROSS", startMonth: 6, salary: 35_000m);
+
+        // Total to Gross for new hire
+        yield return CreateNewHireScenario(year, standardType.Id, "totaltogross-august",
+            "New hire August, TotalToGross 90000 TRY", "TOTAL_TO_GROSS", startMonth: 8, salary: 90_000m);
+    }
+
+    private static ParityScenario CreateNewHireScenario(
+        int year, int employeeTypeId, string testIdSuffix, string description,
+        string mode, int startMonth, decimal salary)
+    {
+        var salaries = Enumerable.Range(1, 12).Select(m => m >= startMonth ? salary : 0m).ToList();
+        var workedDays = Enumerable.Range(1, 12).Select(m => m >= startMonth ? 30 : 0).ToList();
+        var rndDays = Enumerable.Repeat(0, 12).ToList();
+
+        return CreateScenarioWithMonthlyArrays(
+            year + "-newhire-" + testIdSuffix,
+            "Year " + year + ", " + description,
+            year, mode, employeeTypeId, salaries, workedDays, rndDays);
+    }
+
+    private static ParityScenario CreateScenarioWithMonthlyArrays(
+        string testId,
+        string description,
+        int year,
+        string calculationMode,
+        int employeeTypeId,
+        IReadOnlyList<decimal> monthlySalaries,
+        IReadOnlyList<int> monthlyWorkedDays,
+        IReadOnlyList<int> monthlyRnDDays,
+        int disabilityDegree = 0,
+        decimal agiRate = 0m,
+        decimal educationExemptionRate = 0m,
+        bool isPensioner = false,
+        bool applyEmployerDiscount5746 = false,
+        bool isAgiIncludedNet = false,
+        bool isAgiIncludedTax = false,
+        bool applyMinWageTaxExemption = true,
+        bool isAgiCalculationEnabled = false)
+    {
+        // Use first non-zero values as the "uniform" fallback values
+        var firstNonZeroSalary = monthlySalaries.FirstOrDefault(s => s > 0);
+        var firstNonZeroWorkedDays = monthlyWorkedDays.FirstOrDefault(d => d > 0);
+        var firstNonZeroRndDays = monthlyRnDDays.FirstOrDefault(d => d > 0);
+
+        return new ParityScenario
+        {
+            TestId = testId,
+            Description = description,
+            Input = new TestInput
+            {
+                Year = year,
+                CalculationMode = calculationMode,
+                EmployeeTypeId = employeeTypeId,
+                // Fallback uniform values (required by TestInput)
+                SalaryAmount = firstNonZeroSalary,
+                WorkedDays = firstNonZeroWorkedDays,
+                ResearchAndDevelopmentWorkedDays = firstNonZeroRndDays,
+                // Per-month arrays
+                MonthlySalaryAmounts = monthlySalaries,
+                MonthlyWorkedDays = monthlyWorkedDays,
+                MonthlyRnDDays = monthlyRnDDays,
+                // Other settings
+                DisabilityDegree = disabilityDegree,
+                AgiRate = agiRate,
+                EducationExemptionRate = educationExemptionRate,
+                IsPensioner = isPensioner,
+                ApplyEmployerDiscount5746 = applyEmployerDiscount5746,
+                IsAgiIncludedNet = isAgiIncludedNet,
+                IsAgiIncludedTax = isAgiIncludedTax,
+                ApplyMinWageTaxExemption = applyMinWageTaxExemption,
+                IsAgiCalculationEnabled = isAgiCalculationEnabled,
+            },
         };
     }
 

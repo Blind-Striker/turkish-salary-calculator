@@ -3,7 +3,7 @@ using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
 using Turkish.HRSolutions.SalaryCalculator.Application.Responses;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
 
-namespace Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
+namespace Turkish.HRSolutions.SalaryCalculator.Application.Services;
 
 /// <summary>
 /// Primary interface for the Turkish Salary Calculator service.
@@ -42,24 +42,23 @@ public interface ISalaryCalculator
     /// Immutable - set at construction time.
     /// </remarks>
     public Result<ICalculationConstantsProvider> ConstantsProvider { get; }
-    /// <summary>
-    /// Calculates salary from gross amounts.
-    /// </summary>
-    /// <param name="request">The gross-to-net calculation request.</param>
-    /// <returns>A result containing the yearly salary snapshot, or errors if validation fails.</returns>
-    public Result<YearlySalarySnapshot> Calculate(GrossToNetRequest request);
 
     /// <summary>
-    /// Calculates the required gross salary from desired net salary using binary search.
+    /// Calculates salary using the unified request type.
     /// </summary>
-    /// <param name="request">The net-to-gross calculation request.</param>
+    /// <remarks>
+    /// <para>
+    /// This is the primary calculation method that supports all calculation modes
+    /// through a single entry point. The calculation mode is determined by the
+    /// <see cref="SalaryCalculationRequest.Mode"/> property.
+    /// </para>
+    /// <para>
+    /// Use the fluent builders (<see cref="Application.Builders.IGrossToNetBuilder"/>, etc.)
+    /// for a more guided API experience, or construct <see cref="SalaryCalculationRequest"/>
+    /// directly for full control.
+    /// </para>
+    /// </remarks>
+    /// <param name="request">The unified salary calculation request.</param>
     /// <returns>A result containing the yearly salary snapshot, or errors if validation fails.</returns>
-    public Result<YearlySalarySnapshot> Calculate(NetToGrossRequest request);
-
-    /// <summary>
-    /// Calculates gross salary from total employer cost budget using binary search.
-    /// </summary>
-    /// <param name="request">The total-to-gross calculation request.</param>
-    /// <returns>A result containing the yearly salary snapshot, or errors if validation fails.</returns>
-    public Result<YearlySalarySnapshot> Calculate(TotalToGrossRequest request);
+    public Result<YearlySalarySnapshot> Calculate(SalaryCalculationRequest request);
 }

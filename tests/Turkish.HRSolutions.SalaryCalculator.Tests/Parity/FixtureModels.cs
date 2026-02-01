@@ -37,14 +37,44 @@ public sealed record TestInput
     [JsonPropertyName("employeeTypeId")]
     public required int EmployeeTypeId { get; init; }
 
+    /// <summary>
+    /// Uniform salary amount (used if monthly arrays not provided).
+    /// </summary>
     [JsonPropertyName("salaryAmount")]
     public required decimal SalaryAmount { get; init; }
 
+    /// <summary>
+    /// Uniform worked days (used if monthly arrays not provided).
+    /// </summary>
     [JsonPropertyName("workedDays")]
     public required decimal WorkedDays { get; init; }
 
+    /// <summary>
+    /// Uniform R&amp;D days (used if monthly arrays not provided).
+    /// </summary>
     [JsonPropertyName("researchAndDevelopmentWorkedDays")]
     public required decimal ResearchAndDevelopmentWorkedDays { get; init; }
+
+    /// <summary>
+    /// Per-month salary amounts for new hire scenarios. When provided, overrides <see cref="SalaryAmount"/>.
+    /// </summary>
+    [JsonPropertyName("monthlySalaryAmounts")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<decimal>? MonthlySalaryAmounts { get; init; }
+
+    /// <summary>
+    /// Per-month worked days for new hire scenarios. When provided, overrides <see cref="WorkedDays"/>.
+    /// </summary>
+    [JsonPropertyName("monthlyWorkedDays")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<int>? MonthlyWorkedDays { get; init; }
+
+    /// <summary>
+    /// Per-month R&amp;D days for new hire scenarios. When provided, overrides <see cref="ResearchAndDevelopmentWorkedDays"/>.
+    /// </summary>
+    [JsonPropertyName("monthlyRnDDays")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<int>? MonthlyRnDDays { get; init; }
 
     [JsonPropertyName("disabilityDegree")]
     public required int DisabilityDegree { get; init; }
@@ -72,6 +102,14 @@ public sealed record TestInput
 
     [JsonPropertyName("isAgiCalculationEnabled")]
     public required bool IsAgiCalculationEnabled { get; init; }
+
+    /// <summary>
+    /// Returns true if this input uses per-month arrays (new hire scenario).
+    /// </summary>
+    [JsonIgnore]
+    public bool HasMonthlyArrays => MonthlySalaryAmounts is not null
+                                    || MonthlyWorkedDays is not null
+                                    || MonthlyRnDDays is not null;
 }
 
 public sealed record TestOutput

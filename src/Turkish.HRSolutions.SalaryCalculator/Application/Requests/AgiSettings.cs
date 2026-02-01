@@ -1,4 +1,4 @@
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Requests;
 
@@ -21,10 +21,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Requests;
 /// If true, AGI is shown as a separate deduction.
 /// If false, AGI is applied but not shown separately (pre-applied to net).
 /// </param>
-public sealed record AgiSettings(
-    SpouseStatus SpouseStatus = default,
-    int NumberOfChildren = 0,
-    bool IncludeInTax = true)
+public sealed record AgiSettings(SpouseStatus SpouseStatus = default, int NumberOfChildren = 0, bool IncludeInTax = true)
 {
     /// <summary>
     /// Default AGI settings for an unmarried employee with no children.

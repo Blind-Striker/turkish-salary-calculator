@@ -26,9 +26,16 @@ interface CalculationInput {
   year: number;
   calculationMode: 'GROSS_TO_NET' | 'NET_TO_GROSS' | 'TOTAL_TO_GROSS';
   employeeTypeId: number;
+  // Uniform values (used if monthly arrays not provided)
   salaryAmount: number;
   workedDays: number;
   researchAndDevelopmentWorkedDays: number;
+  // Per-month arrays (optional, for new hire scenarios)
+  // When provided, these override the uniform values
+  monthlySalaryAmounts?: number[];
+  monthlyWorkedDays?: number[];
+  monthlyRnDDays?: number[];
+  // Other settings
   disabilityDegree: number;
   agiRate: number;
   educationExemptionRate: number;
@@ -233,9 +240,34 @@ function validateInput(input: unknown): { valid: true; data: CalculationInput } 
       errors.push(`Employee type ${data.employeeTypeId} not found. Available: ${EMPLOYEE_TYPES.map((t: any) => t.id).join(', ')}`);
     }
 
-    // R&D days cannot exceed worked days
+    // R&D days cannot exceed worked days (for uniform values)
     if (data.researchAndDevelopmentWorkedDays > data.workedDays) {
       errors.push(`R&D days (${data.researchAndDevelopmentWorkedDays}) cannot exceed worked days (${data.workedDays})`);
+    }
+
+    // Validate monthly arrays if provided
+    if (data.monthlySalaryAmounts !== undefined) {
+      if (!Array.isArray(data.monthlySalaryAmounts) || data.monthlySalaryAmounts.length !== 12) {
+        errors.push(`monthlySalaryAmounts must be an array of exactly 12 numbers`);
+      } else if (data.monthlySalaryAmounts.some(v => typeof v !== 'number' || v < 0)) {
+        errors.push(`monthlySalaryAmounts must contain non-negative numbers`);
+      }
+    }
+
+    if (data.monthlyWorkedDays !== undefined) {
+      if (!Array.isArray(data.monthlyWorkedDays) || data.monthlyWorkedDays.length !== 12) {
+        errors.push(`monthlyWorkedDays must be an array of exactly 12 numbers`);
+      } else if (data.monthlyWorkedDays.some(v => typeof v !== 'number' || v < 0 || v > 30)) {
+        errors.push(`monthlyWorkedDays must contain numbers between 0 and 30`);
+      }
+    }
+
+    if (data.monthlyRnDDays !== undefined) {
+      if (!Array.isArray(data.monthlyRnDDays) || data.monthlyRnDDays.length !== 12) {
+        errors.push(`monthlyRnDDays must be an array of exactly 12 numbers`);
+      } else if (data.monthlyRnDDays.some(v => typeof v !== 'number' || v < 0 || v > 30)) {
+        errors.push(`monthlyRnDDays must contain numbers between 0 and 30`);
+      }
     }
   }
 
@@ -315,10 +347,10 @@ function runCalculation(input: CalculationInput): CalculationOutput {
   yearCalc.isAGICalculationEnabled = input.isAgiCalculationEnabled;
   yearCalc.applyMinWageTaxExemption = input.applyMinWageTaxExemption;
 
-  // Set 12 months of uniform data
-  yearCalc.enteredAmounts = Array(12).fill(input.salaryAmount);
-  yearCalc.dayCounts = Array(12).fill(input.workedDays);
-  yearCalc.researchAndDevelopmentWorkedDays = Array(12).fill(input.researchAndDevelopmentWorkedDays);
+  // Set 12 months of data - use per-month arrays if provided, otherwise uniform values
+  yearCalc.enteredAmounts = input.monthlySalaryAmounts ?? Array(12).fill(input.salaryAmount);
+  yearCalc.dayCounts = input.monthlyWorkedDays ?? Array(12).fill(input.workedDays);
+  yearCalc.researchAndDevelopmentWorkedDays = input.monthlyRnDDays ?? Array(12).fill(input.researchAndDevelopmentWorkedDays);
 
   // Run calculation
   yearCalc.calculate();

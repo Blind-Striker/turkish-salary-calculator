@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Domain.Services;
 
@@ -283,7 +283,6 @@ public static class CalculationFormulasDomainService
         bool minWageEmployeeTaxExemption
     )
     {
-        // Angular: stampTaxExemption += yearParams.minWageEmployeeTaxExemption ? employerStampTaxExemption : 0;
         var stampTaxExemption = employeeStampTaxExemption + (minWageEmployeeTaxExemption ? employerStampTaxExemption : 0);
         return grossSalary + stampTaxExemption + employeeIncomeTaxExemption - (sgkDeduction + employeeUnemploymentInsuranceDeduction + stampTax + employeeIncomeTax);
     }

@@ -1,8 +1,9 @@
-using Turkish.HRSolutions.SalaryCalculator.Application.Calculator;
 using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
 using Turkish.HRSolutions.SalaryCalculator.Application.Responses;
+using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Enums;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Builders.Internal;
 
@@ -93,10 +94,11 @@ internal sealed class NetToGrossBuilder : INetToGrossBuilder
     }
 
     /// <inheritdoc />
-    public NetToGrossRequest Build(IEnumerable<MonthlyInput> months)
+    public SalaryCalculationRequest Build(IEnumerable<MonthlyInput> months)
     {
         var monthList = months as IReadOnlyList<MonthlyInput> ?? [.. months];
-        return new NetToGrossRequest(
+        return new SalaryCalculationRequest(
+            CalculationMode.NetToGross,
             _year, monthList, _employeeType, _disability,
             _isPensioner, _applyMinWageExemption, _apply5746Discount,
             _agi, _rnd, _isAgiIncludedInNet);

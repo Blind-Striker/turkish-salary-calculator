@@ -1,11 +1,12 @@
 using Turkish.HRSolutions.SalaryCalculator.Application.Requests;
 using Turkish.HRSolutions.SalaryCalculator.Application.Validation;
-using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Models;
+using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Mappings;
 
 /// <summary>
-/// Maps V2 API requests to domain model types.
+/// Maps API requests to domain model types.
 /// Pure shape conversion - no lookups, no validation, no Result.
 /// </summary>
 internal static class RequestMappingService
@@ -63,7 +64,7 @@ internal static class RequestMappingService
     }
 
     /// <summary>
-    /// Converts V2 MonthlyInput values to domain MonthlySalary values.
+    /// Converts MonthlyInput values to domain MonthlySalary values.
     /// </summary>
     internal static IEnumerable<MonthlySalary> MapMonthlyInputs(IReadOnlyList<MonthlyInput> months)
     {
