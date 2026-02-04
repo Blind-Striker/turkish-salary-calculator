@@ -74,8 +74,7 @@ public static class SalaryCalculatorMetadataBuilder
         if (providerValidation.IsFailure)
         {
             var errors = providerValidation.Errors.Select(e => $"{e.Code}: {e.Message}");
-            throw new SalaryCalculatorConfigurationException(
-                $"Salary calculator providers are invalid: {string.Join("; ", errors)}");
+            throw new SalaryCalculatorConfigurationException($"Salary calculator providers are invalid: {string.Join("; ", errors)}");
         }
 
         return new SalaryCalculatorMetadataService(capabilityResolver, yearProvider, constantsProvider);

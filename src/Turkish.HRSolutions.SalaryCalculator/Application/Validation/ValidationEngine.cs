@@ -33,10 +33,7 @@ internal sealed class ValidationEngine : IValidationEngine
     /// <param name="capabilityResolver">Resolver for determining calculator capabilities.</param>
     /// <param name="yearProvider">Provider for year-specific parameters.</param>
     /// <param name="constantsProvider">Provider for calculation constants.</param>
-    public ValidationEngine(
-        ICapabilityResolver capabilityResolver,
-        IYearParameterProvider yearProvider,
-        ICalculationConstantsProvider constantsProvider)
+    public ValidationEngine(ICapabilityResolver capabilityResolver, IYearParameterProvider yearProvider, ICalculationConstantsProvider constantsProvider)
     {
         _capabilityResolver = capabilityResolver ?? throw new ArgumentNullException(nameof(capabilityResolver));
         _yearProvider = yearProvider ?? throw new ArgumentNullException(nameof(yearProvider));
@@ -96,9 +93,7 @@ internal sealed class ValidationEngine : IValidationEngine
         }
         else if (_constantsProvider.GetEmployeeType(context.EmployeeType) is null)
         {
-            errors.Add(new Error(
-                ErrorCode.MissingEmployeeTypeDefinition,
-                $"Employee type {context.EmployeeType.Value} is not defined."));
+            errors.Add(new Error(ErrorCode.MissingEmployeeTypeDefinition, $"Employee type {context.EmployeeType.Value} is not defined."));
         }
 
         // Month validation
@@ -108,9 +103,7 @@ internal sealed class ValidationEngine : IValidationEngine
         }
         else if (context.Months.Count != 12)
         {
-            errors.Add(new Error(
-                ErrorCode.InvalidMonthCount,
-                $"Expected 12 monthly inputs, but got {context.Months.Count}."));
+            errors.Add(new Error(ErrorCode.InvalidMonthCount, $"Expected 12 monthly inputs, but got {context.Months.Count}."));
         }
 
         // Monthly input validation
@@ -162,17 +155,13 @@ internal sealed class ValidationEngine : IValidationEngine
     /// Checks if the user provided settings that conflict with disabled capabilities.
     /// Adds warnings for settings that will be ignored.
     /// </summary>
-    private static void CheckCapabilityViolations(
-        ValidationContext context,
-        Capability disabledCapabilities,
-        List<Error> warnings)
+    private static void CheckCapabilityViolations(ValidationContext context, Capability disabledCapabilities, List<Error> warnings)
     {
         // AGI Selection disabled but AGI settings provided
         if (disabledCapabilities.HasFlag(Capability.AgiSelection) && context.Agi is not null)
         {
-            warnings.Add(Error.ValidationWarning(
-                ErrorCode.AgiNotApplicable,
-                "AGI settings will be ignored because AGI is not applicable for this configuration."));
+            warnings
+                .Add(Error.ValidationWarning(ErrorCode.AgiNotApplicable, "AGI settings will be ignored because AGI is not applicable for this configuration."));
         }
 
         // Education Type disabled but education specified in RnD settings
@@ -180,34 +169,29 @@ internal sealed class ValidationEngine : IValidationEngine
             context.RnD?.Education is not null &&
             context.RnD.Education != EducationTypeId.OtherRnDPersonnel)
         {
-            warnings.Add(Error.ValidationWarning(
-                ErrorCode.EducationExemptionNotApplicable,
-                "Education type will be ignored because education exemption is not applicable for this employee type."));
+            warnings
+                .Add(Error.ValidationWarning(ErrorCode.EducationExemptionNotApplicable, "Education type will be ignored because education exemption is not applicable for this employee type."));
         }
 
         // 5746 Discount disabled but Apply5746Discount is true
         if (disabledCapabilities.HasFlag(Capability.Discount5746) && context.Apply5746Discount)
         {
-            warnings.Add(Error.ValidationWarning(
-                ErrorCode.Discount5746NotApplicable,
-                "5746 discount will be ignored because it is not applicable for this configuration."));
+            warnings
+                .Add(Error.ValidationWarning(ErrorCode.Discount5746NotApplicable, "5746 discount will be ignored because it is not applicable for this configuration."));
         }
 
         // R&D Days disabled but R&D days provided
-        if (disabledCapabilities.HasFlag(Capability.RnDDaysInput) &&
-            context.Months.Any(m => m.RnDDays > 0))
+        if (disabledCapabilities.HasFlag(Capability.RnDDaysInput) && context.Months.Any(m => m.RnDDays > 0))
         {
-            warnings.Add(Error.ValidationWarning(
-                ErrorCode.RnDDaysNotApplicable,
-                "R&D days will be ignored because R&D exemption is not applicable for this employee type."));
+            warnings
+                .Add(Error.ValidationWarning(ErrorCode.RnDDaysNotApplicable, "R&D days will be ignored because R&D exemption is not applicable for this employee type."));
         }
 
         // AGI Included In Net disabled but IsAgiIncludedInNet is true
         if (disabledCapabilities.HasFlag(Capability.AgiIncludedInNet) && context.IsAgiIncludedInNet)
         {
-            warnings.Add(Error.ValidationWarning(
-                ErrorCode.AgiIncludedInNetNotApplicable,
-                "AGI included in net will be ignored because it is only applicable in NET_TO_GROSS mode."));
+            warnings
+                .Add(Error.ValidationWarning(ErrorCode.AgiIncludedInNetNotApplicable, "AGI included in net will be ignored because it is only applicable in NET_TO_GROSS mode."));
         }
     }
 }

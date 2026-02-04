@@ -113,7 +113,7 @@ public enum ErrorCode
     /// <summary>Calculation constants provider is null or invalid.</summary>
     InvalidConstantsProvider = 5001,
 
-    /// <summary>Required employee type definition is missing from provider.</summary>
+    /// <summary>The required employee type definition is missing from the provider.</summary>
     MissingEmployeeTypeDefinition = 5002,
 
     /// <summary>Year parameter data is corrupted or invalid.</summary>

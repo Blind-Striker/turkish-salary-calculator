@@ -29,28 +29,20 @@ internal sealed class CapabilityResolver : ICapabilityResolver
     }
 
     /// <inheritdoc />
-    public Result<CapabilityInfo> ResolveCapabilities(
-        int year,
-        EmployeeTypeId employeeType,
-        bool isPensioner,
-        CalculationMode mode)
+    public Result<CapabilityInfo> ResolveCapabilities(int year, EmployeeTypeId employeeType, bool isPensioner, CalculationMode mode)
     {
         // Validate year
         var yearParam = _yearProvider.GetParameter(year);
         if (yearParam is null)
         {
-            return Result<CapabilityInfo>.Failure(
-                ErrorCode.YearNotSupported,
-                $"Year {year} is not supported.");
+            return Result<CapabilityInfo>.Failure(ErrorCode.YearNotSupported, $"Year {year} is not supported.");
         }
 
         // Validate employee type
         var empType = _constantsProvider.GetEmployeeType(employeeType);
         if (empType is null)
         {
-            return Result<CapabilityInfo>.Failure(
-                ErrorCode.MissingEmployeeTypeDefinition,
-                $"Employee type {employeeType.Value} is not defined.");
+            return Result<CapabilityInfo>.Failure(ErrorCode.MissingEmployeeTypeDefinition, $"Employee type {employeeType.Value} is not defined.");
         }
 
         // Determine disabled capabilities
@@ -66,9 +58,7 @@ internal sealed class CapabilityResolver : ICapabilityResolver
         // Check year provider has data
         if (_yearProvider.AvailableYears.Count == 0)
         {
-            errors.Add(Error.Configuration(
-                ErrorCode.InvalidYearParameterProvider,
-                "Year parameter provider has no available years."));
+            errors.Add(Error.Configuration(ErrorCode.InvalidYearParameterProvider, "Year parameter provider has no available years."));
         }
 
         // Check all 10 known employee types exist
@@ -76,9 +66,7 @@ internal sealed class CapabilityResolver : ICapabilityResolver
         {
             if (_constantsProvider.GetEmployeeType(id) is null)
             {
-                errors.Add(Error.Configuration(
-                    ErrorCode.MissingEmployeeTypeDefinition,
-                    $"Employee type {id} is not defined in constants provider."));
+                errors.Add(Error.Configuration(ErrorCode.MissingEmployeeTypeDefinition, $"Employee type {id} is not defined in constants provider."));
             }
         }
 
@@ -104,11 +92,7 @@ internal sealed class CapabilityResolver : ICapabilityResolver
     /// <item><description>AGI Included In Net: disabled when mode != NetToGross</description></item>
     /// </list>
     /// </remarks>
-    private static Capability DetermineDisabledCapabilities(
-        EmployeeTypeConstant employeeType,
-        YearParameter yearParam,
-        bool isPensioner,
-        CalculationMode mode)
+    private static Capability DetermineDisabledCapabilities(EmployeeTypeConstant employeeType, YearParameter yearParam, bool isPensioner, CalculationMode mode)
     {
         var disabled = Capability.None;
 

@@ -815,8 +815,6 @@ fabric.properties
 
 CLAUDE.md
 
-# Test harness fixtures (generated from Angular, gitignored)
-test-harness/
 tests/artifacts/parity-fixtures/
-docs/
+ignored-docs/
 .cursor/

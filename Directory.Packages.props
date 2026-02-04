@@ -1,42 +1,43 @@
 <Project>
   <ItemGroup>
     <!-- Analyzers -->
-    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.286"/>
-    <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4"/>
-    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.102"/>
-    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15"/>
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0"/>
-    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.15.0"/>
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.18.0.131500"/>
-    <PackageVersion Include="TestableIO.System.IO.Abstractions.Analyzers" Version="2022.0.0"/>
+    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.286" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.102" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
+    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.15.0" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.18.0.131500" />
+    <PackageVersion Include="TestableIO.System.IO.Abstractions.Analyzers" Version="2022.0.0" />
     <!-- Microsoft Dependencies -->
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0"/>
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0"/>
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.0.0"/>
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.0.0"/>
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2"/>
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
     <!-- OTEL Depedencies -->
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.13.1"/>
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.13.1"/>
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.13.0"/>
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.13.0"/>
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.13.0"/>
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.13.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.13.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.13.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.13.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.13.0" />
     <!-- External Dependencies -->
-    <PackageVersion Include="TestableIO.System.IO.Abstractions.Wrappers" Version="22.1.0"/>
-    <PackageVersion Include="TestableIO.System.IO.Abstractions.Extensions" Version="22.0.4"/>
-    <PackageVersion Include="Spectre.Console" Version="0.54.0"/>
-    <PackageVersion Include="CliWrap" Version="3.10.0"/>
+    <PackageVersion Include="TestableIO.System.IO.Abstractions.Wrappers" Version="22.1.0" />
+    <PackageVersion Include="TestableIO.System.IO.Abstractions.Extensions" Version="22.0.4" />
+    <PackageVersion Include="Spectre.Console" Version="0.54.0" />
+    <PackageVersion Include="CliWrap" Version="3.10.0" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.12.32" />
     <!-- Test Dependencies -->
-    <PackageVersion Include="AutoFixture" Version="4.18.1"/>
-    <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1"/>
-    <PackageVersion Include="Moq" Version="4.20.72"/>
-    <PackageVersion Include="Testcontainers" Version="4.10.0"/>
-    <PackageVersion Include="Testcontainers.LocalStack" Version="4.10.0"/>
-    <PackageVersion Include="Testcontainers.MsSql" Version="4.10.0"/>
-    <PackageVersion Include="Testcontainers.Redis" Version="4.10.0"/>
-    <PackageVersion Include="TestableIO.System.IO.Abstractions.TestingHelpers" Version="22.1.0"/>
-    <PackageVersion Include="TUnit" Version="1.12.65"/>
-    <PackageVersion Include="TUnit.Core" Version="1.12.65"/>
-    <PackageVersion Include="TUnit.Assertions" Version="1.12.65"/>
+    <PackageVersion Include="AutoFixture" Version="4.18.1" />
+    <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="Testcontainers" Version="4.10.0" />
+    <PackageVersion Include="Testcontainers.LocalStack" Version="4.10.0" />
+    <PackageVersion Include="Testcontainers.MsSql" Version="4.10.0" />
+    <PackageVersion Include="Testcontainers.Redis" Version="4.10.0" />
+    <PackageVersion Include="TestableIO.System.IO.Abstractions.TestingHelpers" Version="22.1.0" />
+    <PackageVersion Include="TUnit" Version="1.12.65" />
+    <PackageVersion Include="TUnit.Core" Version="1.12.65" />
+    <PackageVersion Include="TUnit.Assertions" Version="1.12.65" />
   </ItemGroup>
 </Project>
