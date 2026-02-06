@@ -62,7 +62,7 @@ public sealed class ValidationEngineTests
         var result = Engine.Validate(context);
 
         await Assert.That(result.IsFailure).IsTrue();
-        await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.MissingEmployeeTypeDefinition)).IsTrue();
+        await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.InvalidEmployeeType)).IsTrue();
     }
 
     [Test]

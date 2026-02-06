@@ -64,7 +64,7 @@ public class ErrorTests
     public async Task IsWarning_Should_Return_True_When_Severity_Is_Warning()
     {
         // Arrange
-        var warning = new Error(ErrorCode.SalaryBelowMinimumWage, "Below minimum", ErrorSeverity.Warning);
+        var warning = new Error(ErrorCode.AgiNotApplicable, "AGI not applicable", ErrorSeverity.Warning);
 
         // Assert
         await Assert.That(warning.IsWarning).IsTrue();
@@ -108,13 +108,13 @@ public class ErrorTests
     {
         // Act
         var warning = Error.ValidationWarning(
-            ErrorCode.SalaryBelowMinimumWage,
-            "Salary is below minimum wage",
-            "Salary");
+            ErrorCode.AgiNotApplicable,
+            "AGI is not applicable",
+            "AgiSettings");
 
         // Assert
         await Assert.That(warning.Severity).IsEqualTo(ErrorSeverity.Warning);
-        await Assert.That(warning.Field).IsEqualTo("Salary");
+        await Assert.That(warning.Field).IsEqualTo("AgiSettings");
     }
 
     [Test]
@@ -122,7 +122,7 @@ public class ErrorTests
     {
         // Act
         var warning = Error.ValidationWarning(
-            ErrorCode.SalaryBelowMinimumWage,
+            ErrorCode.AgiNotApplicable,
             "General warning");
 
         // Assert
@@ -138,11 +138,11 @@ public class ErrorTests
     {
         // Act
         var error = Error.Configuration(
-            ErrorCode.AgiNotApplicableForYear,
-            "AGI is not available for years 2022+");
+            ErrorCode.InvalidYearParameterProvider,
+            "Year parameter provider has no available years.");
 
         // Assert
-        await Assert.That(error.Code).IsEqualTo(ErrorCode.AgiNotApplicableForYear);
+        await Assert.That(error.Code).IsEqualTo(ErrorCode.InvalidYearParameterProvider);
         await Assert.That(error.Severity).IsEqualTo(ErrorSeverity.Error);
         await Assert.That(error.Field).IsNull();
     }
@@ -152,7 +152,7 @@ public class ErrorTests
     {
         // Act
         var warning = Error.ConfigurationWarning(
-            ErrorCode.Discount5746NotApplicableForEmployeeType,
+            ErrorCode.Discount5746NotApplicable,
             "5746 discount ignored for this employee type");
 
         // Assert
@@ -171,12 +171,12 @@ public class ErrorTests
 
         // Act
         var error = Error.Infrastructure(
-            ErrorCode.FileNotFound,
+            ErrorCode.ConfigurationFileNotFound,
             "Configuration file not found",
             exception);
 
         // Assert
-        await Assert.That(error.Code).IsEqualTo(ErrorCode.FileNotFound);
+        await Assert.That(error.Code).IsEqualTo(ErrorCode.ConfigurationFileNotFound);
         await Assert.That(error.Severity).IsEqualTo(ErrorSeverity.Error);
         await Assert.That(error.Exception).IsEqualTo(exception);
     }
@@ -231,7 +231,7 @@ public class ErrorTests
     public async Task ToString_Should_Show_Warning_Severity()
     {
         // Arrange
-        var warning = new Error(ErrorCode.SalaryBelowMinimumWage, "Below minimum", ErrorSeverity.Warning);
+        var warning = new Error(ErrorCode.AgiNotApplicable, "AGI not applicable", ErrorSeverity.Warning);
 
         // Act
         var str = warning.ToString();

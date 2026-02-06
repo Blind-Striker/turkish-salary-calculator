@@ -89,11 +89,11 @@ internal sealed class ValidationEngine : IValidationEngine
         // Employee type validation
         if (context.EmployeeType.Value == 0)
         {
-            errors.Add(new Error(ErrorCode.MissingEmployeeTypeDefinition, "Employee type is required."));
+            errors.Add(new Error(ErrorCode.InvalidEmployeeType, "Employee type is required."));
         }
         else if (_constantsProvider.GetEmployeeType(context.EmployeeType) is null)
         {
-            errors.Add(new Error(ErrorCode.MissingEmployeeTypeDefinition, $"Employee type {context.EmployeeType.Value} is not defined."));
+            errors.Add(new Error(ErrorCode.InvalidEmployeeType, $"Employee type {context.EmployeeType.Value} is not defined."));
         }
 
         // Month validation

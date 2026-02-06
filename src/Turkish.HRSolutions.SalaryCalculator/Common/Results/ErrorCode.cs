@@ -2,8 +2,16 @@ namespace Turkish.HRSolutions.SalaryCalculator.Common.Results;
 
 /// <summary>
 /// Unified error codes for all validation, calculation, and configuration errors.
-/// Codes are grouped by category using a number of ranges for the organization.
+/// Codes are grouped by category using number ranges for organization.
 /// </summary>
+/// <remarks>
+/// <para>Range mapping to HTTP status codes (used by API layer):</para>
+/// <list type="bullet">
+/// <item><description>1000-3999 (Input/Config validation) → 400 Bad Request</description></item>
+/// <item><description>4000-4999 (Calculation runtime) → 422 Unprocessable Entity</description></item>
+/// <item><description>5000+ (Provider/Infrastructure) → 500 Internal Server Error</description></item>
+/// </list>
+/// </remarks>
 public enum ErrorCode
 {
     // ═══════════════════════════════════════════════════════════════
@@ -28,17 +36,17 @@ public enum ErrorCode
     /// <summary>R&amp;D days specified for non-R&amp;D employee type.</summary>
     RnDDaysNotApplicable = 1005,
 
-    /// <summary>No monthly inputs provided.</summary>
-    NoMonthlyInputs = 1006,
-
     /// <summary>Monthly inputs must cover exactly 12 months.</summary>
     InvalidMonthCount = 1007,
 
-    /// <summary>Duplicate month entries found.</summary>
-    DuplicateMonthEntries = 1008,
-
     /// <summary>R&amp;D days cannot be negative.</summary>
     InvalidRnDDays = 1009,
+
+    /// <summary>Employee type identifier is not valid or not recognized.</summary>
+    InvalidEmployeeType = 1010,
+
+    /// <summary>Calculation mode string is not a recognized mode.</summary>
+    InvalidCalculationMode = 1011,
 
     // ═══════════════════════════════════════════════════════════════
     // Input Structure - FillForward/FillBackward (2000-2999)
@@ -60,26 +68,12 @@ public enum ErrorCode
     FillNoEntries = 2004,
 
     // ═══════════════════════════════════════════════════════════════
-    // Configuration Validation (3000-3999)
+    // Configuration Warnings (3000-3999)
+    // Used by ValidationEngine for capability violation warnings.
     // ═══════════════════════════════════════════════════════════════
-
-    /// <summary>AGI calculation is not available for years 2022 and later.</summary>
-    AgiNotApplicableForYear = 3000,
-
-    /// <summary>AGI is not applicable for this employee type.</summary>
-    AgiNotApplicableForEmployeeType = 3001,
 
     /// <summary>Education exemption only applies to R&amp;D 5746 employee types.</summary>
     EducationExemptionNotApplicable = 3002,
-
-    /// <summary>5746 SGK discount cannot be applied for pensioners.</summary>
-    Discount5746NotApplicableForPensioner = 3003,
-
-    /// <summary>5746 SGK discount is not applicable for this employee type.</summary>
-    Discount5746NotApplicableForEmployeeType = 3004,
-
-    /// <summary>Min wage tax exemption is only available for years 2022 and later.</summary>
-    MinWageExemptionNotApplicableForYear = 3005,
 
     /// <summary>AGI is not applicable for this configuration.</summary>
     AgiNotApplicable = 3006,
@@ -94,49 +88,23 @@ public enum ErrorCode
     // Calculation Runtime (4000-4999)
     // ═══════════════════════════════════════════════════════════════
 
-    /// <summary>Binary search failed to converge (Net-to-Gross or Total-to-Gross).</summary>
-    BinarySearchFailed = 4000,
-
-    /// <summary>Calculated salary is below minimum wage.</summary>
-    SalaryBelowMinimumWage = 4001,
-
     /// <summary>Calculation produced an unexpected result.</summary>
     CalculationFailed = 4002,
 
     // ═══════════════════════════════════════════════════════════════
     // Provider/Configuration (5000-5999)
+    // Bootstrap fail-fast errors — these indicate misconfigured providers.
     // ═══════════════════════════════════════════════════════════════
 
     /// <summary>Year parameter provider is null or invalid.</summary>
     InvalidYearParameterProvider = 5000,
 
-    /// <summary>Calculation constants provider is null or invalid.</summary>
-    InvalidConstantsProvider = 5001,
-
-    /// <summary>The required employee type definition is missing from the provider.</summary>
+    /// <summary>The required employee type definition is missing from the provider at bootstrap time.</summary>
     MissingEmployeeTypeDefinition = 5002,
-
-    /// <summary>Year parameter data is corrupted or invalid.</summary>
-    InvalidYearParameterData = 5003,
-
-    /// <summary>Configuration rate is outside valid range.</summary>
-    ConfigurationRateOutOfRange = 5004,
-
-    /// <summary>Year is listed but GetParameter returns null.</summary>
-    YearParameterMismatch = 5005,
-
-    /// <summary>Year has no minimum wage entries.</summary>
-    MissingMinimumWageData = 5006,
-
-    /// <summary>Year has no tax bracket entries.</summary>
-    MissingTaxBracketData = 5007,
 
     // ═══════════════════════════════════════════════════════════════
     // Infrastructure (6000-6999)
     // ═══════════════════════════════════════════════════════════════
-
-    /// <summary>File not found at the specified path.</summary>
-    FileNotFound = 6000,
 
     /// <summary>JSON deserialization failed.</summary>
     JsonDeserializationFailed = 6001,

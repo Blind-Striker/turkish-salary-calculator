@@ -74,7 +74,7 @@ public class ResultTests
         var errors = new[]
         {
             new Error(ErrorCode.InvalidSalaryAmount, "Error 1", ErrorSeverity.Error),
-            new Error(ErrorCode.SalaryBelowMinimumWage, "Warning 1", ErrorSeverity.Warning),
+            new Error(ErrorCode.AgiNotApplicable, "Warning 1", ErrorSeverity.Warning),
             new Error(ErrorCode.InvalidWorkedDays, "Error 2", ErrorSeverity.Error),
         };
         var result = Result.Failure(errors);
@@ -90,7 +90,7 @@ public class ResultTests
         var errors = new[]
         {
             new Error(ErrorCode.InvalidSalaryAmount, "Error 1", ErrorSeverity.Error),
-            new Error(ErrorCode.SalaryBelowMinimumWage, "Warning 1", ErrorSeverity.Warning),
+            new Error(ErrorCode.AgiNotApplicable, "Warning 1", ErrorSeverity.Warning),
         };
         var result = Result.Failure(errors);
 
@@ -162,7 +162,7 @@ public class ResultTests
         // Arrange
         var warnings = new[]
         {
-            new Error(ErrorCode.SalaryBelowMinimumWage, "Below minimum", ErrorSeverity.Warning),
+            new Error(ErrorCode.AgiNotApplicable, "AGI not applicable", ErrorSeverity.Warning),
         };
 
         // Act
@@ -183,7 +183,7 @@ public class ResultTests
     public async Task Failure_Should_Create_Failed_Result_With_Error()
     {
         // Arrange
-        var error = new Error(ErrorCode.BinarySearchFailed, "Calculation failed");
+        var error = new Error(ErrorCode.CalculationFailed, "Calculation failed");
 
         // Act
         var result = Result<decimal>.Failure(error);
@@ -197,11 +197,11 @@ public class ResultTests
     public async Task GenericFailure_With_Code_And_Message_Should_Create_Failed_Result()
     {
         // Act
-        var result = Result<string>.Failure(ErrorCode.FileNotFound, "File not found");
+        var result = Result<string>.Failure(ErrorCode.EmbeddedResourceNotFound, "Resource not found");
 
         // Assert
         await Assert.That(result.IsFailure).IsTrue();
-        await Assert.That(result.Errors[0].Code).IsEqualTo(ErrorCode.FileNotFound);
+        await Assert.That(result.Errors[0].Code).IsEqualTo(ErrorCode.EmbeddedResourceNotFound);
     }
 
     [Test]
@@ -398,7 +398,7 @@ public class ResultTests
         var errors = new[]
         {
             new Error(ErrorCode.InvalidSalaryAmount, "Error 1", ErrorSeverity.Error),
-            new Error(ErrorCode.SalaryBelowMinimumWage, "Warning 1", ErrorSeverity.Warning),
+            new Error(ErrorCode.AgiNotApplicable, "Warning 1", ErrorSeverity.Warning),
             new Error(ErrorCode.InvalidWorkedDays, "Error 2", ErrorSeverity.Error),
             new Error(ErrorCode.RnDDaysNotApplicable, "Warning 2", ErrorSeverity.Warning),
         };

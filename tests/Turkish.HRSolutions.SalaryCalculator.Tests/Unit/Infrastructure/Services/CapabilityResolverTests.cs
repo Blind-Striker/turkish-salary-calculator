@@ -75,7 +75,7 @@ public sealed class CapabilityResolverTests
             2024, EmployeeTypeId.FromId(99), false, CalculationMode.GrossToNet);
 
         await Assert.That(result.IsFailure).IsTrue();
-        await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.MissingEmployeeTypeDefinition)).IsTrue();
+        await Assert.That(result.Errors.Any(e => e.Code == ErrorCode.InvalidEmployeeType)).IsTrue();
     }
 
     // ═══════════════════════════════════════════════════════════════

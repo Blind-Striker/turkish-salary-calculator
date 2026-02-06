@@ -42,7 +42,7 @@ internal sealed class CapabilityResolver : ICapabilityResolver
         var empType = _constantsProvider.GetEmployeeType(employeeType);
         if (empType is null)
         {
-            return Result<CapabilityInfo>.Failure(ErrorCode.MissingEmployeeTypeDefinition, $"Employee type {employeeType.Value} is not defined.");
+            return Result<CapabilityInfo>.Failure(ErrorCode.InvalidEmployeeType, $"Employee type {employeeType.Value} is not defined.");
         }
 
         // Determine disabled capabilities

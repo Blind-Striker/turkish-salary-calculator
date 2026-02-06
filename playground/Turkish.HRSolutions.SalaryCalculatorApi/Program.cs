@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Diagnostics;
 using Scalar.AspNetCore;
 using Turkish.HRSolutions.SalaryCalculator.Application.Services;
 using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Identifiers;
@@ -26,6 +27,39 @@ var app = builder.Build();
 // ═══════════════════════════════════════════════════════════════════════════════
 // Middleware Pipeline
 // ═══════════════════════════════════════════════════════════════════════════════
+
+// Global exception handler — converts framework exceptions to RFC 7807 JSON.
+// Catches BadHttpRequestException (bad JSON, missing params, binding failures),
+// ArgumentNullException (null DTOs), and any other unhandled exceptions.
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exceptionFeature = context.Features.Get<IExceptionHandlerFeature>();
+        var exception = exceptionFeature?.Error;
+
+        var (statusCode, title, detail) = exception switch
+        {
+            BadHttpRequestException bad => (StatusCodes.Status400BadRequest, "Bad Request", bad.Message),
+            ArgumentNullException arg => (StatusCodes.Status400BadRequest, "Bad Request", $"A required value was missing: {arg.ParamName}"),
+            _ => (StatusCodes.Status500InternalServerError, "Internal Server Error", "An unexpected error occurred."),
+        };
+
+        context.Response.StatusCode = statusCode;
+        context.Response.ContentType = "application/problem+json";
+
+        var errorResponse = new ErrorResponse(
+            Type: statusCode == 400
+                ? "https://tools.ietf.org/html/rfc7231#section-6.5.1"
+                : "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+            Title: title,
+            Status: statusCode,
+            Detail: detail);
+
+        await context.Response.WriteAsJsonAsync(errorResponse, ApiJsonSerializerContext.Default.ErrorResponse).ConfigureAwait(false);
+    });
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

@@ -108,8 +108,15 @@ public static class CalculationRequestMapper
         if (mode is null)
         {
             return Result<SalaryCalculationRequest>.Failure(
-                ErrorCode.InvalidMonthCount, // Using closest existing error code
+                ErrorCode.InvalidCalculationMode,
                 $"Invalid calculation mode: '{dto.Mode}'. Use 'gross-to-net', 'net-to-gross', or 'total-to-gross'.");
+        }
+
+        if (dto.Months is null || dto.Months.Count == 0)
+        {
+            return Result<SalaryCalculationRequest>.Failure(
+                ErrorCode.InvalidMonthCount,
+                "Monthly input data is required. Provide 12 monthly entries.");
         }
 
         // Convert months (1-indexed to 0-indexed for AllMonths array)
@@ -142,7 +149,7 @@ public static class CalculationRequestMapper
         if (mode is null)
         {
             return Result<SalaryCalculationRequest>.Failure(
-                ErrorCode.InvalidMonthCount, // Using closest existing error code
+                ErrorCode.InvalidCalculationMode,
                 $"Invalid calculation mode: '{dto.Mode}'. Use 'gross-to-net', 'net-to-gross', or 'total-to-gross'.");
         }
 
