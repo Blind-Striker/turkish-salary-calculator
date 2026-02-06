@@ -1,6 +1,6 @@
 namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
-public record CalculationOptions(
+internal record CalculationOptions(
     bool ApplyMinWageTaxExemption = true,
     bool ApplyEmployerDiscount5746 = true,
     bool IsAgiCalculationEnabled = false,

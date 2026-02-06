@@ -5,7 +5,7 @@ using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Domain.Models;
 
-public sealed class YearCalculationModel
+internal sealed class YearCalculationModel
 {
     private readonly EmployeeYearlyParameters _parameters;
     private readonly List<MonthCalculationModel> _months = [];

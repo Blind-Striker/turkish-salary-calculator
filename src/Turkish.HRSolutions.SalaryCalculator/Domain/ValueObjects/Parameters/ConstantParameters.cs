@@ -51,7 +51,7 @@ public record DisabilityConstant(
 public record EmployeeTypeConstant(
     [property: JsonPropertyName("id")] int Id,
     [property: JsonPropertyName("text")] string Text,
-    [property: JsonPropertyName("desc")] string Desc,
+    [property: JsonPropertyName("desc")] string? Desc,
     [property: JsonPropertyName("order")] int Order,
     [property: JsonPropertyName("show")] bool Show,
     [property: JsonPropertyName("SGKApplicable")] bool SgkApplicable,

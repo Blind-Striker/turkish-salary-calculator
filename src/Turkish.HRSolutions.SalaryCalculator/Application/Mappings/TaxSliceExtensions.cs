@@ -3,7 +3,7 @@ using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Application.Mappings;
 
-public static class TaxSliceExtensions
+internal static class TaxSliceExtensions
 {
 #pragma warning disable CA1034 // False positive https://github.com/dotnet/sdk/issues/51681
     /// <summary>

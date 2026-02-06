@@ -2,7 +2,7 @@ using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Models;
 
-public record EmployeeYearlyParameters(
+internal record EmployeeYearlyParameters(
     YearParameter YearParameter,
     IEnumerable<MonthlySalary> MonthlySalaries,
     EmployeeTypeConstant EmployeeTypeConstant,

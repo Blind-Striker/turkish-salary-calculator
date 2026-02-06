@@ -3,7 +3,7 @@ using Turkish.HRSolutions.SalaryCalculator.Domain.ValueObjects.Parameters;
 
 namespace Turkish.HRSolutions.SalaryCalculator.Domain.Services;
 
-public static class CalculationFormulasDomainService
+internal static class CalculationFormulasDomainService
 {
     public static decimal CalcGrossSalary(decimal grossSalary, int dayCount, int monthDayCount)
     {

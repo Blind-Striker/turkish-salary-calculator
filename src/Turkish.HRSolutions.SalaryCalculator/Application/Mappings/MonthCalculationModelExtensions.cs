@@ -8,7 +8,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Mappings;
 /// <summary>
 /// Extension methods for mapping <see cref="MonthCalculationModel"/> to API responses.
 /// </summary>
-public static class MonthCalculationModelExtensions
+internal static class MonthCalculationModelExtensions
 {
 #pragma warning disable CA1034 // False positive https://github.com/dotnet/sdk/issues/51681
     /// <summary>

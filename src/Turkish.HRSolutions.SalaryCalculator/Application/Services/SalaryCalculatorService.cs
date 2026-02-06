@@ -17,8 +17,6 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Services;
 internal sealed class SalaryCalculatorService : ISalaryCalculator
 {
     private readonly IValidationEngine _validationEngine;
-    private readonly IYearParameterProvider _yearProvider;
-    private readonly ICalculationConstantsProvider _constantsProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SalaryCalculatorService"/> class.
@@ -29,15 +27,15 @@ internal sealed class SalaryCalculatorService : ISalaryCalculator
     internal SalaryCalculatorService(IValidationEngine validationEngine, IYearParameterProvider yearProvider, ICalculationConstantsProvider constantsProvider)
     {
         _validationEngine = validationEngine ?? throw new ArgumentNullException(nameof(validationEngine));
-        _yearProvider = yearProvider ?? throw new ArgumentNullException(nameof(yearProvider));
-        _constantsProvider = constantsProvider ?? throw new ArgumentNullException(nameof(constantsProvider));
+        YearProvider = yearProvider ?? throw new ArgumentNullException(nameof(yearProvider));
+        ConstantsProvider = constantsProvider ?? throw new ArgumentNullException(nameof(constantsProvider));
     }
 
     /// <inheritdoc />
-    public Result<IYearParameterProvider> YearProvider => Result<IYearParameterProvider>.Success(_yearProvider);
+    public IYearParameterProvider YearProvider { get; }
 
     /// <inheritdoc />
-    public Result<ICalculationConstantsProvider> ConstantsProvider => Result<ICalculationConstantsProvider>.Success(_constantsProvider);
+    public ICalculationConstantsProvider ConstantsProvider { get; }
 
     /// <inheritdoc />
     public Result<YearlySalarySnapshot> Calculate(SalaryCalculationRequest request)
@@ -61,13 +59,13 @@ internal sealed class SalaryCalculatorService : ISalaryCalculator
         var warnings = validationResult.Warnings;
 
         // 2. Resolve lookups (guaranteed to succeed after validation)
-        var yearParam = _yearProvider.GetParameter(context.Year)!;
-        var employeeType = _constantsProvider.GetEmployeeType(context.EmployeeType)!;
-        var standardType = _constantsProvider.GetEmployeeType(EmployeeTypeId.Standard)!;
-        var disability = _constantsProvider.GetDisability(context.Disability)!;
+        var yearParam = YearProvider.GetParameter(context.Year)!;
+        var employeeType = ConstantsProvider.GetEmployeeType(context.EmployeeType)!;
+        var standardType = ConstantsProvider.GetEmployeeType(EmployeeTypeId.Standard)!;
+        var disability = ConstantsProvider.GetDisability(context.Disability)!;
         var educationType = context.RnD?.Education ?? EducationTypeId.OtherRnDPersonnel;
-        var educationRate = _constantsProvider.GetEducationType(educationType)?.ExemptionRate ?? 0d;
-        var agiRate = _constantsProvider.GetAgiRate(
+        var educationRate = ConstantsProvider.GetEducationType(educationType)?.ExemptionRate ?? 0d;
+        var agiRate = ConstantsProvider.GetAgiRate(
             context.Agi?.SpouseStatus ?? SpouseStatus.Unmarried,
             context.Agi?.NumberOfChildren ?? 0);
 
@@ -77,7 +75,7 @@ internal sealed class SalaryCalculatorService : ISalaryCalculator
             yearParam,
             employeeType,
             standardType,
-            _constantsProvider.Constants,
+            ConstantsProvider.Constants,
             disability.Degree,
             educationRate,
             agiRate);

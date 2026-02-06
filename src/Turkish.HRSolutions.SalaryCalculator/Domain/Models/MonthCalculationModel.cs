@@ -6,7 +6,7 @@ using static Turkish.HRSolutions.SalaryCalculator.Domain.Services.CalculationFor
 
 namespace Turkish.HRSolutions.SalaryCalculator.Domain.Models;
 
-public sealed class MonthCalculationModel
+internal sealed class MonthCalculationModel
 {
     private readonly EmployeeMonthlyParameters _parameters;
     private readonly MonthCalculationModel? _previousMonthCalculation;
@@ -80,7 +80,7 @@ public sealed class MonthCalculationModel
         // If R&D days is bigger than workedDays, throw
         if (_researchAndDevelopmentWorkedDays > _workedDays && _parameters.EmployeeTypeConstant.ResearchAndDevelopmentTaxExemption)
         {
-            throw new InvalidOperationException("Ar-Ge çalışma günü normal çalışma gününden fazla olamaz.");
+            throw new InvalidOperationException("R&D worked days cannot exceed total worked days.");
         }
 
         // 3) Decide how to get final gross
@@ -96,7 +96,7 @@ public sealed class MonthCalculationModel
         {
             // Binary search or other method failed => reset
             ResetFields();
-            throw new InvalidOperationException("Hesaplama başarısız");
+            throw new InvalidOperationException("Calculation failed.");
         }
 
         // Force the finalGross not to be below min wage

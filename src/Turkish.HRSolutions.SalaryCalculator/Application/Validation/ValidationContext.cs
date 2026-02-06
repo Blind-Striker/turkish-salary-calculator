@@ -11,7 +11,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 /// Used by ValidationEngine to determine capabilities and validate input.
 /// Factory methods provide clean conversion from request DTOs.
 /// </remarks>
-public sealed record ValidationContext
+internal sealed record ValidationContext
 {
     /// <summary>Gets the calculation year.</summary>
     public required int Year { get; init; }

@@ -20,7 +20,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Services;
 /// </para>
 /// <para>
 /// Provider access is exposed for introspection (available years, employee types, etc.).
-/// Providers are immutable and set at construction time.
+/// Providers are immutable and guaranteed valid at construction time.
 /// </para>
 /// </remarks>
 public interface ISalaryCalculator
@@ -30,18 +30,18 @@ public interface ISalaryCalculator
     /// </summary>
     /// <remarks>
     /// Provides access to available years, tax brackets, minimum wages, and other year-specific parameters.
-    /// Immutable - set at construction time.
+    /// Immutable and guaranteed valid — set and validated at construction time.
     /// </remarks>
-    public Result<IYearParameterProvider> YearProvider { get; }
+    public IYearParameterProvider YearProvider { get; }
 
     /// <summary>
     /// Gets the calculation constants provider used by this calculator instance.
     /// </summary>
     /// <remarks>
     /// Provides access to employee types, AGI options, disability degrees, and other constants.
-    /// Immutable - set at construction time.
+    /// Immutable and guaranteed valid — set and validated at construction time.
     /// </remarks>
-    public Result<ICalculationConstantsProvider> ConstantsProvider { get; }
+    public ICalculationConstantsProvider ConstantsProvider { get; }
 
     /// <summary>
     /// Calculates salary using the unified request type.

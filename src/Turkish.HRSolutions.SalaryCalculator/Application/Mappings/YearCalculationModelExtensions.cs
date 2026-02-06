@@ -8,7 +8,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Mappings;
 /// <summary>
 /// Extension methods for mapping <see cref="YearCalculationModel"/> to API responses.
 /// </summary>
-public static class YearCalculationModelExtensions
+internal static class YearCalculationModelExtensions
 {
     private const string FirstHalf = "first";
     private const string SecondHalf = "second";

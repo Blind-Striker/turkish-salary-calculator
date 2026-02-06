@@ -19,7 +19,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Services;
 /// <item><description>Provide a clean, focused API for capability queries</description></item>
 /// </list>
 /// </remarks>
-public interface ICapabilityResolver
+internal interface ICapabilityResolver
 {
     /// <summary>
     /// Resolves which capabilities are disabled for the given configuration.

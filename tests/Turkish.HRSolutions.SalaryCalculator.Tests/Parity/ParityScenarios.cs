@@ -39,10 +39,10 @@ public static class ParityScenarios
     private static readonly ISalaryCalculator Calculator = SalaryCalculatorBuilder.Create();
 
     /// <summary>Year parameter provider from calculator.</summary>
-    private static readonly IYearParameterProvider YearProvider = Calculator.YearProvider.Value;
+    private static readonly IYearParameterProvider YearProvider = Calculator.YearProvider;
 
     /// <summary>Calculation constants provider from calculator.</summary>
-    private static readonly ICalculationConstantsProvider ConstantsProvider = Calculator.ConstantsProvider.Value;
+    private static readonly ICalculationConstantsProvider ConstantsProvider = Calculator.ConstantsProvider;
 
     /// <summary>All available years from provider.</summary>
     private static IReadOnlyList<int> AvailableYears => YearProvider.AvailableYears;

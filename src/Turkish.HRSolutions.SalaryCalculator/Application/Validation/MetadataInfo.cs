@@ -8,7 +8,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 /// <param name="Id">The employee type identifier.</param>
 /// <param name="Name">The display name.</param>
 /// <param name="Description">The description text.</param>
-public sealed record EmployeeTypeInfo(EmployeeTypeId Id, string Name, string Description);
+public sealed record EmployeeTypeInfo(EmployeeTypeId Id, string Name, string? Description);
 
 /// <summary>
 /// Information about an education type for metadata queries.
