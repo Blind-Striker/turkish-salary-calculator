@@ -2,7 +2,7 @@ namespace Turkish.HRSolutions.SalaryCalculator.Common.Results;
 
 /// <summary>
 /// Unified error codes for all validation, calculation, and configuration errors.
-/// Codes are grouped by category using number ranges for organization.
+/// Codes are grouped by category using a number of ranges for the organization.
 /// </summary>
 public enum ErrorCode
 {

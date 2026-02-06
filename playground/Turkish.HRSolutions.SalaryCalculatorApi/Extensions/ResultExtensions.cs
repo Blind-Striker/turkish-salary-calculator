@@ -1,6 +1,7 @@
 using Turkish.HRSolutions.SalaryCalculator.Application.Responses;
 using Turkish.HRSolutions.SalaryCalculator.Common.Results;
 using Turkish.HRSolutions.SalaryCalculatorApi.Contracts;
+using Turkish.HRSolutions.SalaryCalculator.Application.Validation;
 
 namespace Turkish.HRSolutions.SalaryCalculatorApi.Extensions;
 
@@ -23,16 +24,17 @@ public static class ResultExtensions
     /// </remarks>
     public static IResult ToHttpResult(this Result<YearlySalarySnapshot> result)
     {
-        if (result.IsSuccess)
+        if (!result.IsSuccess)
         {
-            var warnings = result.HasWarnings
-                ? result.Warnings.Select(ToApiWarning).ToList()
-                : null;
-
-            return Results.Ok(new CalculationResponse(result.Value, warnings));
+            return ToErrorResult(result.Errors);
         }
 
-        return ToErrorResult(result.Errors);
+        var warnings = result.HasWarnings
+            ? result.Warnings.Select(ToApiWarning).ToList()
+            : null;
+
+        return Results.Ok(new CalculationResponse(result.Value, warnings));
+
     }
 
     /// <summary>
@@ -51,19 +53,18 @@ public static class ResultExtensions
     /// <summary>
     /// Maps a Result&lt;T&gt; to an IResult for capabilities endpoint.
     /// </summary>
-    public static IResult ToCapabilitiesHttpResult(
-        this Result<Turkish.HRSolutions.SalaryCalculator.Application.Validation.CapabilityInfo> result)
+    public static IResult ToCapabilitiesHttpResult(this Result<CapabilityInfo> result)
     {
-        if (result.IsSuccess)
+        if (!result.IsSuccess)
         {
-            var capInfo = result.Value;
-            var disabled = GetCapabilityNames(capInfo.DisabledCapabilities);
-            var available = GetCapabilityNames(capInfo.AvailableCapabilities);
-
-            return Results.Ok(new CapabilitiesResponse(disabled, available));
+            return ToErrorResult(result.Errors);
         }
 
-        return ToErrorResult(result.Errors);
+        var capInfo = result.Value;
+        var disabled = GetCapabilityNames(capInfo.DisabledCapabilities);
+        var available = GetCapabilityNames(capInfo.AvailableCapabilities);
+
+        return Results.Ok(new CapabilitiesResponse(disabled, available));
     }
 
     private static IResult ToErrorResult(IReadOnlyList<Error> errors)
@@ -121,14 +122,14 @@ public static class ResultExtensions
         new(error.Code.ToString(), error.Message, error.Field);
 
     private static List<string> GetCapabilityNames(
-        Turkish.HRSolutions.SalaryCalculator.Application.Validation.Capability capabilities)
+        Capability capabilities)
     {
         var names = new List<string>();
 
-        foreach (var cap in Enum.GetValues<Turkish.HRSolutions.SalaryCalculator.Application.Validation.Capability>())
+        foreach (var cap in Enum.GetValues<Capability>())
         {
-            if (cap != Turkish.HRSolutions.SalaryCalculator.Application.Validation.Capability.None &&
-                cap != Turkish.HRSolutions.SalaryCalculator.Application.Validation.Capability.All &&
+            if (cap != Capability.None &&
+                cap != Capability.All &&
                 capabilities.HasFlag(cap))
             {
                 names.Add(cap.ToString());
